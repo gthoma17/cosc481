@@ -30,14 +30,14 @@
 <link type="text/css" rel="stylesheet" href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
 <script type="text/javascript">
   var config = {
-    widgetUrl: "http://gat.im/login",
-    signInSuccessUrl: "http://gat.im/",
-    signOutUrl: "http://gat.im/",
-    oobActionUrl: "http://gat.im/",
-    apiKey: "AIzaSyBTDXSr6IHKCnXKMTis9UR60Djf0RE6oaw",
-    siteName: "this site",
-    signInOptions: ["password","google"]
-};
+      widgetUrl: "http://gat.im/login",
+      signInSuccessUrl: "/",
+      signOutUrl: "/logout",
+      oobActionUrl: "/mail",
+      apiKey: "AIzaSyCdJoBPQgSMPhFn-oMxJ6HimaBjSorURIs",
+      siteName: "this site",
+      signInOptions: ["password","microsoft","google","facebook","yahoo","aol"]
+  };
   // The HTTP POST body should be escaped by the server to prevent XSS
   window.google.identitytoolkit.start(
       '#gitkitWidgetDiv', // accepts any CSS selector
