@@ -1,0 +1,55 @@
+$def with (title, text)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+<link type=text/css rel=stylesheet href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
+<style type="text/css">
+	div{
+		text-align: center;
+	}
+	.scaled{
+		-ms-transform: scale(3,3); /* IE 9 */
+    	-webkit-transform: scale(3,3); /* Safari */
+    	transform: scale(3,3);
+        margin-top: 2em;
+	}
+</style>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="//www.gstatic.com/authtoolkit/js/gitkit.js"></script>
+<script type=text/javascript>
+  window.google.identitytoolkit.signInButton(
+    '#navbar', // accepts any CSS selector
+    {
+      widgetUrl: "/login",
+      signOutUrl: "/logout",
+    }
+  );
+</script>
+
+<title>COSC 481 Project</title>
+
+</head>
+<body style="background-color:lavender;">
+<div class="containter">
+	<div class="row">
+		<div class="col-sm-12"><h1>$title</h1></div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12"><p>$:text</p></div>
+	</div>
+<div class="containter-fluid">
+	<div class="row">
+		<div class="col-sm-12" style="z-index:255;"><div id="navbar" class="scaled" style="vertical-align:middle;"></div></div>
+		<!--<div id="navbar" style="float:right;position:relative;right:15px"></div>-->
+	</div>
+</div>
+</body>
+</html>
