@@ -1,7 +1,7 @@
 {
   "clientId": "1094129989666-0036ab0kik406mmr7piabfjklo2obbkf.apps.googleusercontent.com",
   "serviceAccountEmail": "1094129989666-l1lnvke2bdmgchsab6pkoistjqm7v18b@developer.gserviceaccount.com",
-  "serviceAccountPrivateKeyFile": "INSERT/PATH/TO/PRIVATEKEY",
+  "serviceAccountPrivateKeyFile": "/apps/cosc481/webui/google_privkey.p12",
   "widgetUrl": "http://gat.im/login",
   "cookieName": "gtoken"
 }
