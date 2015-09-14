@@ -1,7 +1,7 @@
 #!/bin/bash
-if which greadlink > /dev/null; then
+if ! which greadlink > /dev/null; then
 	echo “Installing dependancies… Mac is hard.”
-	if which brew > /dev/null; then
+	if ! which brew > /dev/null; then
 		ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 	fi
 	brew install coreutils
