@@ -20,7 +20,10 @@ urls = (
 	"/logout", "logout",
 	"/dashboard", "dashboard",
 	"/update", "update",
-	"/admin","admin"
+	"/admin","admin",
+	"/jobs", "jobs",
+	"/job/(.*)", "job",
+	"/newJob", "newJob",
 	)
 render = web.template.render(path.join(root,'templates/'))
 app = web.application(urls, globals())
@@ -70,8 +73,54 @@ class index:
 			return render.index(title, text)
 			
 
-
-
+class jobs:
+	def GET(self):
+		response = urllib.urlopen(apiUrl+"/job/all?apiKey="+session.user['apiKey']).read()
+		return render.jobs("::JOBS::", response)
+class job:
+	def GET(self, job):
+		response = urllib.urlopen(apiUrl+"/job/"+str(job)+"?apiKey="+session.user['apiKey']).read()
+		return render.job("::JOB::", response)
+class newJob:
+	form = web.form.Form(
+		web.form.Textbox('name', web.form.notnull, 
+            size=30,
+            description="Job Name:"),
+        web.form.Textbox('location',
+            size=30,
+            description="Job Location:"),
+        web.form.Textbox('bill_to',
+            size=30,
+            description="Bill To:"),
+        web.form.Textbox('date_started',
+            size=30,
+            description="Date Started:"),
+        web.form.Textbox('Description',
+            size=30,
+            description="description:"),
+        web.form.Checkbox('isInProgress',
+        	description="Is Job In Progress?"),
+        web.form.Button('Add Job'),
+    )
+	def GET(self):
+		if not userAuthed(session.user) or not userIsAdmin(session.user):
+			raise web.seeother('/')
+		if session.user.has_key('apiResponse'):
+			response = session.user['apiResponse']
+			del session.user['apiResponse']
+		else:
+			response = ""
+		return render.admin(response, self.form)
+	def POST(self):
+		form = self.form()
+		if not form.validates():
+			return render.admin("Form validation failed", self.form)
+		user_form = dict(form.d)
+		user_form['apiKey'] = session.user['apiKey']
+		apiRequest = requests.post(apiUrl+"/job", data=user_form)
+		session.user['apiResponse'] = apiRequest.text
+		user_form = {}
+		raise web.seeother('/newJob')
 class login:
 	def GET(self):
 		return render.login()
@@ -124,12 +173,10 @@ class admin:
 		if not form.validates():
 			return render.admin("Form validation failed", self.form)
 		user_form = dict(form.d)
-		print "user_form['isAdmin'] = " + str(user_form['isAdmin']) + "\n type: " + str(type(user_form['isAdmin']))
 		if user_form['isAdmin'] == True:
 			user_form['isAdmin'] = "True"
 		else:
 			user_form['isAdmin'] = "False"
-		print "user_form['isAdmin'] = " + str(user_form['isAdmin']) + "\n type: " + str(type(user_form['isAdmin']))
 		user_form['apiKey'] = session.user['apiKey']
 		apiRequest = requests.post(apiUrl+"/user", data=user_form)
 		session.user['apiResponse'] = apiRequest.text

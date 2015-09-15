@@ -52,8 +52,8 @@ class newJob:
 			db.update('jobs', where="id = "+str(job), bill_to=passedData['bill_to'])
 		if 'description' in passedData:
 			db.update('jobs', where="id = "+str(job), description=passedData['description'])
-		#if 'isInProgress' in passedData:
-		#	db.update('jobs', where="id = "+str(job), isInProgress=passedData['isInProgress'])
+		if 'isInProgress' in passedData:
+			db.update('jobs', where="id = "+str(job), isInProgress=passedData['isInProgress'])
 		return "201 Job Created"
 class newUser:
 	def GET(self): 
@@ -133,23 +133,27 @@ class job:
 			reqUser = db.where('jobAppUsers', apiKey=apiKey)[0]
 		except:
 			return "403 Forbidden"
-		try:
-			theJob = dict(db.where('jobs', id=job)[0])
-		except IndexError:
-			return "404 Not Found"
-		try:
-			jobsBugetItems = list(db.where('budgetItems', job_id=job))
-			#force an exception if there are no budget items
-			jobsBugetItems[0]
-			if not reqUser['canSeeNumbers']:
-				pass
-				#todo remove numbers for those not allowed to see them
-			theJob['budget'] = jobsBugetItems
-		except IndexError:
-			pass
-			#jobs are allowed to not have budgets
-		web.header('Content-Type', 'application/json')
-		return json.dumps(theJob)
+		if job == "all":
+			return json.dumps(list(db.select('jobs')))
+		else:
+			try:
+				theJob = dict(db.where('jobs', id=job)[0])
+			except IndexError:
+				return "404 Not Found"
+			if reqUser['canSeeNumbers']:
+				try:
+					jobsBugetItems = list(db.where('budgetItems', job_id=job))
+					#force an exception if there are no budget items
+					jobsBugetItems[0]
+					if not reqUser['canSeeNumbers']:
+						pass
+						#todo remove numbers for those not allowed to see them
+					theJob['budget'] = jobsBugetItems
+				except IndexError:
+					pass
+					#jobs are allowed to not have budgets
+			web.header('Content-Type', 'application/json')
+			return json.dumps(theJob)
 	def POST(self, job):
 		#if you're posting here, the job already exists.
 		passedData = dict(web.input())
@@ -177,8 +181,8 @@ class job:
 			db.update('jobs', where="id = "+str(job), bill_to=passedData['bill_to'])
 		if 'description' in passedData:
 			db.update('jobs', where="id = "+str(job), description=passedData['description'])
-		#if 'isInProgress' in passedData:
-		#	db.update('jobs', where="id = "+str(job), isInProgress=passedData['isInProgress'])
+		if 'isInProgress' in passedData:
+			db.update('jobs', where="id = "+str(job), isInProgress=passedData['isInProgress'])
 		return "202 Item Updated"	
 		
 
