@@ -131,7 +131,7 @@ class admin:
 			user_form['isAdmin'] = "False"
 		print "user_form['isAdmin'] = " + str(user_form['isAdmin']) + "\n type: " + str(type(user_form['isAdmin']))
 		user_form['apiKey'] = session.user['apiKey']
-		apiRequest = requests.post(apiUrl+"/user/"+user_form['email'], data=user_form)
+		apiRequest = requests.post(apiUrl+"/user", data=user_form)
 		session.user['apiResponse'] = apiRequest.text
 		user_form = {}
 		raise web.seeother('/admin')

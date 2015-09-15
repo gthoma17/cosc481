@@ -36,12 +36,12 @@ def main():
 	if not tblExists("jobs", cursor):
 		createJobsTbl(cursor)
 	#create users table if it doesn't exist
-	if not tblExists("budgets", cursor):
-		createBudgetsTbl(cursor)
+	#if not tblExists("budgets", cursor):
+	#	createBudgetsTbl(cursor)
 	if not tblExists("budgetItems", cursor):
 		createBudgetItemsTbl(cursor)
-	if not tblExists("budgetItemCosts", cursor):
-		createBudgetItemCostsTbl(cursor)
+	#if not tblExists("budgetItemCosts", cursor):
+	#	createBudgetItemCostsTbl(cursor)
 	if not tblExists("comments", cursor):
 		createCommentsTbl(cursor)
 	if not tblExists("jobAppUsers", cursor):
@@ -68,15 +68,7 @@ def createJobsTbl(cursor):
 	  date_completed VARCHAR(100),
 	  date_billed VARCHAR(100),
 	  description TEXT(65535),
-	  budget_id INTEGER,
-	  PRIMARY KEY(id)
-	)
-	""")
-def createBudgetsTbl(cursor):
-	print "Creating table: budgets"
-	cursor.execute("""
-	CREATE TABLE budgets(
-	  id INTEGER  NOT NULL AUTO_INCREMENT,
+	  isInProgress BOOLEAN,
 	  PRIMARY KEY(id)
 	)
 	""")
@@ -87,18 +79,8 @@ def createBudgetItemsTbl(cursor):
 	  id INTEGER  NOT NULL AUTO_INCREMENT,
 	  job_id INTEGER NOT NULL,
 	  name TEXT(8000),
-	  cost_id INTEGER,
-	  type VARCHAR(100),
-	  PRIMARY KEY(id)
-	)
-	""")
-def createBudgetItemCostsTbl(cursor):
-	print "Creating table: budgetItemCosts"
-	cursor.execute("""
-	CREATE TABLE budgetItemCosts(
-	  id INTEGER  NOT NULL AUTO_INCREMENT,
-	  item_id INTEGER NOT NULL,
 	  cost VARCHAR(100),
+	  type VARCHAR(100),
 	  PRIMARY KEY(id)
 	)
 	""")
@@ -122,6 +104,7 @@ def createUsersTbl(cursor):
 	  name VARCHAR(255),
 	  title TEXT(65535),
 	  email TEXT(65535) NOT NULL,
+	  canSeeNumbers BOOLEAN,
 	  isInTable BOOLEAN,
 	  isAdmin BOOLEAN,
 	  apiKey TEXT(256),
@@ -133,9 +116,9 @@ def createUsersTbl(cursor):
 	apiKey = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(256))
 	addGreg = """
 	INSERT INTO jobAppUsers
-		(id, name, title, email, isInTable, isAdmin, apiKey)
+		(id, name, title, email, isInTable, isAdmin, canSeeNumbers, apiKey)
     VALUES
-    	(NULL, 'Greg', 'SWE', 'gatlp9@gmail.com', 1, 1, {0})
+    	(NULL, 'Greg', 'SWE', 'gatlp9@gmail.com', 1, 1, 1, {0})
 	"""
 	cursor.execute(addGreg.format(sanitize(apiKey)))
 
