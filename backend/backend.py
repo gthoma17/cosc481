@@ -10,6 +10,8 @@ config.read(path.join(root, "backend.cfg"))
 urls = (
 	"/", "index",
 	"/user/(.*)", "user",
+	"/job/(.*)", "job",
+	"/budget/(.*)", "budget",
 	)
 
 app = web.application(urls, globals())
@@ -20,30 +22,37 @@ class index:
 		return "Shhhh... the database is sleeping."
 class user:
 	def GET(self, user):
-		try:
-			theUser = db.where('jobAppUsers', email=user)[0]
+		if user == "all":
+			allUsers = db.select('jobAppUsers')
 			web.header('Content-Type', 'application/json')
-			return json.dumps(theUser)
-		except IndexError:
-			return "404 Not Found"
+			return json.dumps(list(allUsers))
+		else:
+			try:
+				theUser = db.where('jobAppUsers', email=user)[0]
+				web.header('Content-Type', 'application/json')
+				return json.dumps(theUser)
+			except IndexError:
+				return "404 Not Found"
 	def POST(self, user):
 		passedData = dict(web.input())
 		reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
 		if reqUser['isAdmin']:
 			#user is allowed to do this. 
+			if passedData['isAdmin'] == u'True':
+				passedData['isAdmin'] = 1
+			else:
+				passedData['isAdmin'] = 0
 			#first check if user exists.
 			newUser = db.where('jobAppUsers', email=user)
 			if len(newUser) != 0: #user exists
+				db.insert('jobAppUsers', 
+					name=passedData['name'], 
+					email=passedData['email'], 
+					title=passedData['title'], 
+					isAdmin=passedData['isAdmin']
+				)
 				return "202 User Updated"
 			else: 
-				print "passedData['isAdmin'] = " + str(passedData['isAdmin']) + "\n type: " + str(type(passedData['isAdmin']))
-				if passedData['isAdmin'] == u'True':
-					passedData['isAdmin'] = 1
-				else:
-					passedData['isAdmin'] = 0
-				print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-				print passedData['isAdmin']
-				print type(passedData['isAdmin'])
 				db.insert('jobAppUsers', 
 					name=passedData['name'], 
 					email=passedData['email'], 

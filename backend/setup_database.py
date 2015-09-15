@@ -32,14 +32,18 @@ def main():
 	finally:
 		cursor.execute('use '+DATABASE)
 
-	#create OpenJobs table if it doesn't exist
-	if not tblExists("OpenJobs", cursor):
-		createOpenJobsTbl(cursor)
-	#create ClosedJobs table if it doesn't exist
-	if not tblExists("ClosedJobs", cursor):
-		createClosedJobsTbl(cursor)
-
+	#create jobsobs table if it doesn't exist
+	if not tblExists("jobs", cursor):
+		createJobsTbl(cursor)
 	#create users table if it doesn't exist
+	if not tblExists("budgets", cursor):
+		createBudgetsTbl(cursor)
+	if not tblExists("budgetItems", cursor):
+		createBudgetItemsTbl(cursor)
+	if not tblExists("budgetItemCosts", cursor):
+		createBudgetItemCostsTbl(cursor)
+	if not tblExists("comments", cursor):
+		createCommentsTbl(cursor)
 	if not tblExists("jobAppUsers", cursor):
 		createUsersTbl(cursor)
 	#we're done here. close up shop
@@ -52,29 +56,61 @@ def createDatabase(DATABASE, cursor):
 	print "Creating database: " +DATABASE
 	cursor.execute('create database '+DATABASE)
 
-def createOpenJobsTbl(cursor):
-	print "Creating table: OpenJobs"
+def createJobsTbl(cursor):
+	print "Creating table: jobs"
 	cursor.execute("""
-	CREATE TABLE OpenJobs(
+	CREATE TABLE jobs(
 	  id INTEGER  NOT NULL AUTO_INCREMENT,
-	  name VARCHAR(255)  NOT NULL,
-	  address TEXT(65535),
-	  POC_phone TEXT(65535),
-	  POC_email TEXT(65535),
+	  name TEXT(8000),
+	  location TEXT(8000),
+	  bill_to TEXT(8000),
+	  date_started VARCHAR(100),
+	  date_completed VARCHAR(100),
+	  date_billed VARCHAR(100),
 	  description TEXT(65535),
+	  budget_id INTEGER,
 	  PRIMARY KEY(id)
 	)
 	""")
-def createClosedJobsTbl(cursor):
-	print "Creating table: ClosedJobs"
+def createBudgetsTbl(cursor):
+	print "Creating table: budgets"
 	cursor.execute("""
-	CREATE TABLE ClosedJobs(
+	CREATE TABLE budgets(
 	  id INTEGER  NOT NULL AUTO_INCREMENT,
-	  name VARCHAR(255)  NOT NULL,
-	  address TEXT(65535),
-	  POC_phone TEXT(65535),
-	  POC_email TEXT(65535),
-	  description TEXT(65535),
+	  PRIMARY KEY(id)
+	)
+	""")
+def createBudgetItemsTbl(cursor):
+	print "Creating table: budgetItems"
+	cursor.execute("""
+	CREATE TABLE budgetItems(
+	  id INTEGER  NOT NULL AUTO_INCREMENT,
+	  job_id INTEGER NOT NULL,
+	  name TEXT(8000),
+	  cost_id INTEGER,
+	  type VARCHAR(100),
+	  PRIMARY KEY(id)
+	)
+	""")
+def createBudgetItemCostsTbl(cursor):
+	print "Creating table: budgetItemCosts"
+	cursor.execute("""
+	CREATE TABLE budgetItemCosts(
+	  id INTEGER  NOT NULL AUTO_INCREMENT,
+	  item_id INTEGER NOT NULL,
+	  cost VARCHAR(100),
+	  PRIMARY KEY(id)
+	)
+	""")
+def createCommentsTbl(cursor):
+	print "Creating table: comments"
+	cursor.execute("""
+	CREATE TABLE comments(
+	  id INTEGER  NOT NULL AUTO_INCREMENT,
+	  job_id INTEGER NOT NULL,
+	  time TIMESTAMP,
+	  postedBy VARCHAR(255),
+	  comment TEXT(65535),
 	  PRIMARY KEY(id)
 	)
 	""")
@@ -89,6 +125,7 @@ def createUsersTbl(cursor):
 	  isInTable BOOLEAN,
 	  isAdmin BOOLEAN,
 	  apiKey TEXT(256),
+	  googId TEXT(65535),
 	  PRIMARY KEY(id)
 	)
 	""")
