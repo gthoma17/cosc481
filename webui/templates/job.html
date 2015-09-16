@@ -1,4 +1,4 @@
-$def with (title, text)
+$def with (job, user, form, budgetResponse)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +10,7 @@ $def with (title, text)
 <link type=text/css rel=stylesheet href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
 
 <style type="text/css">
-a.adminButton {
+a.button {
     -webkit-appearance: button;
     -moz-appearance: button;
     appearance: button;
@@ -40,11 +40,53 @@ a.adminButton {
 <body style="background-color:lavender;">
 <div class="containter">
 	<div class="row">
-		<div class="col-sm-12"><h1 style="padding:5px;">$title</h1></div>
-	</div>
-	<div class="row">
-		<div class="col-sm-12"><p style="padding:5px;">$:text</p></div>
+		<div class="col-sm-2" style="z-index:255;height:65px;"><div id="navbar" style="vertical-align:middle;"></div></div>
+		<div class="col-sm-8"><h1 style="text-align:center;">::$job['name']::</h1></div>
+		<div class="col-sm-2"><h3 style="text-align:center;vertical-align:middle;"><a href="/dashboard" class="button">Dashboard</a></h3></div>
 	</div>
 </div>
+<div class="containter">
+
+  $if job['isInProgress']:
+    $ color = "PaleGreen"
+  $else:
+    $ color = "PaleVioletRed"
+  <div class="row" style="background-color:$color;">
+    <div class="col-sm-2"><p style="padding:5px;">Location: <a href="http://maps.apple.com/?q=$job['location']">$job['location']</a></p></div>
+    <div class="col-sm-2"><p style="padding:5px;">Bill to: <a href="tel:+18005555555">$job['bill_to']</a></p></div>
+    <div class="col-sm-2"><p style="padding:5px;">In progress: $job['isInProgress']</p></div>
+    <div class="col-sm-2"><p style="padding:5px;">Date Started: $job['date_started']</p></div>
+  </div>
+</div>
+$if user['canSeeNumbers']:
+  <div class="contrainer">
+    <div class="row">
+      <div class="col-sm-12"><h1 style="padding:5px;">Budget</h1></div>
+    </div>
+      $if 'budget' in job:
+        $for item in job['budget']:
+          <div class="row">
+            <div class="col-sm-4">$item['name']</div>
+            <div class="col-sm-4">$item['type']</div>
+            <div class="col-sm-4">$item['cost']</div>
+          </div>
+      $else:
+        <div class="row">
+          <div class="col-sm-12">No budget items yet...</div>
+        </div>
+      <div class="row">
+        <div class="col-sm-12"><h3>Add Budget Items:</h3></div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12">$:budgetResponse</div>
+      </div>
+      <div class="row">
+        <form action="" method="post">
+          $:form.render()
+        </form>
+      </div>
+  </div>
+
+
 </body>
 </html>

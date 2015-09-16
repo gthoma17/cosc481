@@ -62,7 +62,7 @@ class newJob:
 class newUser:
 	def GET(self): 
 		return "Shhhh... the database is sleeping."
-	def POST(self, user):
+	def POST(self):
 		passedData = dict(web.input())
 		try:
 			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
