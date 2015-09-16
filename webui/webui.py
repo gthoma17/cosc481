@@ -76,11 +76,11 @@ class index:
 class jobs:
 	def GET(self):
 		response = urllib.urlopen(apiUrl+"/job/all?apiKey="+session.user['apiKey']).read()
-		return render.jobs("::JOBS::", response)
+		return render.jobs("::JOBS::", json.loads(response))
 class job:
 	def GET(self, job):
 		response = urllib.urlopen(apiUrl+"/job/"+str(job)+"?apiKey="+session.user['apiKey']).read()
-		return render.job("::JOB::", response)
+		return render.job("::JOB::", json.loads(response))
 class newJob:
 	form = web.form.Form(
 		web.form.Textbox('name', web.form.notnull, 
@@ -99,7 +99,8 @@ class newJob:
             size=30,
             description="description:"),
         web.form.Checkbox('isInProgress',
-        	description="Is Job In Progress?"),
+        	description="Is Job In Progress?",
+        	value="isInProgress"),
         web.form.Button('Add Job'),
     )
 	def GET(self):
@@ -116,6 +117,10 @@ class newJob:
 		if not form.validates():
 			return render.admin("Form validation failed", self.form)
 		user_form = dict(form.d)
+		if user_form['isInProgress'] == True:
+			user_form['isInProgress'] = "True"
+		else:
+			user_form['isInProgress'] = "False"
 		user_form['apiKey'] = session.user['apiKey']
 		apiRequest = requests.post(apiUrl+"/job", data=user_form)
 		session.user['apiResponse'] = apiRequest.text
@@ -155,7 +160,8 @@ class admin:
             size=30,
             description="Job Title:"),
         web.form.Checkbox('isAdmin',
-        	description="Is User an Admin?"),
+        	description="Is User an Admin?",
+        	value="isAdmin"),
         web.form.Button('Add/Update User'),
     )
 

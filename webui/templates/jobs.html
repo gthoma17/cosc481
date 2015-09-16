@@ -1,4 +1,4 @@
-$def with (title, text)
+$def with (title, jobs)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,12 +39,22 @@ a.adminButton {
 </head>
 <body style="background-color:lavender;">
 <div class="containter">
-	<div class="row">
-		<div class="col-sm-12"><h1 style="padding:5px;">$title</h1></div>
-	</div>
-	<div class="row">
-		<div class="col-sm-12"><p style="padding:5px;">$:text</p></div>
-	</div>
+  <div class="row">
+    <div class="col-sm-12"><h1 style="padding:5px;">$title</h1></div>
+  </div>
+  $for job in jobs:
+    $if job['isInProgress']:
+      $ color = "PaleGreen"
+    $else:
+      $ color = "PaleVioletRed"
+    <div class="row" style="background-color:$color;">
+      <div class="col-sm-4"><p style="padding:5px;"><h2><a href="job/$job['id']">$job['name']</a></h2></p></div>
+    </div>
+    <div class="row" style="background-color:$color;">
+      <div class="col-sm-2"><p style="padding:5px;">Location: <a href="http://maps.apple.com/?q=$job['location']">$job['location']</a></p></div>
+      <div class="col-sm-2"><p style="padding:5px;">Bill to: <a href="tel:+18005555555">$job['bill_to']</a></p></div>
+    </div>
+    <hr>
 </div>
 </body>
 </html>

@@ -40,6 +40,10 @@ class newJob:
 		job = db.insert('jobs', 
 					name=passedData['name']
 				)
+		if passedData['isInProgress'] == u'True':
+			passedData['isInProgress'] = 1
+		else:
+			passedData['isInProgress'] = 0
 		if 'location' in passedData:
 			db.update('jobs', where="id = "+str(job), location=passedData['location'])
 		if 'date_started' in passedData:
