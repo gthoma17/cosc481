@@ -78,9 +78,40 @@ class jobs:
 		response = urllib.urlopen(apiUrl+"/job/all?apiKey="+session.user['apiKey']).read()
 		return render.jobs("::JOBS::", json.loads(response))
 class job:
+	form = web.form.Form(
+		web.form.Textbox('name', web.form.notnull, 
+            size=30,
+            description="Item Name:"),
+        web.form.Textbox('cost',
+            size=30,
+            description="Item Cost:"),
+        web.form.Textbox('type',
+            size=30,
+            description="Item Type (labor/material/misc):"),
+        web.form.Button('Add Budget Item'),
+    )
 	def GET(self, job):
+		budgetForm = self.form()
+		if session.user.has_key('budgetResponse'):
+			budgetResponse = session.user['budgetResponse']
+			del session.user['budgetResponse']
+		else:
+			budgetResponse = ""
 		response = urllib.urlopen(apiUrl+"/job/"+str(job)+"?apiKey="+session.user['apiKey']).read()
-		return render.job("::JOB::", json.loads(response))
+		return render.job(json.loads(response), session.user, budgetForm, budgetResponse)
+	def POST(self, job):
+		form = self.form()
+		if not form.validates():
+			session.user['budgetResponse'] = "Form didn't validate"
+			raise web.seeother('/job/'+str(job))
+		user_form = dict(form.d)
+		user_form['apiKey'] = session.user['apiKey']
+		user_form['job_id'] = str(job)
+		apiRequest = requests.post(apiUrl+"/budgetItem", data=user_form)
+		session.user['budgetResponse'] = apiRequest.text
+		print apiRequest.text
+		user_form = {}
+		raise web.seeother('/job/'+str(job))
 class newJob:
 	form = web.form.Form(
 		web.form.Textbox('name', web.form.notnull, 
