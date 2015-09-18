@@ -18,6 +18,9 @@ urls = (
 
 app = web.application(urls, globals())
 db = web.database(dbn='mysql', host=config.get("Database", "host"), port=int(config.get("Database", "port")), user=config.get("Database", "user"), pw=config.get("Database", "password"), db=config.get("Database", "name"))
+def set_headers():
+    web.header('Access-Control-Allow-Origin',      '*')
+app.add_processor(web.loadhook(set_headers))
 
 class index:
 	def GET(self): 
@@ -110,13 +113,13 @@ class budgetItem:
 						)
 			if not existingItem:
 				#item wasn't in database
-				db.insert('budgetItems', 
+				newId = db.insert('budgetItems', 
 					job_id=int(passedData['job_id']),
 					name=passedData['name'],
 					cost=passedData['cost'],
 					type=passedData['type']
 				)
-				return "201 Item Created"
+				return json.dumps(newId)
 			else:
 				#update existing item
 				existingItem = existingItem[0]
@@ -126,7 +129,7 @@ class budgetItem:
 					db.update('budgetItems', where="id = "+str(existingItem.id), cost=passedData['cost'])
 				if 'type' in passedData:
 					db.update('budgetItems', where="id = "+str(existingItem.id), type=passedData['type'])
-				return "202 Item Updated"
+				return existingItem['id']
 		else:
 			return "403 Forbidden"
 class job:
@@ -200,6 +203,7 @@ class user:
 		else:
 			try:
 				web.header('Content-Type', 'application/json')
+				print "sending"
 				return json.dumps(db.where('jobAppUsers', email=user)[0])
 			except IndexError:
 				return "404 Not Found"

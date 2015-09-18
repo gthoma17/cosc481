@@ -24,6 +24,7 @@ urls = (
 	"/jobs", "jobs",
 	"/job/(.*)", "job",
 	"/newJob", "newJob",
+	"/forward/(.*)", "forward",
 	)
 render = web.template.render(path.join(root,'templates/'))
 app = web.application(urls, globals())
@@ -72,7 +73,17 @@ class index:
 			title = "Wait.. what?"
 			return render.index(title, text)
 			
-
+class forward:
+	def GET(self, path):
+		print "Forwarding get request"
+		apiRequest = urllib.urlopen(apiUrl+"/"+path+"?apiKey="+session.user['apiKey']).read()
+		return apiRequest
+	def POST(self, path):
+		print "Forwarding post request"
+		passedData = dict(json.loads(web.input().keys()[0]))
+		passedData['apiKey'] = session.user['apiKey']
+		apiRequest = requests.post(apiUrl+"/"+path, data=passedData)
+		return apiRequest.text
 class jobs:
 	def GET(self):
 		response = urllib.urlopen(apiUrl+"/job/all?apiKey="+session.user['apiKey']).read()
@@ -98,7 +109,7 @@ class job:
 		else:
 			budgetResponse = ""
 		response = urllib.urlopen(apiUrl+"/job/"+str(job)+"?apiKey="+session.user['apiKey']).read()
-		return render.job(json.loads(response), session.user, budgetForm, budgetResponse)
+		return render.job(json.loads(response), session.user, apiUrl)
 	def POST(self, job):
 		form = self.form()
 		if not form.validates():

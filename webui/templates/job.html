@@ -1,4 +1,4 @@
-$def with (job, user, form, budgetResponse)
+$def with (job, user, apiUrl)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +8,84 @@ $def with (job, user, form, budgetResponse)
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 <link type=text/css rel=stylesheet href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+<script type="text/javascript">
+//apiUrl = "http://localhost:9001"
+//jobId = "1"
+$$(document).ready(function(){
+    $$("#addItemForm").hide()
+    $$("#showBudgetAdd").click(function(){
+        $$("#addItemForm").show()
+        $$("#showBudgetAdd").hide()
+    });
+    $$("#cancelBudgetAdd").click(function(){
+        $$("#name").val("");
+        $$("#type").val("select");
+        $$("#cost").val("");
+        $$("#addItemForm").hide()
+        $$("#showBudgetAdd").show()
+    });
+    $$("#budgetAdd").click(function(){
+        //validate the form
+        if ($$("#name").val() != "" && $$("#type").val() != "select" && $$("#cost").val() != "") {
+            postData = {}
+            postData.job_id = "$job['id']"
+            postData.apiKey = "$user['apiKey']"
+            postData.name = $$("#name").val()
+            postData.type = $$("#type").val()
+            postData.cost = $$("#cost").val()
+            $$.ajax({
+                url : "/forward/budgetItem",
+                dataType:"text",
+                method:"POST",
+                data: JSON.stringify(postData),
+                success:function(data){
+                  if (/^\d+$$/.test(data)) {
+                    console.log("Successful add")
+                    //respone was only integers, adding was successful
+                    newRow = "<row id=\"item_"+data+"\"><div class=\"col-sm-3\">"+$$("#name").val()+"</div><div class=\"col-sm-3\">"+$$("#type").val()+"</div><div class=\"col-sm-3\">"+$$("#cost").val()+"</div><div class=\"col-sm-3\"><button id=\"edit_"+data+"\">Edit</button><button id=\"delete_"+data+"\">Delete</button></div>";
+                    $$("#name").val("");
+                    $$("#type").val("select");
+                    $$("#cost").val("");
+                    $$(newRow).insertBefore("#addItemForm");
+                  } else{
+                    console.log("Unsuccessful add")
+                    console.log(data)
+                    //response contained non numerics. Something bad happened
+                    $$("#apiResponse").html(data)
+                  };
+                  
+                }
+            });    
+        }
+        else{
+            //didn't validate. Tell user where they goofed
+            if ($$("#name").val() == "") {
+                bg = $$("#name").css("background");
+                $$("#name").css("background", "red");
+                setTimeout(function(){
+                    $$("#name").css("background", bg);
+                }, 2000);
+            };
+            if ($$("#type").val() == "select") {
+                bg = $$("#type").css("background");
+                $$("#type").css("background", "red");
+                setTimeout(function(){
+                    $$("#type").css("background", bg);
+                }, 2000);
+            };
+            if ($$("#cost").val() == "") {
+                bg = $$("#cost").css("background");
+                $$("#cost").css("background", "red");
+                setTimeout(function(){
+                    $$("#cost").css("background", bg);
+                }, 2000);
+            };
+        };        
+    });
+});
+</script>
 
 <style type="text/css">
 a.adminButton {
@@ -40,7 +118,14 @@ a.adminButton {
 <body style="background-color:lavender;">
 <div class="containter">
   <div class="row">
-    <div class="col-sm-12"><h1 style="padding:5px;">$job['name']</h1><h4><a href="edit/job/$job['id']">(edit)</a></h4></div>
+    <div class="col-sm-2" style="z-index:255;height:65px;"><div id="navbar" style="vertical-align:middle;"></div></div>
+    <div class="col-sm-8"><h1 style="text-align:center;">::$job['name']::</h1></div>
+    <div class="col-sm-2"><h3 style="text-align:center;vertical-align:middle;"><a href="dashboard" class="button">Dashboard</a></h3></div>
+  </div>
+</div>
+<div class="containter">
+  <div class="row">
+    <div class="col-sm-12"><h4><a href="edit/job/$job['id']">(edit)</a></h4></div>
   </div>
   $if job['isInProgress']:
     $ color = "PaleGreen"
@@ -58,27 +143,43 @@ $if user['canSeeNumbers']:
     <div class="row">
       <div class="col-sm-12"><h1 style="padding:5px;">Budget</h1></div>
     </div>
+    <div class="row">
+      <div class="col-sm-12" id="apiResponse"></div>
+    </div>
       $if 'budget' in job:
+        <div class="row">
+          <div class="col-sm-3"><strong>Name</strong></div>
+          <div class="col-sm-3"><strong>Type</strong></div>
+          <div class="col-sm-3"><strong>Cost</strong></div>
+          <div class="col-sm-3">&nbsp;</div>
+        </div>
         $for item in job['budget']:
-          <div class="row">
-            <div class="col-sm-4">$item['name']</div>
-            <div class="col-sm-4">$item['type']</div>
-            <div class="col-sm-4">$item['cost']</div>
+          <div class="row" id="item_$item['id']">
+            <div class="col-sm-3">$item['name']</div>
+            <div class="col-sm-3">$item['type']</div>
+            <div class="col-sm-3">$item['cost']</div>
+            <div class="col-sm-3"><button id="edit_$item['id']">Edit</button><button id="delete_$item['id']">Delete</button></div>
           </div>
       $else:
         <div class="row">
           <div class="col-sm-12">No budget items yet...</div>
         </div>
-      <div class="row">
-        <div class="col-sm-12"><h3>Add Budget Items:</h3></div>
+      <div id="addItemForm">
+          <div id="row">
+              <div class="col-sm-3"><input type="text" id="name" name="name" size="30"/></div>
+              <div class="col-sm-3"><select id="type"><option value="select" selected>select</option><option value="labor">Labor</option><option value="material">Material</option><option value="misc">Misc</option></select></div>
+              <div class="col-sm-3"><input type="text" id="cost" name="cost" size="30"/></div>
+              <div class="col-sm-3">&nbsp;</div>
+          </div>
+          <div id="row">
+              <div class="col-sm-12">
+                  <button id="budgetAdd">Add Item</button>
+                  <button id="cancelBudgetAdd">Cancel</button>
+              </div>
+          </div>
       </div>
-      <div class="row">
-        <div class="col-sm-12">$:budgetResponse</div>
-      </div>
-      <div class="row">
-        <form action="" method="post">
-          $:form.render()
-        </form>
+      <div id="row">
+          <button id="showBudgetAdd">Add a budget item</button>
       </div>
   </div>
 
