@@ -204,6 +204,9 @@ class admin:
         web.form.Checkbox('isAdmin',
         	description="Is User an Admin?",
         	value="isAdmin"),
+        web.form.Checkbox('canSeeNumbers',
+        	description="Can user see budget numbers?",
+        	value="canSeeNumbers"),
         web.form.Button('Add/Update User'),
     )
 
