@@ -1,0 +1,31 @@
+a.button {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+    text-decoration: none;
+    color: initial;
+    vertical-align:middle;
+    padding: 5px;
+}
+a.adminButton {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+    text-decoration: none;
+    color: initial;
+    vertical-align:middle;
+    padding: 5px;
+}
+.hidden {
+    display: hidden;
+}
+th{
+  text-align: right;
+}
+tr{
+  padding: 10px;
+}
+
+body {
+    background-color: lavender;
+}
