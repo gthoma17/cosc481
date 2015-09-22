@@ -73,16 +73,20 @@ class newUser:
 			return "403 Forbidden"
 		if reqUser['isAdmin']:
 			#user is allowed to do this. 
-			if passedData['isAdmin'] == u'True':
+			if passedData['isAdmin'].lower() == u'true':
 				passedData['isAdmin'] = 1
 			else:
 				passedData['isAdmin'] = 0
+			if passedData['canSeeNumbers'].lower() == u'true':
+				passedData['canSeeNumbers'] = 1
+			else:
+				passedData['canSeeNumbers'] = 0
 			#first check if user exists.
 			existingUser = db.where('jobAppUsers', email=user)
 			if existingUser:
 				return "403 Forbidden"
 			else: 
-				db.insert('jobAppUsers', 
+				return db.insert('jobAppUsers', 
 					name=passedData['name'], 
 					email=passedData['email'], 
 					title=passedData['title'], 
@@ -91,7 +95,6 @@ class newUser:
 					isInTable=1,
 					apiKey=makeNewApiKey()
 				)
-				return "201 User Created"
 		else:
 			return "403 Forbidden"
 class budgetItem:
@@ -197,20 +200,32 @@ class job:
 class user:
 	def GET(self, user):
 		if user == "all":
-			allUsers = db.select('jobAppUsers')
-			web.header('Content-Type', 'application/json')
-			return json.dumps(list(allUsers))
+			passedData = dict(web.input())
+			try:
+				reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
+			except IndexError:
+				return "403 Forbidden"
+			if reqUser['isAdmin']:
+				#user is allowed to do this
+				allUsers = db.select('jobAppUsers', what="id,name,title,isAdmin,email,canSeeNumbers")
+				web.header('Content-Type', 'application/json')
+				return json.dumps(list(allUsers))
+			else:
+				return "403 Forbidden"
 		else:
 			try:
-				web.header('Content-Type', 'application/json')
-				print "sending"
-				return json.dumps(db.where('jobAppUsers', email=user)[0])
+				print "Performing lookup on " + user
+				print user.isdigit()
+				if user.isdigit(): #if all digits, lookup by ID
+					return json.dumps(db.where('jobAppUsers', id=user)[0])
+				else:
+					return json.dumps(db.where('jobAppUsers', email=user)[0])
 			except IndexError:
 				return "404 Not Found"
 	def POST(self, user):
 		passedData = dict(web.input())
 		try:
-			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
+			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0] 
 		except IndexError:
 			return "403 Forbidden"
 		if reqUser['isAdmin']:
@@ -219,8 +234,15 @@ class user:
 				passedData['isAdmin'] = 1
 			else:
 				passedData['isAdmin'] = 0
+			if passedData['canSeeNumbers'] == u'True':
+				passedData['canSeeNumbers'] = 1
+			else:
+				passedData['canSeeNumbers'] = 0
 			#first check if user exists.
-			existingUser = db.where('jobAppUsers', email=user)
+			if user.isdigit(): #if all digits, lookup by ID
+				existingUser = db.where('jobAppUsers', id=user)
+			else:
+				existingUser = db.where('jobAppUsers', email=user)
 			if existingUser: #user exists
 				existingUser = existingUser[0]
 				db.update('jobAppUsers', 

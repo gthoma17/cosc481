@@ -24,18 +24,24 @@ $def with (job, user, apiUrl)
 </script>
 
 <link rel="stylesheet" type="text/css" href="/static/style.css">
-<title>COSC 481 Project</title>
+<link rel="icon" type="image/png" href="/static/favicon.png">
+<title>Jobn - Jobn over here, Jobn over there!</title>
 
 </head>
 <body>
-<div class="containter">
+<div class="container">
   <div class="row">
-    <div class="col-sm-2" style="z-index:255;height:65px;"><div id="navbar" style="vertical-align:middle;"></div></div>
+    <div class="col-sm-2"><img src="/static/logo_small.png" class="img-responsive logo" alt="Jobn"></div>
     <div class="col-sm-8"><h1 style="text-align:center;">::$job['name']::</h1></div>
-    <div class="col-sm-2"><h3 style="text-align:center;vertical-align:middle;"><a href="dashboard" class="button">Dashboard</a></h3></div>
+	<div class="col-sm-2" style="z-index:255;height:65px;"><div id="navbar" style="vertical-align:middle;"></div></div>
   </div>
 </div>
-<div class="containter">
+<div class="container">
+	<div class="row">
+		<div class="col-sm-2"><h3 style="text-align:center;vertical-align:middle;"><a href="/dashboard" class="button">Dashboard</a></h3></div>
+	</div>
+</div>
+<div class="container">
   <div class="row">
     <div class="col-sm-12"><h4><a href="edit/job/$job['id']">(edit)</a></h4></div>
   </div>
@@ -45,13 +51,13 @@ $def with (job, user, apiUrl)
     $ color = "PaleVioletRed"
   <div class="row" style="background-color:$color;">
     <div class="col-sm-2"><p style="padding:5px;">Location: <a href="http://maps.apple.com/?q=$job['location']">$job['location']</a></p></div>
-    <div class="col-sm-2"><p style="padding:5px;">Bill to: <a href="tel:+18005555555">$job['bill_to']</a></p></div>
+    <div class="col-sm-2"><p style="padding:5px;">Bill to: <a href="tel:$job['poc_phone']">$job['bill_to']</a></p></div>
     <div class="col-sm-2"><p style="padding:5px;">In progress: $job['isInProgress']</p></div>
     <div class="col-sm-2"><p style="padding:5px;">Date Started: $job['date_started']</p></div>
   </div>
 </div>
 $if user['canSeeNumbers']:
-  <div class="contrainer">
+  <div class="container">
     <div class="row">
       <div class="col-sm-12"><h1 style="padding:5px;">Budget</h1></div>
     </div>

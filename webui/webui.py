@@ -218,7 +218,8 @@ class admin:
 			del session.user['apiResponse']
 		else:
 			response = ""
-		return render.admin(response, self.form)
+		allUsers = urllib.urlopen(apiUrl+"/user/all?apiKey="+session.user['apiKey']).read()
+		return render.admin(response, self.form, json.loads(allUsers))
 	def POST(self):
 		form = self.form()
 		if not form.validates():
@@ -228,6 +229,10 @@ class admin:
 			user_form['isAdmin'] = "True"
 		else:
 			user_form['isAdmin'] = "False"
+		if user_form['canSeeNumbers'] == True:
+			user_form['canSeeNumbers'] = "True"
+		else:
+			user_form['canSeeNumbers'] = "False"
 		user_form['apiKey'] = session.user['apiKey']
 		apiRequest = requests.post(apiUrl+"/user", data=user_form)
 		session.user['apiResponse'] = apiRequest.text

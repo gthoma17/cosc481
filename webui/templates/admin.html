@@ -1,4 +1,4 @@
-$def with (response, form)
+$def with (response, form, users)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,24 +8,6 @@ $def with (response, form)
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 <link type=text/css rel=stylesheet href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
-
-<style type="text/css">
-a.button {
-    -webkit-appearance: button;
-    -moz-appearance: button;
-    appearance: button;
-    text-decoration: none;
-    color: initial;
-    vertical-align:middle;
-    padding: 5px;
-}
-th{
-  text-align: right;
-}
-tr{
-  padding: 10px;
-}
-</style>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
@@ -39,31 +21,119 @@ tr{
     }
   );
 </script>
-
-<title>COSC 481 Project</title>
+<link rel="stylesheet" type="text/css" href="/static/style.css">
+<link rel="icon" type="image/png" href="/static/favicon.png">
+<script src="/static/user_ajax.js"></script>
+<title>Jobn - Are you Jobn?</title>
 
 </head>
-<body style="background-color:lavender;">
-<div class="containter">
+<body>
+<div class="container">
 	<div class="row">
-    <div class="col-sm-2"><h3 style="text-align:center;vertical-align:middle;"><a href="/dashboard" class="button">Dashboard</a></h3></div>
-    <div class="col-sm-8"><h1 style="text-align:center;">::Admin Options::</h1></div>
+    	<div class="col-sm-2"><img src="/static/logo_small.png" class="img-responsive logo" alt="Jobn"></div>
+    	<div class="col-sm-8"><h1 style="text-align:center;">::Admin Options::</h1></div>
 		<div class="col-sm-2" style="z-index:255;height:65px;"><div id="navbar" style="vertical-align:middle;"></div></div>
 	</div>
 </div>
-<div class="containter">
+<div class="container">
+	<div class="row">
+		<div class="col-sm-2"><h3 style="text-align:center;vertical-align:middle;"><a href="/dashboard" class="button">Dashboard</a></h3></div>
+    	<div class="col-sm-2"><h3 style="text-align:center;vertical-align:middle;"><a href="jobs" class="button">View Jobs</a></h3></div>
+	</div>
+</div>
+<div class="container">
   <div class="row">
     <div class="col-sm-12"><p style="padding:5px;">$:response</p></div>
   </div>
 </div>
-<div class="containter">
-	<div class="row">
-		<div class="col-sm-12" style="text-align:center;">
-      <form action="" method="post">
-        $:form.render()
-      </form>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12" id="apiResponse"></div>
+  </div>
+    <div class="row">
+      <div class="col-sm-2"><strong>Name</strong></div>
+      <div class="col-sm-2"><strong>Title</strong></div>
+      <div class="col-sm-2"><strong>Email</strong></div>
+      <div class="col-sm-2"><strong>Admin</strong></div>
+      <div class="col-sm-2"><strong>Can See Numbers</strong></div>
+      <div class="col-sm-2">&nbsp;</div>
     </div>
-	</div>
+    $for user in users:
+      <div class="row" id="user$user['id']">
+        <div class="col-sm-2">
+          <div id="name_$user['id']">$user['name']</div>
+          <input type="text" class="edit_row" id="name_edit_$user['id']" name="name" size="15" value="$user['name']"/>
+        </div>
+        <div class="col-sm-2">
+          <div id="title_$user['id']">$user['title']</div>
+          <select id="title_edit_$user['id']" class="edit_row"><option value="select" selected>select</option><option value="executive">Executive</option><option value="manager">Manager</option><option value="Supervisor">Supervisor</option></select>
+        </div>
+        <div class="col-sm-2">
+          <div id="email_$user['id']">$user['email']</div>
+          <input type="text" id="email_edit_$user['id']" class="edit_row" name="email" size="15" value="$user['email']"/>
+        </div>
+        <div class="col-sm-2">
+          $if user['isAdmin']:
+            <div id="admin_$user['id']">Yes</div>
+            <input type="checkbox" id="admin_edit_$user['id']" class="edit_row" name="isAdmin" value="isAdmin" checked="checked" />
+          $else:
+            <div id="admin_$user['id']">No</div>
+            <input type="checkbox" id="admin_edit_$user['id']" class="edit_row" name="isAdmin" value="isAdmin"/>
+        </div>
+        <div class="col-sm-2">
+          $if user['canSeeNumbers']:
+            <div id="numbers_$user['id']">Yes</div>
+            <input type="checkbox" id="numbers_edit_$user['id']" class="edit_row" name="isAdmin" value="isAdmin" checked="checked" />
+          $else:
+            <div id="numbers_$user['id']">No</div>
+            <input type="checkbox" id="numbers_edit_$user['id']" class="edit_row" name="isAdmin" value="isAdmin"/>
+        </div>
+        <div class="col-sm-2">
+          <div id="buttons_$user['id']"><button class="edit_button" id="edit_$user['id']">Edit</button><button class="delete_button" id="delete_$user['id']">Delete</button></div>
+          <div id="buttons_edit_$user['id']" class="edit_row"><button class="save_button" id="save_$user['id']">Save</button><button class="cancel_button" id="cancel_$user['id']">Cancel</button></div>
+        </div>
+      </div>
+    <div id="addUserForm">
+        <div id="row">
+            <div class="col-sm-2"><input type="text" id="name" name="name" size="15" placeholder="Name"/></div>
+            <div class="col-sm-2"><select id="title"><option value="select" selected>select</option><option value="executive">Executive</option><option value="manager">Manager</option><option value="Supervisor">Supervisor</option></select></div>
+            <div class="col-sm-2"><input type="text" id="email" name="email" size="15" placeholder="Email"/></div>
+            <div class="col-sm-2"><input type="checkbox" id="admin" name="isAdmin" value="isAdmin" /></div>
+            <div class="col-sm-2"><input type="checkbox" id="numbers" name="canSeeNumbers" value="canSeeNumbers" /></div>
+            <div class="col-sm-2"><button id="userAdd">Add</button><button id="cancelUserAdd">Cancel</button></div>
+        </div>
+    </div>
+    <div id="row">
+        <button id="showUserAdd">Add A User</button>
+    </div>
+</div>
+<div class="hidden" id="userRowTemplate">
+<div class="row" id="user!template!">
+  <div class="col-sm-2">
+    <div id="name_!template!"></div>
+    <input type="text" class="edit_row" id="name_edit_!template!" name="name" size="15"/>
+  </div>
+  <div class="col-sm-2">
+    <div id="title_!template!"></div>
+    <select id="title_edit_!template!" class="edit_row"><option value="select" selected>select</option><option value="executive">Executive</option><option value="manager">Manager</option><option value="Supervisor">Supervisor</option></select>
+  </div>
+  <div class="col-sm-2">
+    <div id="email_!template!"></div>
+    <input type="text" id="email_edit_!template!" class="edit_row" name="email" size="15" value="$user['email']"/>
+  </div>
+  <div class="col-sm-2">
+    <div id="admin_!template!"></div>
+    <input type="checkbox" id="admin_edit_!template!" class="edit_row" name="isAdmin" value="isAdmin"/>
+  </div>
+  <div class="col-sm-2">
+    <div id="numbers_!template!"></div>
+    <input type="checkbox" id="numbers_edit_!template!" class="edit_row" name="isAdmin" value="isAdmin"/>
+  </div>
+  <div class="col-sm-2">
+    <div id="buttons_!template!"><button class="edit_button" id="edit_!template!">Edit</button><button class="delete_button" id="delete_!template!">Delete</button></div>
+    <div id="buttons_edit_!template!" class="edit_row"><button class="save_button" id="save_!template!">Save</button><button class="cancel_button" id="cancel_!template!">Cancel</button></div>
+  </div>
+</div>
 </div>
 </body>
 </html>

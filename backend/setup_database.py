@@ -27,7 +27,7 @@ def main():
 	#create our database if it doesn't exist
 	try:
 		cursor.execute('use '+DATABASE)
-	except Exception, e:
+	except:
 		createDatabase(DATABASE, cursor)
 	finally:
 		cursor.execute('use '+DATABASE)
@@ -46,6 +46,12 @@ def main():
 		createCommentsTbl(cursor)
 	if not tblExists("jobAppUsers", cursor):
 		createUsersTbl(cursor)
+	#add some users
+	if tblEmpty("jobAppUsers", cursor):
+		createUsers(cursor)
+	#add some jobs so things aren't so empty
+	if tblEmpty("jobs", cursor):
+		createJobs(cursor)
 	#we're done here. close up shop
 	db_connection.commit()
 	cursor.close()
@@ -64,6 +70,7 @@ def createJobsTbl(cursor):
 	  name TEXT(8000),
 	  location TEXT(8000),
 	  bill_to TEXT(8000),
+	  poc_phone VARCHAR(100),
 	  date_started VARCHAR(100),
 	  date_completed VARCHAR(100),
 	  date_billed VARCHAR(100),
@@ -112,16 +119,41 @@ def createUsersTbl(cursor):
 	  PRIMARY KEY(id)
 	)
 	""")
-	#add Greg's account. Becasue without atlease 1 admin we can't add anyone else.
-	apiKey = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(256))
-	addGreg = """
+def createUsers(cursor):
+	addUser = """
 	INSERT INTO jobAppUsers
 		(id, name, title, email, isInTable, isAdmin, canSeeNumbers, apiKey)
     VALUES
-    	(NULL, 'Greg', 'SWE', 'gatlp9@gmail.com', 1, 1, 1, {0})
+    	(NULL, {0}, {1}, {2}, 1, 1, 1, {3})
 	"""
-	cursor.execute(addGreg.format(sanitize(apiKey)))
-
+	usersToMake = [
+		{"name":"Greg","title":"SWE","email":"gatlp9@gmail.com"},
+		{"name":"Trevor","title":"Some sort of manager thing","email":"6573755@gmail.com"},
+		{"name":"Tijana","title":"SWE","email":"tmilovan@emich.edu"},
+		{"name":"Brianna","title":"SWE","email":"bwoell@gmail.com"},
+		{"name":"Hanna","title":"SWE","email":"hjohns25@emich.edu"},
+		{"name":"Devon","title":"SWE","email":"hawkinsd90@gmail.com"}
+	]
+	for user in usersToMake:
+		apiKey = makeNewApiKey(cursor)
+		thisUserAdd = addUser.format(sanitize(user['name']), sanitize(user['title']), sanitize(user['email']), sanitize(apiKey))
+		cursor.execute(thisUserAdd)
+def createJobs(cursor):
+	addJob = """
+	INSERT INTO jobs
+		(id, name, location, bill_to, poc_phone, description, isInProgress)
+	VALUES
+		(NULL, {0}, {1}, {2}, {3}, {4}, {5})
+	"""
+	jobsToMake = [
+		{"name":"Find missing droids", "location":"Mos Eisley", "bill_to":"Imperial Army", "poc_phone":"1800DARKSID", "description":"We really need to find these droids","isInProgress":1},
+		{"name":"Keep an eye on Luke", "location":"Tatooine", "bill_to":"Obi Wan Kenobi", "poc_phone":"1734GETJEDI", "description":"What else are you going to do?","isInProgress":0},
+		{"name":"Shoot First", "location":"Chalmun's Cantina", "bill_to":"Han Solo", "poc_phone":"1877SHIPFAST", "description":"You really weren't looking for any trouble, huh?","isInProgress":1},
+		{"name":"Collect Jabba's debt", "location":"Chalmun's Cantina", "bill_to":"Greedo", "poc_phone":"18554OUCHIE", "description":"Good luck","isInProgress":1},
+	]
+	for job in jobsToMake:
+		thisJobAdd = addJob.format(sanitize(job['name']), sanitize(job['location']), sanitize(job['bill_to']), sanitize(job['poc_phone']), sanitize(job['description']), sanitize(job['isInProgress']))
+		cursor.execute(thisJobAdd)
 def tblExists(name, cursor):
 	search_tbl = "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = {0}"
 	search_tbl = search_tbl.format(sanitize(name))
@@ -130,7 +162,21 @@ def tblExists(name, cursor):
 		return True
 	else:
 		return False
-
+def tblEmpty(name, cursor):
+	query = """SELECT * from {0} limit 1"""
+	entry = cursor.execute(query.format(name))
+	if not entry:
+		return True
+	else:
+		return False
+def makeNewApiKey(cursor):
+	potentialApiKey = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(256))
+	query = """SELECT * from jobAppUsers WHERE apiKey={0}"""
+	entry = cursor.execute(query.format(sanitize(potentialApiKey)))
+	if not entry:
+		return potentialApiKey
+	else:
+		return makeNewApiKey()
 def sanitize(inString):
 	return "'"+(str(inString).replace("'","\\'").rstrip().lstrip())+"'"
 
