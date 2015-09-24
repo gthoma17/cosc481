@@ -153,7 +153,7 @@ class newJob:
 			del session.user['apiResponse']
 		else:
 			response = ""
-		return render.admin(response, self.form)
+		return render.newJob(response, self.form)
 	def POST(self):
 		form = self.form()
 		if not form.validates():

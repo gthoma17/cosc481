@@ -4,8 +4,8 @@ $def with (title, jobs)
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 <link type=text/css rel=stylesheet href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -41,19 +41,28 @@ $def with (title, jobs)
   <div class="row">
     <div class="col-sm-2"><h3 style="text-align:center;vertical-align:middle;"><a href="newJob" class="button">Add a Job</a></h3></div>
   </div>
-  $for job in jobs:
-    $if job['isInProgress']:
-      $ color = "PaleGreen"
-    $else:
-      $ color = "PaleVioletRed"
-    <div class="row" style="background-color:$color;">
-      <div class="col-sm-4"><p style="padding:5px;"><h2><a href="job/$job['id']">$job['name']</a></h2></p></div>
-    </div>
-    <div class="row" style="background-color:$color;">
-      <div class="col-sm-2"><p style="padding:5px;">Location: <a href="http://maps.apple.com/?q=$job['location']">$job['location']</a></p></div>
-      <div class="col-sm-2"><p style="padding:5px;">Bill to: <a href="tel:$job['poc_phone']">$job['bill_to']</a></p></div>
-    </div>
-    <hr>
+</div>
+<div class="container">
+  <div class="card-group">
+        $for job in jobs:
+          $if job['isInProgress']:
+            $ cardType = "card-success"
+          $else:
+            $ cardType = "card-danger"
+          <div class="col-sm-3">
+            <div class="card card-inverse $cardType text-center">
+              <div class="card-block">
+                <a href="job/$job['id']"><h4 class="card-title">$job['name']</h4></a>
+                <a href="http://maps.apple.com/?q=$job['location']" target="blank" role="button" class="btn btn-default" aria-label="Left Align">
+                  <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>$job['location']
+                </a>
+                <a href="tel:$job['poc_phone']" target="blank" role="button" class="btn btn-default" aria-label="Left Align">
+                  <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>$job['bill_to']
+                </a> 
+              </div>
+            </div>
+          </div>
+        </div>
 </div>
 </body>
 </html>
