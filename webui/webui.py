@@ -17,11 +17,17 @@ else:
 	#we're on a local machine
 	config.read(path.join(root, "local.cfg"))
 
+#create out google identity kit
+key_file = open(config.get("Google", "PrivateKeyFile"), 'rb')
+key = key_file.read()
+key_file.close()
+gitkit_instance = gitkitclient.GitkitClient(
+      client_id=config.get("Google", "clientId"),
+      service_account_email=config.get("Google", "serviceAccountEmail"),
+      service_account_key=key,
+      widget_url=config.get("Google", "widgetUrl"),
+      cookie_name=config.get("Google", "cookieName"))
 
-
-#gitkit_config_json = config.get("Google", "GitkitJSON")
-gitkit_config_json = path.join(root, config.get("Google", "GitkitJSON"))
-gitkit_instance = gitkitclient.GitkitClient.FromConfigFile(gitkit_config_json)
 
 web.config.debug = True
 debug = False
