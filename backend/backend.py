@@ -148,7 +148,6 @@ class job:
 			#make sure the list can be serialized
 			for job in allJobs:
 				for item in job:
-					print type(job[item])
 					if type(job[item]) is datetime.date:
 						job[item] = str(job[item])
 			#then return
@@ -158,18 +157,18 @@ class job:
 				theJob = dict(db.where('jobs', id=job)[0])
 			except IndexError:
 				return "404 Not Found"
-			if reqUser['canSeeNumbers']:
+			if reqUser['permissionLevel'].upper() == "ADMIN" or reqUser['permissionLevel'].upper() == "MANAGER":
 				try:
 					jobsBugetItems = list(db.where('budgetItems', job_id=job))
 					#force an exception if there are no budget items
 					jobsBugetItems[0]
-					if not reqUser['canSeeNumbers']:
-						pass
-						#todo remove numbers for those not allowed to see them
 					theJob['budget'] = jobsBugetItems
 				except IndexError:
 					pass
 					#jobs are allowed to not have budgets
+			for item in theJob:
+				if type(theJob[item]) is datetime.date:
+					theJob[item] = str(theJob[item])
 			web.header('Content-Type', 'application/json')
 			return json.dumps(theJob)
 	def POST(self, job):
