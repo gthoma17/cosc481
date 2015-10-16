@@ -1,3 +1,4 @@
+$def with (url)
 <!--
 
 /*
@@ -30,13 +31,13 @@
 <link type="text/css" rel="stylesheet" href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
 <script type="text/javascript">
   var config = {
-    "widgetUrl": "http://gat.im/login",
-    "signInSuccessUrl": "http://gat.im/",
-    "signOutUrl": "http://gat.im/logout",
-    "oobActionUrl": "http://gat.im/mail",
+    "widgetUrl": "$url/login",
+    "signInSuccessUrl": "$url",
+    "signOutUrl": "$url/logout",
+    "oobActionUrl": "$url/mail",
     "apiKey": "AIzaSyCdJoBPQgSMPhFn-oMxJ6HimaBjSorURIs",
     "siteName": "this site",
-    "signInOptions": ["password","microsoft","google","facebook","yahoo","aol"]
+    "signInOptions": ["password","google"]
 }
   // The HTTP POST body should be escaped by the server to prevent XSS
   window.google.identitytoolkit.start(

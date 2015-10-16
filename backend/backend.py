@@ -1,4 +1,4 @@
-import web, ConfigParser, json, string, random, socket
+import web, ConfigParser, json, string, random, socket, urllib
 from os import path
 from identitytoolkit import gitkitclient
 
@@ -81,7 +81,7 @@ class newUser:
 			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
 		except IndexError:
 			return "403 Forbidden"
-		if reqUser['isAdmin']:
+		if userIsAdmin(reqUser):
 			#user is allowed to do this. 
 			if passedData['isAdmin'].lower() == u'true':
 				passedData['isAdmin'] = 1
@@ -215,9 +215,9 @@ class user:
 				reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
 			except IndexError:
 				return "403 Forbidden"
-			if reqUser['isAdmin']:
+			if userIsAdmin(reqUser):
 				#user is allowed to do this
-				allUsers = db.select('jobAppUsers', what="id,name,title,isAdmin,email,canSeeNumbers")
+				allUsers = db.select('jobAppUsers', what="id,name,permissionLevel,phone")
 				web.header('Content-Type', 'application/json')
 				return json.dumps(list(allUsers))
 			else:
@@ -238,7 +238,7 @@ class user:
 			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0] 
 		except IndexError:
 			return "403 Forbidden"
-		if reqUser['isAdmin']:
+		if userIsAdmin(reqUser):
 			#user is allowed to do this. 
 			if passedData['isAdmin'] == u'True':
 				passedData['isAdmin'] = 1
@@ -268,6 +268,11 @@ class user:
 				return "404 Not Found"
 		else:
 			return "403 Forbidden"
+def userIsAdmin(user):
+	if user['permissionLevel'].upper() == "ADMIN":
+		return True
+	else:
+		return False
 def makeNewApiKey():
 	potentialApiKey = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(256))
 	if len(db.where('jobAppUsers', apiKey=potentialApiKey)) == 0:
