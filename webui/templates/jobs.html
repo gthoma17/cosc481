@@ -46,7 +46,6 @@ $def with (title, jobs)
   <div class="card-group">
         $for job in jobs:
           $ job['location'] = job['street_address']+" "+job['city']+" "+job['state']+" "+job['zip']
-          $ job['location_small'] = job['street_address']+" "+job['city']
           $if job['phase'] == "open":
             $ cardType = "card-success"
           $else:
@@ -56,7 +55,7 @@ $def with (title, jobs)
               <div class="card-block">
                 <a href="job/$job['id']"><h4 class="card-title">$job['name']</h4></a>
                 <a href="http://maps.apple.com/?q=$job['location']" target="blank" role="button" class="btn btn-default" aria-label="Left Align">
-                  <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>$job['location_small']
+                  <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>$job['street_address']
                 </a>
               </div>
             </div>
