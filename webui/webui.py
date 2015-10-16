@@ -1,11 +1,23 @@
-import web, ConfigParser, json, sys, urllib, requests, tempfile
+import web, ConfigParser, json, sys, urllib, requests, tempfile, socket
 from os import path
 from identitytoolkit import gitkitclient
 
-#read the config file
+#prepare to read config
 config = ConfigParser.ConfigParser()
 root = path.dirname(path.realpath(__file__))
-config.read(path.join(root, "webui.cfg"))
+
+#determine if we're on a production machine, or testing machine
+# load the correct config based on that.  
+localIp = socket.gethostbyname(socket.gethostname())
+publicIp = urllib.urlopen('https://wtfismyip.com/text').read().rstrip()
+if localIp == publicIp: 
+	#we're on the internet
+	config.read(path.join(root, "webui.cfg"))
+else:
+	#we're on a local machine
+	config.read(path.join(root, "local.cfg"))
+
+
 
 #gitkit_config_json = config.get("Google", "GitkitJSON")
 gitkit_config_json = path.join(root, config.get("Google", "GitkitJSON"))

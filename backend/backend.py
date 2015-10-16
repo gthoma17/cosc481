@@ -1,11 +1,21 @@
-import web, ConfigParser, json, string, random
+import web, ConfigParser, json, string, random, socket
 from os import path
 from identitytoolkit import gitkitclient
 
-#read the config file
+#prepare to read config
 config = ConfigParser.ConfigParser()
 root = path.dirname(path.realpath(__file__))
-config.read(path.join(root, "backend.cfg"))
+
+#determine if we're on a production machine, or testing machine
+# load the correct config based on that.  
+localIp = socket.gethostbyname(socket.gethostname())
+publicIp = urllib.urlopen('https://wtfismyip.com/text').read().rstrip()
+if localIp == publicIp: 
+	#we're on the internet
+	config.read(path.join(root, "backend.cfg"))
+else:
+	#we're on a local machine
+	config.read(path.join(root, "local.cfg"))
 
 urls = (
 	"/", "index",
