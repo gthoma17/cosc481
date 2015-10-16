@@ -1,4 +1,4 @@
-import web, ConfigParser, json, string, random, socket, urllib
+import web, ConfigParser, json, string, random, socket, urllib, datetime
 from os import path
 from identitytoolkit import gitkitclient
 
@@ -144,7 +144,15 @@ class job:
 		except:
 			return "403 Forbidden"
 		if job == "all":
-			return json.dumps(list(db.select('jobs')))
+			allJobs = list(db.select('jobs'))
+			#make sure the list can be serialized
+			for job in allJobs:
+				for item in job:
+					print type(job[item])
+					if type(job[item]) is datetime.date:
+						job[item] = str(job[item])
+			#then return
+			return json.dumps(allJobs)
 		else:
 			try:
 				theJob = dict(db.where('jobs', id=job)[0])
