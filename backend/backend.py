@@ -83,14 +83,6 @@ class newUser:
 			return "403 Forbidden"
 		if userIsAdmin(reqUser):
 			#user is allowed to do this. 
-			if passedData['isAdmin'].lower() == u'true':
-				passedData['isAdmin'] = 1
-			else:
-				passedData['isAdmin'] = 0
-			if passedData['canSeeNumbers'].lower() == u'true':
-				passedData['canSeeNumbers'] = 1
-			else:
-				passedData['canSeeNumbers'] = 0
 			#first check if user exists.
 			existingUser = db.where('jobAppUsers', email=user)
 			if existingUser:
@@ -99,10 +91,8 @@ class newUser:
 				return db.insert('jobAppUsers', 
 					name=passedData['name'], 
 					email=passedData['email'], 
-					title=passedData['title'], 
-					isAdmin=passedData['isAdmin'],
-					canSeeNumbers=passedData['canSeeNumbers'], 
-					isInTable=1,
+					phone=passedData['phone'], 
+					permissionLevel=passedData['permissionLevel'],
 					apiKey=makeNewApiKey()
 				)
 		else:
@@ -217,7 +207,7 @@ class user:
 				return "403 Forbidden"
 			if userIsAdmin(reqUser):
 				#user is allowed to do this
-				allUsers = db.select('jobAppUsers', what="id,name,permissionLevel,phone")
+				allUsers = db.select('jobAppUsers', what="id,name,permissionLevel,email,phone")
 				web.header('Content-Type', 'application/json')
 				return json.dumps(list(allUsers))
 			else:
@@ -239,15 +229,6 @@ class user:
 		except IndexError:
 			return "403 Forbidden"
 		if userIsAdmin(reqUser):
-			#user is allowed to do this. 
-			if passedData['isAdmin'] == u'True':
-				passedData['isAdmin'] = 1
-			else:
-				passedData['isAdmin'] = 0
-			if passedData['canSeeNumbers'] == u'True':
-				passedData['canSeeNumbers'] = 1
-			else:
-				passedData['canSeeNumbers'] = 0
 			#first check if user exists.
 			if user.isdigit(): #if all digits, lookup by ID
 				existingUser = db.where('jobAppUsers', id=user)
@@ -255,13 +236,15 @@ class user:
 				existingUser = db.where('jobAppUsers', email=user)
 			if existingUser: #user exists
 				existingUser = existingUser[0]
+				print "*"*50
+				print passedData
+				print "*"*50
 				db.update('jobAppUsers', 
 							where="id = "+str(existingUser.id), 
 							name=passedData['name'],
 							email=passedData['email'],
-							title=passedData['title'],
-							isAdmin=passedData['isAdmin'],
-							canSeeNumbers=passedData['canSeeNumbers']
+							permissionLevel=passedData['permissionLevel'],
+							phone=passedData['phone']
 						)
 				return "202 User Updated"
 			else: 

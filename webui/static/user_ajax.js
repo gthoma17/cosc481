@@ -24,27 +24,24 @@ function flashRedBackground (div) {
 }
 function userAjax(divLLQ){
     nameDivId = "#name";
-    titleDivId = "#title";
+    permDivId = "#permissionLevel";
     emailDivId = "#email";
-    adminDivId = "#admin";
-    numbersDivId = "#numbers";
+    phoneDivId = "#phone";
     postUrl = "/forward/user"
     if (divLLQ != null){
         nameDivId = nameDivId.concat("_edit_", divLLQ);
-        titleDivId = titleDivId.concat("_edit_", divLLQ);
+        permDivId = permDivId.concat("_edit_", divLLQ);
         emailDivId = emailDivId.concat("_edit_", divLLQ);
-        adminDivId = adminDivId.concat("_edit_", divLLQ);
-        numbersDivId = numbersDivId.concat("_edit_", divLLQ);
+        phoneDivId = phoneDivId.concat("_edit_", divLLQ);
         postUrl = "/forward/user/"+divLLQ
     };
     //validate the form
-    if ($(nameDivId).val() != "" && $(titleDivId).val() != "select" && $(emailDivId).val() != "") {
+    if ($(nameDivId).val() != "" && $(permDivId).val() != "select" && $(permDivId).val() != "" && $(emailDivId).val() != "" && $(phoneDivId).val() != "") {
         postData = {}
         postData.name = $(nameDivId).val()
-        postData.title = $(titleDivId).val()
+        postData.permissionLevel = $(permDivId).val()
         postData.email = $(emailDivId).val()
-        postData.isAdmin = $(adminDivId).prop("checked")
-        postData.canSeeNumbers = $(numbersDivId).prop("checked")
+        postData.phone = $(phoneDivId).val()
         $.ajax({
             url : postUrl,
             dataType:"text",
@@ -76,15 +73,24 @@ function userAjax(divLLQ){
         });    
     }
     else{
+        console.log("Here:")
+        console.log($(nameDivId).val())
+        console.log($(permDivId).val())
+        console.log($(emailDivId).val())
+        console.log($(phoneDivId).val())
         //didn't validate. Tell user where they goofed
         if ($(nameDivId).val() == "") {
             flashRedBackground($(nameDivId));
         };
-        if ($(titleDivId).val() == "select") {
-            flashRedBackground($(titleDivId));
+        if ($(permDivId).val() == "select" && $(permDivId).val() != undefined)  {
+            console.log("Lame")
+            flashRedBackground($(permDivId));
         };
         if ($(emailDivId).val() == "") {
             flashRedBackground($(emailDivId));
+        };
+        if ($(phoneDivId).val() == "") {
+            flashRedBackground($(phoneDivId));
         };
     };        
 }
@@ -94,20 +100,9 @@ function newUserRow(userId){
     $(newRow).insertBefore("#addUserForm");
      //add new values to the row
     $("#name_".concat(userId)).text($("#name").val());
-    $("#title_".concat(userId)).text($("#title").val());
+    $("#perm_".concat(userId)).text($("#permissionLevel").val());
     $("#email_".concat(userId)).text($("#email").val());
-    if($("#admin").prop('checked')){
-        $("#admin_".concat(userId)).text("Yes")
-    }
-    else{
-        $("#admin_".concat(userId)).text("No")
-    };
-    if($("#numbers").prop('checked')){
-        $("#numbers_".concat(userId)).text("Yes")
-    }
-    else{
-        $("#numbers_".concat(userId)).text("No")
-    };
+    $("#phone_".concat(userId)).text($("#phone").val());
     resetEditCols(userId) //set edit column values equal to display columns
     hideEditCols(userId)
     clearAddForm()
@@ -140,78 +135,52 @@ function updateDisplayCols (userId) {
     //move new values into display cols
     console.log("updating row")
     $("#name_".concat(userId)).text($("#name_edit_".concat(userId)).val());
-    $("#title_".concat(userId)).text($("#title_edit_".concat(userId)).val());
+    $("#permissionLevel_".concat(userId)).text($("#permissionLevel_edit_".concat(userId)).val());
     $("#email_".concat(userId)).text($("#email_edit_".concat(userId)).val());
-    if ($("#admin_edit_".concat(userId)).attr('checked')) {
-        console.log("admin checked")
-        $("#admin_".concat(userId)).text("Yes")
-    } else{
-        $("#admin_".concat(userId)).text("No")
-    };
-    if ($("#numbers_edit_".concat(userId)).attr('checked')) {
-        $("#numbers_".concat(userId)).text("Yes")
-    } else{
-        $("#numbers_".concat(userId)).text("No")
-    };
+    $("#phone_".concat(userId)).text($("#phone_edit_".concat(userId)).val());
     hideEditCols(userId);
 }
 function showEditCols (userId) {
     //show the edit cols
     $("#name_edit_".concat(userId)).show()
-    $("#title_edit_".concat(userId)).show()
+    $("#permissionLevel_edit_".concat(userId)).show()
     $("#email_edit_".concat(userId)).show()
-    $("#admin_edit_".concat(userId)).show()
-    $("#numbers_edit_".concat(userId)).show()
+    $("#phone_edit_".concat(userId)).show()
     $("#buttons_edit_".concat(userId)).show()
     //hide the display cols
     $("#name_".concat(userId)).hide()
-    $("#title_".concat(userId)).hide()
+    $("#permissionLevel_".concat(userId)).hide()
     $("#email_".concat(userId)).hide()
-    $("#admin_".concat(userId)).hide()
-    $("#numbers_".concat(userId)).hide()
+    $("#phone_".concat(userId)).hide()
     $("#buttons_".concat(userId)).hide()
 }
 function resetEditCols (userId) {
     //set text fields
     $("#name_edit_".concat(userId)).val($("#name_".concat(userId)).text())
     $("#email_edit_".concat(userId)).val($("#email_".concat(userId)).text())
+    $("#phone_edit_".concat(userId)).val($("#phone_".concat(userId)).text())
     //set the select properly
-    $("#title_edit_".concat(userId)).val($("#title_".concat(userId)).text())
-    //set checkboxes properly
-    if ($("#admin_".concat(userId)).text() == "Yes") {
-        console.log("Checking")
-        $("#admin_edit_".concat(userId)).prop('checked', true);
-    } else{
-        $("#admin_edit_".concat(userId)).prop('checked', false);
-    };
-    if ($("#numbers_".concat(userId)).text() == "Yes") {
-        $("#numbers_edit_".concat(userId)).prop('checked', true);
-    } else{
-        $("#numbers_edit_".concat(userId)).prop('checked', false);
-    };
+    $("#permissionLevel_edit_".concat(userId)).val($("#permissionLevel_".concat(userId)).text())
 }
 function hideEditCols (userId){
     //hide the edit cols
     $("#name_edit_".concat(userId)).hide()
-    $("#title_edit_".concat(userId)).hide()
+    $("#permissionLevel_edit_".concat(userId)).hide()
     $("#email_edit_".concat(userId)).hide()
-    $("#admin_edit_".concat(userId)).hide()
-    $("#numbers_edit_".concat(userId)).hide()
+    $("#phone_edit_".concat(userId)).hide()
     $("#buttons_edit_".concat(userId)).hide()
     //show the display cols
     $("#name_".concat(userId)).show()
-    $("#title_".concat(userId)).show()
+    $("#permissionLevel_".concat(userId)).show()
     $("#email_".concat(userId)).show()
-    $("#admin_".concat(userId)).show()
-    $("#numbers_".concat(userId)).show()
+    $("#phone_".concat(userId)).show()
     $("#buttons_".concat(userId)).show()
 }
 function clearAddForm(){
     $("#name").val("");
-    $("#title").val("select");
+    $("#permissionLevel").val("select");
     $("#email").val("");
-    $("#admin" ).attr('checked', false);
-    $("#numbers").attr('checked', false);
+    $("#phone").val("");
 }
 function replaceAllSubsting (str, oldSubStr, newSubStr) {
     return str.split(oldSubStr).join(newSubStr);

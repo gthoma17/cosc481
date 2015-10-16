@@ -193,7 +193,7 @@ def createUsersTbl(cursor):
 	  name VARCHAR(255),
 	  permissionLevel TEXT(65535),
 	  email TEXT(65535),
-	  phone BOOLEAN,
+	  phone VARCHAR(255),
 	  apiKey TEXT(65535),
 	  PRIMARY KEY(id)
 	)
