@@ -143,7 +143,6 @@ def createJobsTbl(cursor):
 	  id INTEGER  NOT NULL AUTO_INCREMENT,
 	  manager_id INTEGER,
 	  supervisor_id INTEGER,
-	  max_budget_id INTEGER,
 	  customer_id INTEGER,
 	  name TEXT(65535),
 	  street_address TEXT(65535),

@@ -153,24 +153,11 @@ class job:
 			#then return
 			return json.dumps(allJobs)
 		else:
-			try:
-				theJob = dict(db.where('jobs', id=job)[0])
-			except IndexError:
-				return "404 Not Found"
-			if reqUser['permissionLevel'].upper() == "ADMIN" or reqUser['permissionLevel'].upper() == "MANAGER":
-				try:
-					jobsBugetItems = list(db.where('budgetItems', job_id=job))
-					#force an exception if there are no budget items
-					jobsBugetItems[0]
-					theJob['budget'] = jobsBugetItems
-				except IndexError:
-					pass
-					#jobs are allowed to not have budgets
-			for item in theJob:
-				if type(theJob[item]) is datetime.date:
-					theJob[item] = str(theJob[item])
+			userPrivelege = (reqUser['permissionLevel'].upper() == "ADMIN" or reqUser['permissionLevel'].upper() == "MANAGER")
+			theJob = buildJob(job, userPrivelege)
 			web.header('Content-Type', 'application/json')
-			return json.dumps(theJob)
+			print theJob
+			return theJob
 	def POST(self, job):
 		#if you're posting here, the job already exists.
 		passedData = dict(web.input())
@@ -269,5 +256,71 @@ def makeNewApiKey():
 		return potentialApiKey
 	else:
 		return makeNewApiKey()
+def buildJob(jobId, isPriveleged):
+	try:
+		job = dict(db.where('jobs', id=jobId)[0])
+	except IndexError:
+		return "404 Not Found"
+
+	if isPriveleged:
+		#add all priveleged items to the job
+		privelegedReferanceThings = [
+			['budgetItems', 'budget'],
+			['fullEstimates','fullEstimates']
+		]
+		privelegedIdThings = []
+		for thing in privelegedReferanceThings:
+			job = addThingByJobReference(job, jobId, thing[0], thing[1])
+		for thing in privelegedIdThings:
+			job = addThingById(job, thing[0], thing[1])
+	#add non-priveleged items to the job
+	referanceThings = [
+		['notes', 'notes'],
+		['dailyReports', 'notes'],
+		['actionItems', 'notes'],
+		['subContracts','subContracts'],
+		['jobContacts','contacts'],
+		['maxBudgets','maxBudgets'],
+		['equipmentSchedule','equipmentSchedule'],
+		['userSchedule','userSchedule'],
+		['scopes','scopes'],
+		['photoFolders','photoFolders'],
+		['photos','photos']
+	]
+	idThings = [
+		['jobAppUsers','manager',job['manager_id'], "name,permissionLevel,email,phone"],
+  		['jobAppUsers','supervisor',job['supervisor_id'], "name,permissionLevel,email,phone"],
+  		['contacts','customer',job['customer_id'], "*"]
+	]
+	for thing in referanceThings:
+		theJob = addThingByJobReference(job, jobId, thing[0], thing[1])
+	for thing in idThings:
+		theJob = addThingById(job, thing[0], thing[1], thing[2], thing[3])
+	job = makeDumpable(job)
+	print "*"*50
+	print job
+	print "*"*50
+	return json.dumps(job)
+def makeDumpable(inDict):
+	for item in inDict:
+		if type(inDict[item]) is datetime.date or \
+			type(inDict[item]) is datetime.datetime:
+			inDict[item] = str(inDict[item])
+	return inDict
+def addThingByJobReference(job, jobId, table, dictName):
+	if dictName not in job:
+		job[dictName] = []
+	things = list(db.where(table, job_id=jobId))
+	for thing in things:
+		thing['tbl'] = table
+		thing = makeDumpable(thing)
+	job[dictName].append(things)
+	return job
+def addThingById(job, table, dictName, thingId, what):
+	thing = list(db.where(table, id=thingId, what=what))[0]
+	job[dictName] = thing
+	return job
+
+
 if __name__ == "__main__":
 	app.run()
