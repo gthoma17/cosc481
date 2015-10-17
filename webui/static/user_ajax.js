@@ -138,7 +138,6 @@ function updateDisplayCols (userId) {
     $("#permissionLevel_".concat(userId)).text($("#permissionLevel_edit_".concat(userId)).val());
     $("#email_".concat(userId)).text($("#email_edit_".concat(userId)).val());
     $("#phone_".concat(userId)).text($("#phone_edit_".concat(userId)).val());
-    hideEditCols(userId);
 }
 function showEditCols (userId) {
     //show the edit cols
