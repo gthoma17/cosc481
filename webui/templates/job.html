@@ -45,18 +45,18 @@ $def with (job, user, apiUrl)
   <div class="row">
     <div class="col-sm-12"><h4><a href="edit/job/$job['id']">(edit)</a></h4></div>
   </div>
-  $if job['isInProgress']:
+  $if job['phase'] == "open":
     $ color = "PaleGreen"
   $else:
     $ color = "PaleVioletRed"
+  $ job['location'] = job['street_address']+" "+job['city']+" "+job['state']+" "+job['zip']
   <div class="row" style="background-color:$color;">
     <div class="col-sm-2"><p style="padding:5px;">Location: <a href="http://maps.apple.com/?q=$job['location']">$job['location']</a></p></div>
-    <div class="col-sm-2"><p style="padding:5px;">Bill to: <a href="tel:$job['poc_phone']">$job['bill_to']</a></p></div>
-    <div class="col-sm-2"><p style="padding:5px;">In progress: $job['isInProgress']</p></div>
+    <div class="col-sm-2"><p style="padding:5px;">Phase: $job['phase']</p></div>
     <div class="col-sm-2"><p style="padding:5px;">Date Started: $job['date_started']</p></div>
   </div>
 </div>
-$if user['canSeeNumbers']:
+$if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper() == "MANAGER":
   <div class="container">
     <div class="row">
       <div class="col-sm-12"><h1 style="padding:5px;">Budget</h1></div>
@@ -71,7 +71,7 @@ $if user['canSeeNumbers']:
           <div class="col-sm-3"><strong>Cost</strong></div>
           <div class="col-sm-3">&nbsp;</div>
         </div>
-        $for item in job['budget']:
+        $for item in job['budget'][0]:
           <div class="row" id="item_$item['id']">
             <div class="col-sm-3">
               <div id="name_$item['id']">$item['name']</div>
@@ -87,7 +87,7 @@ $if user['canSeeNumbers']:
             </div>
             <div class="col-sm-3">
               <div id="buttons_$item['id']"><button class="edit_button" id="edit_$item['id']">Edit</button><button class="delete_button" id="delete_$item['id']">Delete</button></div>
-              <div id="buttons_edit_$item['id']" class="edit_row"><button class="save_button" id="save_$item['id']">Save</button><button class="cancel_button" id="cancel_$item['id']">Cancel</button></div>
+             <div id="buttons_edit_$item['id']" class="edit_row"><button class="save_button" id="save_$item['id']">Save</button><button class="cancel_button" id="cancel_$item['id']">Cancel</button></div>
             </div>
           </div>
       $else:

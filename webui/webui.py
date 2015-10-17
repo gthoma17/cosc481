@@ -63,6 +63,9 @@ class index:
 			gVars = vars(gitkit_instance.VerifyGitkitToken(gtoken))
 			if not session.user.has_key('isInTable'):
 				if session.user['state'] != 'unregistered':
+					print "*"*50
+					print gVars
+					print type(gVars)
 					session.user = makeUserSession(gVars)
 		else:
 			session.user['state'] = None
@@ -107,26 +110,18 @@ class jobs:
 		response = urllib.urlopen(apiUrl+"/job/all?apiKey="+session.user['apiKey']).read()
 		return render.jobs("::JOBS::", json.loads(response))
 class job:
-	form = web.form.Form(
-		web.form.Textbox('name', web.form.notnull, 
-            size=30,
-            description="Item Name:"),
-        web.form.Textbox('cost',
-            size=30,
-            description="Item Cost:"),
-        web.form.Textbox('type',
-            size=30,
-            description="Item Type (labor/material/misc):"),
-        web.form.Button('Add Budget Item'),
-    )
 	def GET(self, job):
-		budgetForm = self.form()
 		if session.user.has_key('budgetResponse'):
 			budgetResponse = session.user['budgetResponse']
 			del session.user['budgetResponse']
 		else:
 			budgetResponse = ""
 		response = urllib.urlopen(apiUrl+"/job/"+str(job)+"?apiKey="+session.user['apiKey']).read()
+		print "*"*50
+		#print json.loads(response)['budget']
+		for item in json.loads(response)['budget'][0]:
+			print item
+		print "*"*50
 		return render.job(json.loads(response), session.user, apiUrl)
 	def POST(self, job):
 		form = self.form()
@@ -188,7 +183,7 @@ class newJob:
 		raise web.seeother('/newJob')
 class login:
 	def GET(self):
-		return render.login()
+		return render.login(config.get("WebUi","url"))
 
 class logout:
 	def GET(self):
@@ -201,7 +196,7 @@ class dashboard:
 			raise web.seeother('/')
 		text = "You are a registered user "
 		adminLink = " "
-		if session.user['isAdmin']:
+		if userIsAdmin(session.user):
 			text += "and an admin.. People respect you "
 			adminLink += "<a href=\"admin\" class=\"adminButton\">Admin Panel</a>"
 		if debug:
@@ -269,12 +264,12 @@ class update:
                 return render.text_form(text, self.form)		
 
 def userIsAdmin(user):
-	if user['isAdmin']:
+	if user['permissionLevel'].upper() == "ADMIN":
 		return True
 	else:
 		return False
 def userAuthed(user):
-	if user.has_key('isInTable'):
+	if user.has_key('apiKey'):
 		return True
 	else:
 		return False

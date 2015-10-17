@@ -1,4 +1,4 @@
-import web, ConfigParser, json, string, random, socket
+import web, ConfigParser, json, string, random, socket, urllib, datetime
 from os import path
 from identitytoolkit import gitkitclient
 
@@ -81,16 +81,8 @@ class newUser:
 			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
 		except IndexError:
 			return "403 Forbidden"
-		if reqUser['isAdmin']:
+		if userIsAdmin(reqUser):
 			#user is allowed to do this. 
-			if passedData['isAdmin'].lower() == u'true':
-				passedData['isAdmin'] = 1
-			else:
-				passedData['isAdmin'] = 0
-			if passedData['canSeeNumbers'].lower() == u'true':
-				passedData['canSeeNumbers'] = 1
-			else:
-				passedData['canSeeNumbers'] = 0
 			#first check if user exists.
 			existingUser = db.where('jobAppUsers', email=user)
 			if existingUser:
@@ -99,10 +91,8 @@ class newUser:
 				return db.insert('jobAppUsers', 
 					name=passedData['name'], 
 					email=passedData['email'], 
-					title=passedData['title'], 
-					isAdmin=passedData['isAdmin'],
-					canSeeNumbers=passedData['canSeeNumbers'], 
-					isInTable=1,
+					phone=passedData['phone'], 
+					permissionLevel=passedData['permissionLevel'],
 					apiKey=makeNewApiKey()
 				)
 		else:
@@ -154,26 +144,20 @@ class job:
 		except:
 			return "403 Forbidden"
 		if job == "all":
-			return json.dumps(list(db.select('jobs')))
+			allJobs = list(db.select('jobs'))
+			#make sure the list can be serialized
+			for job in allJobs:
+				for item in job:
+					if type(job[item]) is datetime.date:
+						job[item] = str(job[item])
+			#then return
+			return json.dumps(allJobs)
 		else:
-			try:
-				theJob = dict(db.where('jobs', id=job)[0])
-			except IndexError:
-				return "404 Not Found"
-			if reqUser['canSeeNumbers']:
-				try:
-					jobsBugetItems = list(db.where('budgetItems', job_id=job))
-					#force an exception if there are no budget items
-					jobsBugetItems[0]
-					if not reqUser['canSeeNumbers']:
-						pass
-						#todo remove numbers for those not allowed to see them
-					theJob['budget'] = jobsBugetItems
-				except IndexError:
-					pass
-					#jobs are allowed to not have budgets
+			userPrivelege = (reqUser['permissionLevel'].upper() == "ADMIN" or reqUser['permissionLevel'].upper() == "MANAGER")
+			theJob = buildJob(job, userPrivelege)
 			web.header('Content-Type', 'application/json')
-			return json.dumps(theJob)
+			print theJob
+			return theJob
 	def POST(self, job):
 		#if you're posting here, the job already exists.
 		passedData = dict(web.input())
@@ -215,9 +199,9 @@ class user:
 				reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
 			except IndexError:
 				return "403 Forbidden"
-			if reqUser['isAdmin']:
+			if userIsAdmin(reqUser):
 				#user is allowed to do this
-				allUsers = db.select('jobAppUsers', what="id,name,title,isAdmin,email,canSeeNumbers")
+				allUsers = db.select('jobAppUsers', what="id,name,permissionLevel,email,phone")
 				web.header('Content-Type', 'application/json')
 				return json.dumps(list(allUsers))
 			else:
@@ -238,16 +222,7 @@ class user:
 			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0] 
 		except IndexError:
 			return "403 Forbidden"
-		if reqUser['isAdmin']:
-			#user is allowed to do this. 
-			if passedData['isAdmin'] == u'True':
-				passedData['isAdmin'] = 1
-			else:
-				passedData['isAdmin'] = 0
-			if passedData['canSeeNumbers'] == u'True':
-				passedData['canSeeNumbers'] = 1
-			else:
-				passedData['canSeeNumbers'] = 0
+		if userIsAdmin(reqUser):
 			#first check if user exists.
 			if user.isdigit(): #if all digits, lookup by ID
 				existingUser = db.where('jobAppUsers', id=user)
@@ -255,24 +230,97 @@ class user:
 				existingUser = db.where('jobAppUsers', email=user)
 			if existingUser: #user exists
 				existingUser = existingUser[0]
+				print "*"*50
+				print passedData
+				print "*"*50
 				db.update('jobAppUsers', 
 							where="id = "+str(existingUser.id), 
 							name=passedData['name'],
 							email=passedData['email'],
-							title=passedData['title'],
-							isAdmin=passedData['isAdmin'],
-							canSeeNumbers=passedData['canSeeNumbers']
+							permissionLevel=passedData['permissionLevel'],
+							phone=passedData['phone']
 						)
 				return "202 User Updated"
 			else: 
 				return "404 Not Found"
 		else:
 			return "403 Forbidden"
+def userIsAdmin(user):
+	if user['permissionLevel'].upper() == "ADMIN":
+		return True
+	else:
+		return False
 def makeNewApiKey():
 	potentialApiKey = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(256))
 	if len(db.where('jobAppUsers', apiKey=potentialApiKey)) == 0:
 		return potentialApiKey
 	else:
 		return makeNewApiKey()
+def buildJob(jobId, isPriveleged):
+	try:
+		job = dict(db.where('jobs', id=jobId)[0])
+	except IndexError:
+		return "404 Not Found"
+
+	if isPriveleged:
+		#add all priveleged items to the job
+		privelegedReferanceThings = [
+			['budgetItems', 'budget'],
+			['fullEstimates','fullEstimates']
+		]
+		privelegedIdThings = []
+		for thing in privelegedReferanceThings:
+			job = addThingByJobReference(job, jobId, thing[0], thing[1])
+		for thing in privelegedIdThings:
+			job = addThingById(job, thing[0], thing[1])
+	#add non-priveleged items to the job
+	referanceThings = [
+		['notes', 'notes'],
+		['dailyReports', 'notes'],
+		['actionItems', 'notes'],
+		['subContracts','subContracts'],
+		['jobContacts','contacts'],
+		['maxBudgets','maxBudgets'],
+		['equipmentSchedule','equipmentSchedule'],
+		['userSchedule','userSchedule'],
+		['scopes','scopes'],
+		['photoFolders','photoFolders'],
+		['photos','photos']
+	]
+	idThings = [
+		['jobAppUsers','manager',job['manager_id'], "name,permissionLevel,email,phone"],
+  		['jobAppUsers','supervisor',job['supervisor_id'], "name,permissionLevel,email,phone"],
+  		['contacts','customer',job['customer_id'], "*"]
+	]
+	for thing in referanceThings:
+		theJob = addThingByJobReference(job, jobId, thing[0], thing[1])
+	for thing in idThings:
+		theJob = addThingById(job, thing[0], thing[1], thing[2], thing[3])
+	job = makeDumpable(job)
+	print "*"*50
+	print job
+	print "*"*50
+	return json.dumps(job)
+def makeDumpable(inDict):
+	for item in inDict:
+		if type(inDict[item]) is datetime.date or \
+			type(inDict[item]) is datetime.datetime:
+			inDict[item] = str(inDict[item])
+	return inDict
+def addThingByJobReference(job, jobId, table, dictName):
+	if dictName not in job:
+		job[dictName] = []
+	things = list(db.where(table, job_id=jobId))
+	for thing in things:
+		thing['tbl'] = table
+		thing = makeDumpable(thing)
+	job[dictName].append(things)
+	return job
+def addThingById(job, table, dictName, thingId, what):
+	thing = list(db.where(table, id=thingId, what=what))[0]
+	job[dictName] = thing
+	return job
+
+
 if __name__ == "__main__":
 	app.run()

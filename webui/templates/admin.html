@@ -52,10 +52,9 @@ $def with (response, form, users)
   </div>
     <div class="row">
       <div class="col-sm-2"><strong>Name</strong></div>
-      <div class="col-sm-2"><strong>Title</strong></div>
+      <div class="col-sm-2"><strong>Type</strong></div>
       <div class="col-sm-2"><strong>Email</strong></div>
-      <div class="col-sm-2"><strong>Admin</strong></div>
-      <div class="col-sm-2"><strong>Can See Numbers</strong></div>
+      <div class="col-sm-2"><strong>Phone</strong></div>
       <div class="col-sm-2">&nbsp;</div>
     </div>
     $for user in users:
@@ -65,28 +64,16 @@ $def with (response, form, users)
           <input type="text" class="edit_row" id="name_edit_$user['id']" name="name" size="15" value="$user['name']"/>
         </div>
         <div class="col-sm-2">
-          <div id="title_$user['id']">$user['title']</div>
-          <select id="title_edit_$user['id']" class="edit_row"><option value="select" selected>select</option><option value="executive">Executive</option><option value="manager">Manager</option><option value="Supervisor">Supervisor</option></select>
+          <div id="permissionLevel_$user['id']">$user['permissionLevel']</div>
+          <select id="permissionLevel_edit_$user['id']" class="edit_row"><option value="select" selected>select</option><option value="admin">Admin</option><option value="manager">Manager</option><option value="Supervisor">Supervisor</option></select>
         </div>
         <div class="col-sm-2">
           <div id="email_$user['id']">$user['email']</div>
           <input type="text" id="email_edit_$user['id']" class="edit_row" name="email" size="15" value="$user['email']"/>
         </div>
         <div class="col-sm-2">
-          $if user['isAdmin']:
-            <div id="admin_$user['id']">Yes</div>
-            <input type="checkbox" id="admin_edit_$user['id']" class="edit_row" name="isAdmin" value="isAdmin" checked="checked" />
-          $else:
-            <div id="admin_$user['id']">No</div>
-            <input type="checkbox" id="admin_edit_$user['id']" class="edit_row" name="isAdmin" value="isAdmin"/>
-        </div>
-        <div class="col-sm-2">
-          $if user['canSeeNumbers']:
-            <div id="numbers_$user['id']">Yes</div>
-            <input type="checkbox" id="numbers_edit_$user['id']" class="edit_row" name="isAdmin" value="isAdmin" checked="checked" />
-          $else:
-            <div id="numbers_$user['id']">No</div>
-            <input type="checkbox" id="numbers_edit_$user['id']" class="edit_row" name="isAdmin" value="isAdmin"/>
+          <div id="admin_$user['id']">$user['phone']</div>
+          <input type="text" id="phone_edit_$user['id']" class="edit_row" name="phone" size="15" value="$user['phone']"/>
         </div>
         <div class="col-sm-2">
           <div id="buttons_$user['id']"><button class="edit_button" id="edit_$user['id']">Edit</button><button class="delete_button" id="delete_$user['id']">Delete</button></div>
@@ -96,10 +83,9 @@ $def with (response, form, users)
     <div id="addUserForm">
         <div id="row">
             <div class="col-sm-2"><input type="text" id="name" name="name" size="15" placeholder="Name"/></div>
-            <div class="col-sm-2"><select id="title"><option value="select" selected>select</option><option value="executive">Executive</option><option value="manager">Manager</option><option value="Supervisor">Supervisor</option></select></div>
+            <div class="col-sm-2"><select id="permissionLevel"><option value="select" selected>select</option><option value="admin">Admin</option><option value="manager">Manager</option><option value="Supervisor">Supervisor</option></select></div>
             <div class="col-sm-2"><input type="text" id="email" name="email" size="15" placeholder="Email"/></div>
-            <div class="col-sm-2"><input type="checkbox" id="admin" name="isAdmin" value="isAdmin" /></div>
-            <div class="col-sm-2"><input type="checkbox" id="numbers" name="canSeeNumbers" value="canSeeNumbers" /></div>
+            <div class="col-sm-2"><input type="text" id="phone" name="phone" size="15" placeholder="Phone Number"/></div>
             <div class="col-sm-2"><button id="userAdd">Add</button><button id="cancelUserAdd">Cancel</button></div>
         </div>
     </div>
@@ -114,20 +100,16 @@ $def with (response, form, users)
     <input type="text" class="edit_row" id="name_edit_!template!" name="name" size="15"/>
   </div>
   <div class="col-sm-2">
-    <div id="title_!template!"></div>
-    <select id="title_edit_!template!" class="edit_row"><option value="select" selected>select</option><option value="executive">Executive</option><option value="manager">Manager</option><option value="Supervisor">Supervisor</option></select>
+    <div id="permissionLevel_!template!"></div>
+    <select id="permissionLevel_edit_!template!" class="edit_row"><option value="select" selected>select</option><option value="admin">Admin</option><option value="manager">Manager</option><option value="Supervisor">Supervisor</option></select>
   </div>
   <div class="col-sm-2">
     <div id="email_!template!"></div>
     <input type="text" id="email_edit_!template!" class="edit_row" name="email" size="15" value="$user['email']"/>
   </div>
   <div class="col-sm-2">
-    <div id="admin_!template!"></div>
-    <input type="checkbox" id="admin_edit_!template!" class="edit_row" name="isAdmin" value="isAdmin"/>
-  </div>
-  <div class="col-sm-2">
-    <div id="numbers_!template!"></div>
-    <input type="checkbox" id="numbers_edit_!template!" class="edit_row" name="isAdmin" value="isAdmin"/>
+    <div id="phone_!template!"></div>
+    <input type="checkbox" id="phone_edit_!template!" class="edit_row" name="phone" size="15" value="$user['phone']"/>
   </div>
   <div class="col-sm-2">
     <div id="buttons_!template!"><button class="edit_button" id="edit_!template!">Edit</button><button class="delete_button" id="delete_!template!">Delete</button></div>
