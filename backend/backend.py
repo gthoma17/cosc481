@@ -317,7 +317,10 @@ def addThingByJobReference(job, jobId, table, dictName):
 	job[dictName].append(things)
 	return job
 def addThingById(job, table, dictName, thingId, what):
-	thing = list(db.where(table, id=thingId, what=what))[0]
+	try:
+		thing = list(db.where(table, id=thingId, what=what))[0]
+	except:
+		thing = None
 	job[dictName] = thing
 	return job
 
