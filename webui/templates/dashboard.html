@@ -20,24 +20,56 @@ $def with (title, text, adminLink)
     }
   );
 </script>
-<title>Jobn - Let's get Jobn!</title>
+<title>Jobn - Dashboard</title>
 <link rel="stylesheet" type="text/css" href="/static/style.css">
 <link rel="icon" type="image/png" href="/static/favicon.png">
 </head>
 <body> 
-<div class="container">
-	<div class="row">
-    	<div class="col-sm-2"><img src="/static/logo_small.png" class="img-responsive logo" alt="Jobn"></div>
-    	<div class="col-sm-8"><h1 style="text-align:center;">::Dashboard::</h1></div>
-		<div id="accountSwitcher" class="col-sm-2 center-block"><div id="navbar" style="vertical-align:middle;width:100%;" class="center-block"></div></div>
+
+<!-- navigation bar -->
+<div class="navbar navbar-default">
+	
+	<div class="container">
+		
+		<div class="navbar-header">
+		
+			
+			<a href="http://gat.im/dashboard"><img id="logo" alt="Jobn" src="/static/logo_small.png"  /></a>
+			
+			<a class="navbar-brand">Dashboard</a>
+			
+
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+				
+				<span class="sr-only">Toggle navigation</span>
+				
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				
+			</button>
+				
+		</div>
+		
+		<div class="collapse navbar-collapse">
+		
+			<ul class="nav navbar-nav">
+				
+				<li class="pages"><a href="">Reports</a></li>
+				<li class="pages"><a href="/admin">Admin Panel</a></li>
+				<li class="pages"><a href="/jobs">Jobs</a></li>
+				<li class="pages"><div id="accountSwitcher"><div id="navbar" style="vertical-align:middle;width:100%;" class="center-block"></div></div></li>
+				
+				
+			</ul>
+			
+		</div>
+			
 	</div>
+	
 </div>
-<div class="container">
-	<div class="row">
-		<div class="col-sm-2"><h3 style="text-align:center;vertical-align:middle;">$:adminLink</h3></div>
-    	<div class="col-sm-2"><h3 style="text-align:center;vertical-align:middle;"><a href="jobs" class="button">View Jobs</a></h3></div>
-	</div>
-</div>
+
 
 <div class="container">
 	<div class="row">
