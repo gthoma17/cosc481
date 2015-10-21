@@ -24,7 +24,8 @@ urls = (
 	"/job", "newJob",
 	"/job/(.*)", "job",
 	"/budgetItem", "budgetItem",
-	"/note", "note"
+	"/note", "note",
+	"/actionItem/(.*)", "actionItem",
 	)
 
 app = web.application(urls, globals())
@@ -45,20 +46,43 @@ class note:
 			return "403 Forbidden"
 		if db.where('jobs', name=passedData['name']):
 			return "403 Forbidden"
+		if "assigned_user" in passedData:
+			db.update(tbl, where="id = "+str(passedData['note_id']), 
+					assigned_user=passedData['assigned_user']
+				)
+		if "completion_user" in passedData:
+			db.update(tbl, where="id = "+str(passedData['note_id']), 
+					completion_user=passedData['arrival_time']
+					completion_time="CURRENT_TIMESTAMP"
+				)
+		return "202 Note Updated"
+
+class note:
+	def GET(self): 
+		return "Shhhh... the database is sleeping."
+	def POST(self):
+		#create a new note
+		passedData = dict(web.input())
+		try:
+			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
+		except IndexError:
+			return "403 Forbidden"
+		if db.where('jobs', name=passedData['name']):
+			return "403 Forbidden"
 		tbl = passedData['tbl']
-		job = db.insert(tbl, 
+		note = db.insert(tbl, 
 					job_id=passedData['job_id'],
 					author_id=passedData['author_id'],
 					contents=passedData['contents']
 				)
 		if tbl == "dailyReports":
-			db.update(tbl, where="id = "+str(job), 
+			db.update(tbl, where="id = "+str(note), 
 					arrival_time=passedData['arrival_time']
 					departure_time=passedData['departure_time']
 					people_on_site=passedData['people_on_site']
 				)
 		if tbl == "actionItems" and "assigned_user" in passedData:
-			db.update(tbl, where="id = "+str(job), 
+			db.update(tbl, where="id = "+str(note), 
 					assigned_user=passedData['assigned_user']
 				)
 		return "201 Note Created"
