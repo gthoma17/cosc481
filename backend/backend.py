@@ -24,6 +24,7 @@ urls = (
 	"/job", "newJob",
 	"/job/(.*)", "job",
 	"/budgetItem", "budgetItem",
+	"/note", "note"
 	)
 
 app = web.application(urls, globals())
@@ -31,6 +32,36 @@ db = web.database(dbn='mysql', host=config.get("Database", "host"), port=int(con
 def set_headers():
     web.header('Access-Control-Allow-Origin',      '*')
 app.add_processor(web.loadhook(set_headers))
+
+class note:
+	def GET(self): 
+		return "Shhhh... the database is sleeping."
+	def POST(self):
+		#create a new note
+		passedData = dict(web.input())
+		try:
+			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
+		except IndexError:
+			return "403 Forbidden"
+		if db.where('jobs', name=passedData['name']):
+			return "403 Forbidden"
+		tbl = passedData['tbl']
+		job = db.insert(tbl, 
+					job_id=passedData['job_id'],
+					author_id=passedData['author_id'],
+					contents=passedData['contents']
+				)
+		if tbl == "dailyReports":
+			db.update(tbl, where="id = "+str(job), 
+					arrival_time=passedData['arrival_time']
+					departure_time=passedData['departure_time']
+					people_on_site=passedData['people_on_site']
+				)
+		if tbl == "actionItems" and "assigned_user" in passedData:
+			db.update(tbl, where="id = "+str(job), 
+					assigned_user=passedData['assigned_user']
+				)
+		return "201 Note Created"
 
 class index:
 	def GET(self): 
