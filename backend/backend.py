@@ -71,7 +71,7 @@ class note:
 			return "403 Forbidden"
 		tbl = passedData['tbl']
 		note = db.insert(tbl, 
-					job_id=passedData['job_id'],
+					job_id=reqUser['id'],
 					author_id=passedData['author_id'],
 					contents=passedData['contents']
 				)
