@@ -179,7 +179,7 @@ def createNotesTbl(cursor):
 	  id INTEGER  NOT NULL AUTO_INCREMENT,
 	  job_id INTEGER,
 	  author_id INTEGER,
-	  entry_time TIMESTAMP,
+	  entry_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	  contents TEXT(65535),
 	  PRIMARY KEY(id)
 	)
@@ -204,7 +204,7 @@ def createReportsTbl(cursor):
 	  id INTEGER  NOT NULL AUTO_INCREMENT,
 	  job_id INTEGER,
 	  author_id INTEGER,
-	  entry_time TIMESTAMP,
+	  entry_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	  arrival_time TIMESTAMP,
 	  departure_time TIMESTAMP,
 	  contents TEXT(65535),
@@ -219,7 +219,7 @@ def createActionItemsTbl(cursor):
 	  id INTEGER  NOT NULL AUTO_INCREMENT,
 	  job_id INTEGER,
 	  author_id INTEGER,
-	  entry_time TIMESTAMP,
+	  entry_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	  completion_time TIMESTAMP,
 	  completion_user INTEGER,
 	  assigned_user INTEGER,
