@@ -71,8 +71,8 @@ class note:
 			return "403 Forbidden"
 		tbl = passedData['tbl']
 		note = db.insert(tbl, 
-					job_id=reqUser['id'],
-					author_id=passedData['author_id'],
+					job_id=passedData['job_id'],
+					author_id=reqUser['id'],
 					contents=passedData['contents']
 				)
 		if tbl == "dailyReports":
