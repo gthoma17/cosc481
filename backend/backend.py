@@ -52,7 +52,7 @@ class note:
 				)
 		if "completion_user" in passedData:
 			db.update(tbl, where="id = "+str(passedData['note_id']), 
-					completion_user=passedData['arrival_time']
+					completion_user=passedData['arrival_time'],
 					completion_time="CURRENT_TIMESTAMP"
 				)
 		return "202 Note Updated"
@@ -77,8 +77,8 @@ class note:
 				)
 		if tbl == "dailyReports":
 			db.update(tbl, where="id = "+str(note), 
-					arrival_time=passedData['arrival_time']
-					departure_time=passedData['departure_time']
+					arrival_time=passedData['arrival_time'],
+					departure_time=passedData['departure_time'],
 					people_on_site=passedData['people_on_site']
 				)
 		if tbl == "actionItems" and "assigned_user" in passedData:
