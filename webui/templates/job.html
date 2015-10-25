@@ -129,5 +129,45 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
     </div>
   </div>
 </div>
+
+
+<div id="notes_container">
+  <!-- Notes Form Content -->
+        <div id="notes">
+          <h1 class="notesHeader">Notes</h1>
+          <form id="notesForm">
+            Daily Report<input type="radio" name="formOptions" value="dailyReports" />
+            Action Item<input type="radio" name="formOptions" value="actionItem" />
+            <textarea class="message"></textarea>
+            <input type='submit' value='Submit Note' color='black'/>
+          </form>
+        </div>
+
+  <!-- Daily Report Form Content -->
+        <div id="dailyReport">
+          <h1 class="dailyHeader">Daily Reports</h1>
+          <form id="dailyForm">
+            Notes<input type="radio" name="formOptions" value="notes" />
+            Action Item<input type="radio" name="formOptions" value="actionItem" /></br>
+            Arrival<input type="time" size="30" name="arrival" /></br>
+            Departure<input type="time" size="30" name="arrival" /></br>
+            People on site:</br>
+            <textarea class="peopleOnsite"></textarea></br>
+            <textarea class="message"></textarea>
+            <input type='submit' value='Submit Note' color='black'/>
+          </form>
+
+        </div>
+    <!-- Action Item Form Content -->
+        <div id="actionItem">
+          <h1 class="actionHeader">Action Items</h1>
+          <form id="actionForm">
+            Daily Report<input type="radio" name="formOptions" value="dailyReports" />
+            Notes<input type="radio" name="formOptions" value="notes" />
+            <textarea class="message"></textarea>
+            <input type='submit' value='Submit Note' color='black'/>
+          </form>
+        </div>
+</div>
 </body>
 </html>
