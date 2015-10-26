@@ -109,8 +109,6 @@ body {
     background-color: lavender;
 }
 
-/*notes*/
-
 #notes_container{
     width: 34%;
     height: 350px;
@@ -132,24 +130,14 @@ textarea{
     background-color: none;
 }   
 
-textarea.peopleOnsite{
+textarea #peopleOnsite{
     height: 75px;
     margin: 15px;
 }
 
-#notes{
-    background-color: #33CCFF;
-    border: 2px #33CCFF solid;
-}
 
-#dailyReport{
+#note{
     background-color: #ff6633;
     border: 2px #ff6633 solid;
     height: 500px;
 }
-
-#acitonItem{
-    background-color: green;
-    border: 2px green solid;
-}
-/*end of notes*/

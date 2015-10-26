@@ -52,6 +52,7 @@ $(document).ready(function(){
         $("#type_edit_".concat(itemId)).val($("#type_".concat(itemId)).text());
         $("#cost_edit_".concat(itemId)).val($("#cost_".concat(itemId)).text());
     });
+
 });
 function flashRedBackground (div) {
     bg = div.css("background");
@@ -154,4 +155,66 @@ function updateBudgetItemRow (itemId) {
 }
 function replaceAllSubsting (str, oldSubStr, newSubStr) {
     return str.split(oldSubStr).join(newSubStr);
+}
+
+function notesAjax(){
+    messageDivId = "#message";
+    typeDivId = "#note";
+    arrivalDivId = "#arrival";
+    assigneeDivId = "#assignee";
+    departureDivId = "#departure";
+    peopleOnsiteDivId = "#peopleOnSite";
+    
+    alert("notesAjax called still works");
+    //validate the form
+    if ($(messageDivId).val() != "") {
+        postData = {}
+        postData.job_id = $("#jobId").text()
+        postData.apiKey = $("#apiKey").text()
+        postData.tbl = $(typeDivId).val()
+        postData.content = $(messageDivId).val()
+        postData.arrival_time = $(arrivalDivId).val()
+        postData.departure_time = $(departureDivId).val()
+        postData.people_on_site = $(properlyeopleOnsiteDivId).val()
+    }
+    if($(messageDivId).val() != ""){
+        $.ajax({
+            url : "/forward/note",
+            dataType:"text",
+            method:"POST",
+            data: JSON.stringify(postData),
+            success:function(response){
+              if (/^\d+$/.test(response)) {
+                console.log("Successful add")
+                //respone was only integers, adding was successful
+              } else{
+                console.log("Unsuccessful add")
+                console.log(data)
+                //response contained non numerics. Something bad happened
+                $("#apiResponse").html(data)
+              };
+              
+            }
+        }); 
+    }
+    else{
+        //didn't validate. Tell user where they goofed
+        if ($(".message").val() == "") {
+            flashRedBackground($(".message"));
+        };  
+        if($("#assignee") == ""){
+            flashRedBackground($("#assignee"))
+        };
+        if($("#arrival") == ""){
+            flashRedBackground($("#arrival"))
+        };
+        if($("#departure") == ""){
+            flashRedBackground($("#departure"))
+        };
+        if($("#peopleOnSite") == ""){
+            flashRedBackground($("#peopleOnSite"))
+        };
+    }; 
+           
+       
 }
