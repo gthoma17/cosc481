@@ -164,9 +164,9 @@ function notesAjax(){
     departureDivId = "#note-departureTime";
     peopleOnsiteDivId = "#note-PeopleOnSite";
     
-    alert("notesAjax called still works");
+    //alert("notesAjax called still works");
     //validate the form
-    if ($(messageDivId).val() != "") {
+    if ($("#note-message").val() != "") {
         postData = {}
         if($(note-type-actionItem).prop("checked") == true){
             postData.assignee = $(assigneeDivId).val();
@@ -180,11 +180,11 @@ function notesAjax(){
                 postData.tbl = "dailyReports"
             }
             else{
-                if($(arrivalDivId).val() == ""){
-                    flashRedBackground($(arrivalDivId))
+                if($("#note-arrivalTime").val() == ""){
+                    flashRedBackground($("#note-arrivalTime"))
                 };
-                if($(departureDivId).val() == ""){
-                    flashRedBackground($(departureDivId))
+                if($("#note-departureTime").val() == ""){
+                    flashRedBackground($("#note-departureTime"))
                 };
             }
         }
@@ -212,6 +212,9 @@ function notesAjax(){
               
             }
         }); 
+    }
+    else{
+        flashRedBackground($("#note-message"))
     }
     
 }  
