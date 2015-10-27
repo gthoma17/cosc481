@@ -34,7 +34,7 @@ def set_headers():
     web.header('Access-Control-Allow-Origin',      '*')
 app.add_processor(web.loadhook(set_headers))
 
-class note:
+class actionItem:
 	def GET(self): 
 		return "Shhhh... the database is sleeping."
 	def POST(self):
@@ -43,8 +43,6 @@ class note:
 		try:
 			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
 		except IndexError:
-			return "403 Forbidden"
-		if db.where('jobs', name=passedData['name']):
 			return "403 Forbidden"
 		if "assigned_user" in passedData:
 			db.update(tbl, where="id = "+str(passedData['note_id']), 
@@ -67,7 +65,7 @@ class note:
 			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
 		except IndexError:
 			return "403 Forbidden"
-		if db.where('jobs', name=passedData['name']):
+		if not db.where('jobs', id=passedData['job_id']):
 			return "403 Forbidden"
 		tbl = passedData['tbl']
 		note = db.insert(tbl, 
@@ -76,15 +74,22 @@ class note:
 					contents=passedData['contents']
 				)
 		if tbl == "dailyReports":
+			date = datetime.datetime.now().strftime("%d/%m/%Y")
+			arrivalTime = datetime.datetime.strptime(passedData['arrival_time']+" "+date, "%H:%M %d/%m/%Y")
+			departureTime = datetime.datetime.strptime(passedData['departure_time']+" "+date, "%H:%M %d/%m/%Y")
 			db.update(tbl, where="id = "+str(note), 
-					arrival_time=passedData['arrival_time'],
-					departure_time=passedData['departure_time'],
+					arrival_time=arrivalTime.isoformat(),
+					departure_time=departureTime.isoformat(),
 					people_on_site=passedData['people_on_site']
 				)
 		if tbl == "actionItems" and "assigned_user" in passedData:
-			db.update(tbl, where="id = "+str(note), 
-					assigned_user=passedData['assigned_user']
+			try:
+				assignedUser = db.where('jobAppUsers', name=passedData['assigned_user'])[0]
+				db.update(tbl, where="id = "+str(note), 
+					assigned_user=assignedUser['id']
 				)
+			except:
+				pass
 		return "201 Note Created"
 
 class index:
@@ -148,7 +153,7 @@ class newJob:
 			db.update('jobs', where="id = "+str(job), date_closed=passedData['date_closed'])
 		if 'description' in passedData:
 			db.update('jobs', where="id = "+str(job), description=passedData['description'])
-		 return "201 Job Created"
+		return "201 Job Created"
 class newUser:
 	def GET(self): 
 		return "Shhhh... the database is sleeping."
@@ -373,10 +378,9 @@ def buildJob(jobId, isPriveleged):
 		theJob = addThingByJobReference(job, jobId, thing[0], thing[1])
 	for thing in idThings:
 		theJob = addThingById(job, thing[0], thing[1], thing[2], thing[3])
+	#sort the list of notes
+	job['notes'] = sorted(job['notes'], key=lambda k: k['entry_time'], reverse=True) 
 	job = makeDumpable(job)
-	print "*"*50
-	print job
-	print "*"*50
 	return json.dumps(job)
 def makeDumpable(inDict):
 	for item in inDict:
@@ -389,9 +393,21 @@ def addThingByJobReference(job, jobId, table, dictName):
 		job[dictName] = []
 	things = list(db.where(table, job_id=jobId))
 	for thing in things:
+		if 'author_id' in thing:
+			thing['author'] = list(db.where('jobAppUsers', id=thing['author_id']))[0]
+		if 'completion_user' in thing:
+			try:
+				thing['completion_user'] = list(db.where('jobAppUsers', id=thing['completion_user']))[0]
+			except:
+				pass
+		if 'assigned_user' in thing:
+			try:
+				thing['assigned_user'] = list(db.where('jobAppUsers', id=thing['assigned_user']))[0]
+			except:
+				pass
 		thing['tbl'] = table
 		thing = makeDumpable(thing)
-	job[dictName].append(things)
+	job[dictName].extend(things)
 	return job
 def addThingById(job, table, dictName, thingId, what):
 	try:

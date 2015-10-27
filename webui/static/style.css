@@ -119,25 +119,36 @@ body {
     border-radius: 25px;
 }
 
-
-
-textarea{
-    width: 85%;
-    height: 150px;
-    margin: 20px;
-    border-radius: 15px;
-    text-indent: 10px;
-    background-color: none;
-}   
-
-textarea #peopleOnsite{
-    height: 75px;
-    margin: 15px;
-}
-
-
 #note{
     background-color: #ff6633;
     border: 2px #ff6633 solid;
     height: 500px;
+}
+.note-card {
+    background-color: aliceblue;
+    border-width: .15rem;
+}
+.note-card > .card-header  {
+    padding: .0125rem;
+    margin-bottom: 0rem;
+}
+.note-card > .card-header > .card-title {
+    padding: .0125rem;
+    margin-bottom: 0rem;
+}
+.note-card > .card-block {
+    padding: .0125rem;
+    margin-bottom: 0rem;
+}.note-card > .card-block > p {
+    padding: .0125rem;
+    margin-left: .1rem;
+    margin-bottom: 0rem;
+}
+.note-card > .card-block > hr {
+    margin-top: .1rem;
+    margin-bottom: .1rem;
+}
+.note-card > .card-footer {
+    padding: .0125rem;
+    margin-bottom: 0rem;
 }

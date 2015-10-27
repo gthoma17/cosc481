@@ -1,6 +1,9 @@
 $(document).ready(function(){
+    $(".daily-report-field").hide()
+    $(".action-item-field").hide()
     $("#addItemForm").hide();
     $(".edit_row").hide();
+    $(".add-note-card").removeClass("card-warning card-danger").addClass("card-info");
     $("#cancelBudgetAdd").click(function(){
         $("#name").val("");
         $("#type").val("select");
@@ -61,6 +64,21 @@ function flashRedBackground (div) {
         div.css("background", bg);
     }, 2000);
 }
+function selectedNote(){
+    $(".daily-report-field").hide()
+    $(".action-item-field").hide()
+    $(".add-note-card").removeClass("card-warning card-danger").addClass("card-info");
+}
+function selectedDailyReport(){
+    $(".daily-report-field").show()
+    $(".action-item-field").hide()
+    $(".add-note-card").removeClass("card-info card-danger").addClass("card-warning");
+}
+function selectedActionItem(){
+    $(".daily-report-field").hide()
+    $(".action-item-field").show()
+    $(".add-note-card").removeClass("card-info card-warning").addClass("card-danger");
+}
 function budgetItemAjax(divLLQ){
     nameDivId = "#name";
     typeDivId = "#type";
@@ -84,7 +102,7 @@ function budgetItemAjax(divLLQ){
             method:"POST",
             data: JSON.stringify(postData),
             success:function(response){
-              if (/^\d+$/.test(response)) {
+              if (apiResponseIsGood(response)) {
                 console.log("Successful add")
                 //respone was only integers, adding was successful
                 if (divLLQ != null){
@@ -156,7 +174,12 @@ function updateBudgetItemRow (itemId) {
 function replaceAllSubsting (str, oldSubStr, newSubStr) {
     return str.split(oldSubStr).join(newSubStr);
 }
-
+function apiResponseIsGood(response){
+    pattStr = "^2\\d\\d.*"
+    var pattern = new RegExp(pattStr)
+    result = pattern.test(response)
+    return result
+}
 function notesAjax(){
     messageDivId = "#note-message";
     assigneeDivId = "#note-assignee";
@@ -166,33 +189,31 @@ function notesAjax(){
     
     //alert("notesAjax called still works");
     //validate the form
-    if ($("#note-message").val() != "") {
+    if (($("#note-type-dailyReport").prop("checked") == false &&
+            ($(messageDivId).val() != "")) ||
+        ($("#note-type-dailyReport").prop("checked") == true &&
+            ($(messageDivId).val() != "") &&
+            ($(arrivalDivId).val() != "") &&
+            ($(departureDivId).val() != ""))
+        ) {
         postData = {}
-        if($(note-type-actionItem).prop("checked") == true){
+        if($("#note-type-actionItem").prop("checked") == true){
             postData.assignee = $(assigneeDivId).val();
             postData.tbl = "actionItems"
         }
-        else if($(note-type-dailyReport).prop("checked") == true){
+        else if($("#note-type-dailyReport").prop("checked") == true){
             if($(arrivalDivId).val() != "" && $(departureDivId).val() != ""){
                 postData.arrival_time = $(arrivalDivId).val()
                 postData.departure_time = $(departureDivId).val()
                 postData.people_on_site = $(peopleOnsiteDivId).val()
                 postData.tbl = "dailyReports"
             }
-            else{
-                if($("#note-arrivalTime").val() == ""){
-                    flashRedBackground($("#note-arrivalTime"))
-                };
-                if($("#note-departureTime").val() == ""){
-                    flashRedBackground($("#note-departureTime"))
-                };
-            }
         }
         else{
             postData.tbl = "notes"
         }
         postData.job_id = $("#jobId").text()
-        postData.content = $(messageDivId).val()
+        postData.contents = $(messageDivId).val()
 
         $.ajax({
             url : "/forward/note",
@@ -200,21 +221,31 @@ function notesAjax(){
             method:"POST",
             data: JSON.stringify(postData),
             success:function(response){
-              if (/^\d+$/.test(response)) {
+              if (apiResponseIsGood(response)) {
                 console.log("Successful add")
-                //respone was only integers, adding was successful
+                console.log(JSON.stringify(postData))
+                console.log(response)
               } else{
                 console.log("Unsuccessful add")
-                console.log(data)
-                //response contained non numerics. Something bad happened
-                $("#apiResponse").html(data)
+                console.log(JSON.stringify(postData))
+                console.log(response)
+                $("#apiResponse").html(response)
               };
               
             }
         }); 
     }
     else{
-        flashRedBackground($("#note-message"))
+        console.log("Note didn't validate")
+        if($("#note-arrivalTime").val() == ""){
+            flashRedBackground($("#note-arrivalTime"))
+        };
+        if($("#note-departureTime").val() == ""){
+            flashRedBackground($("#note-departureTime"))
+        };
+        if($("#note-message").val() == ""){
+            flashRedBackground($("#note-message"))
+        };
     }
     
 }  
