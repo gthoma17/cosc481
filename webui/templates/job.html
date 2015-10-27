@@ -26,7 +26,36 @@ $def with (job, user, apiUrl)
 <link rel="stylesheet" type="text/css" href="/static/style.css">
 <link rel="icon" type="image/png" href="/static/favicon.png">
 <title>Jobn - $job['name']</title>
-
+<style type="text/css">
+.note-card {
+    background-color: aliceblue;
+    border-width: .15rem;
+}
+.note-card > .card-header  {
+	padding: .0125rem;
+    margin-bottom: 0rem;
+}
+.note-card > .card-header > .card-title {
+	padding: .0125rem;
+	margin-bottom: 0rem;
+}
+.note-card > .card-block {
+    padding: .0125rem;
+    margin-bottom: 0rem;
+}.note-card > .card-block > p {
+    padding: .0125rem;
+    margin-left: .1rem;
+    margin-bottom: 0rem;
+}
+.note-card > .card-block > hr {
+    margin-top: .1rem;
+    margin-bottom: .1rem;
+}
+.note-card > .card-footer {
+    padding: .0125rem;
+    margin-bottom: 0rem;
+}
+</style>
 </head>
 
 <body>
@@ -104,7 +133,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
           <div class="col-sm-3"><strong>Cost</strong></div>
           <div class="col-sm-3">&nbsp;</div>
         </div>
-        $for item in job['budget'][0]:
+        $for item in job['budget']:
           <div class="row" id="item_$item['id']">
             <div class="col-sm-3">
               <div id="name_$item['id']">$item['name']</div>
@@ -163,73 +192,99 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
   </div>
 </div>
 
+<div class="container">
+	<div class="col-sm-4">
+		<div class="card-group">
+			<div class="card add-note-card text-center">
+				<div class="card-header">
+					<h5 class="card-title">Add a Note</h5>
+				</div>
+				<div class="card-block">
+					<p>
+						Note Type: <br>
+						<input type="radio" id="note-type-note" name="note-type" value="note" onclick="selectedNote()" checked> Note
+						<input type="radio" id="note-type-dailyReport" name="note-type" onclick="selectedDailyReport()" value="dailyReport"> Daily Report
+						<input type="radio" id="note-type-actionItem" name="note-type" onclick="selectedActionItem()" value="actionItem"> Action Item
+					</p>
+					<p class="daily-report-field">
+						Arrival Time:<br>
+						<input id="note-arrivalTime" type="time"> <br>
+						Departure Time:<br> 
+						<input id="note-departureTime" type="time">
+					</p>
+					<p class="daily-report-field">
+						People On Site: <br>
+						<textarea id="note-PeopleOnSite"></textarea>
+					</p>
+					<p>
+						Message: <br>
+						<textarea id="note-message"></textarea>
+					</p>
+					<p class="action-item-field">
+						Assignee: <br>
+						<input id="note-assignee" type="text">
+					</p>
+				</div>
+				<div class="card-footer">
+					<button id="submitNote" onclick="notesAjax();">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-6">
+		<div class="container">
+			<div class="card-group note-card-group"> 
+				$for note in job['notes']:
+					$if note['tbl'] == 'dailyReports':
+						$ type = "Daily Report"
+						$ cardType = "card-warning"
+					$if note['tbl'] == 'actionItems':
+						$ type = "Action Item"
+						$ cardType = "card-danger"
+					$if note['tbl'] == 'notes':
+						$ type = "Note"
+						$ cardType = "card-info"
+					<div class="col-sm-12">
+					<div class="card $cardType note-card text-center">
+						<div class="card-header">
+							<h5 class="card-title">$type</h5>
+						</div>
+						<div class="card-block">
+							<p class="card-text">$note['contents']</p>
+						</div>
+						$if note['tbl'] == 'dailyReports':
+							<div class="card-block">
+								<hr>
+								<p class="card-text"><b>Arrival Time:</b> $note['arrival_time']</p>
+								<p class="card-text"><b>Departure Time:</b> $note['departure_time']</p>
+								<hr>
+								<p class="card-text"><b>People on Site:</b></p>
+								<p class="card-text">$note['people_on_site']</p>
+							</div>
+						$if note['tbl'] == 'actionItems':
+							<div class="card-block">
+								<hr>
+								$if note['completion_time']:
+									<p class="card-text">Completed by $note['completion_user']['name'] at $note['completion_time']</p>
+								$else:
+									<p class="card-text">Assigned User: 
+									$if note['assigned_user']:
+										$note['assigned_user']
+									$else:
+										<button>Add one</button><br> (not implemented)
+									</p>
+									<hr>
+									<p class="card-text"><button>Complete</button><br>(not implemented)</p>
+							</div>
+						<div class="card-footer text-muted small">
+							Created by $note['author']['name'] at $note['entry_time']
+						</div>
+					</div><br>				
+					</div>
+		</div>
+	</div>
+</div>
 
-<div class="card-group">
-<div class="card">
-	<div class="card-block">
-		<div class="container">
-			<div class="col-sm-3">
-				Note Type
-			</div>
-			<div class="col-sm-9">
-				<input type="radio" id="note-type-note" name="note-type" value="note" checked> Note
-				<input type="radio" id="note-type-dailyReport" name="note-type" value="dailyReport"> Daily Report
-				<input type="radio" id="note-type-actionItem" name="note-type" value="actionItem"> Action Item
-			</div>
-		</div>
-	</div>
-	<div class="card-block">
-		<div class="container">
-			<div class="col-sm-6">
-				Arrival Time
-				</br>
-				<input id="note-arrivalTime" type="time">
-			</div>
-			<div class="col-sm-6">
-				Departure Time
-				</br>
-				<input id="note-departureTime" type="time">
-			</div>
-		</div
-	</div>
-	<div class="card-block">
-		<div class="container">
-			<div class="col-sm-3">
-				People On Site
-			</div>
-			<div class="col-sm-9">
-				<textarea id="note-PeopleOnSite"></textarea>
-			</div>
-		</div>
-	</div>
-	<div class="card-block">
-		<div class="container">
-			<div class="col-sm-3">
-				Message
-			</div>
-			<div class="col-sm-9">
-				<textarea id="note-message"></textarea>
-			</div>
-		</div>
-	</div>
-	<div class="card-block">
-				<div class="container">
-			<div class="col-sm-3">
-				Assignee
-			</div>
-			<div class="col-sm-9">
-				<input id="note-assignee" type="text">
-			</div>
-		</div>
-	</div>
-	<div class="card-block">
-		<div class="container">
-			<div class="col-sm-12">
-				<button id="submitNote" onclick="notesAjax();">Submit</button>
-			</div>
-		</div>
-	</div>
-</div>
-</div>
+
 </body>
 </html>
