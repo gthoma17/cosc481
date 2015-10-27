@@ -148,7 +148,7 @@ class newJob:
 			db.update('jobs', where="id = "+str(job), date_closed=passedData['date_closed'])
 		if 'description' in passedData:
 			db.update('jobs', where="id = "+str(job), description=passedData['description'])
-		 "201 Job Created"
+		 return "201 Job Created"
 class newUser:
 	def GET(self): 
 		return "Shhhh... the database is sleeping."
