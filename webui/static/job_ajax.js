@@ -158,26 +158,42 @@ function replaceAllSubsting (str, oldSubStr, newSubStr) {
 }
 
 function notesAjax(){
-    messageDivId = "#message";
-    typeDivId = "#note";
-    arrivalDivId = "#arrival";
-    assigneeDivId = "#assignee";
-    departureDivId = "#departure";
-    peopleOnsiteDivId = "#peopleOnSite";
+    messageDivId = "#note-message";
+    assigneeDivId = "#note-assignee";
+    arrivalDivId = "#note-arrivalTime";
+    departureDivId = "#note-departureTime";
+    peopleOnsiteDivId = "#note-PeopleOnSite";
     
     alert("notesAjax called still works");
     //validate the form
     if ($(messageDivId).val() != "") {
         postData = {}
+        if($(note-type-actionItem).prop("checked") == true){
+            postData.assignee = $(assigneeDivId).val();
+            postData.tbl = "actionItems"
+        }
+        else if($(note-type-dailyReport).prop("checked") == true){
+            if($(arrivalDivId).val() != "" && $(departureDivId).val() != ""){
+                postData.arrival_time = $(arrivalDivId).val()
+                postData.departure_time = $(departureDivId).val()
+                postData.people_on_site = $(peopleOnsiteDivId).val()
+                postData.tbl = "dailyReports"
+            }
+            else{
+                if($(arrivalDivId).val() == ""){
+                    flashRedBackground($(arrivalDivId))
+                };
+                if($(departureDivId).val() == ""){
+                    flashRedBackground($(departureDivId))
+                };
+            }
+        }
+        else{
+            postData.tbl = "notes"
+        }
         postData.job_id = $("#jobId").text()
-        postData.apiKey = $("#apiKey").text()
-        postData.tbl = $(typeDivId).val()
         postData.content = $(messageDivId).val()
-        postData.arrival_time = $(arrivalDivId).val()
-        postData.departure_time = $(departureDivId).val()
-        postData.people_on_site = $(properlyeopleOnsiteDivId).val()
-    }
-    if($(messageDivId).val() != ""){
+
         $.ajax({
             url : "/forward/note",
             dataType:"text",
@@ -197,24 +213,5 @@ function notesAjax(){
             }
         }); 
     }
-    else{
-        //didn't validate. Tell user where they goofed
-        if ($(".message").val() == "") {
-            flashRedBackground($(".message"));
-        };  
-        if($("#assignee") == ""){
-            flashRedBackground($("#assignee"))
-        };
-        if($("#arrival") == ""){
-            flashRedBackground($("#arrival"))
-        };
-        if($("#departure") == ""){
-            flashRedBackground($("#departure"))
-        };
-        if($("#peopleOnSite") == ""){
-            flashRedBackground($("#peopleOnSite"))
-        };
-    }; 
-           
-       
-}
+    
+}  
