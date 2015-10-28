@@ -3,6 +3,28 @@ $(document).ready(function(){
     $(".action-item-field").hide()
     $(".addItemForm").hide();
     $(".edit_row").hide();
+    $("#show-budget").hide();
+    $("#show-budget").click(function(){
+        $("#show-budget").hide();
+        $("#hide-budget").show();
+        $("#budget-table").show();   
+    });
+    $("#hide-budget").click(function(){
+        $("#hide-budget").hide();
+        $("#show-budget").show();
+        $("#budget-table").hide();   
+    });
+    $("#show-notes").hide();
+    $("#show-notes").click(function(){
+        $("#show-notes").hide();
+        $("#hide-notes").show();
+        $("#notes-container").show();   
+    });
+    $("#hide-notes").click(function(){
+        $("#hide-notes").hide();
+        $("#show-notes").show();
+        $("#notes-container").hide();   
+    });
     $(".add-note-card").removeClass("card-warning card-danger").addClass("card-info");
     $("#cancelBudgetAdd").click(function(){
         $("#name").val("");

@@ -146,12 +146,13 @@ $def with (job, user, apiUrl)
 
 
 $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper() == "MANAGER":
+	<hr>
 	<!-- Begin Budget Stuff -->
 		<div id="apiResponse"></div>
+		<div class="text-center"><h3>Budget <small><a href="#" id="hide-budget">[-]</a><a href="#" id="show-budget">[+]</a></div></small></h3>
 		<div class="table-responsive">
 		<table id="budget-table" class="table table-striped table-condensed table-bordered text-center">
   		<thead>
-  			<tr><th colspan="4" class="text-center"><h3>Budget</h3></th></tr>
   			<tr>
   				<th class="text-center">Name</th>
   				<th class="text-center">Type</th>
@@ -198,11 +199,13 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 		</table>
   		</div>
   	<!-- End Budget Stuff -->
-$else:
-	<div>Holla</div>
+
+	
 
 <!-- Begin Note Stuff -->
-	<div class="container">
+	<hr>
+	<div class="text-center"><h3>Notes <small><a href="#" id="hide-notes">[-]</a><a href="#" id="show-notes">[+]</a></div></small></h3>
+	<div class="container" id="notes-container">
 		<div class="col-sm-4">
 			<div class="card-group">
 				<div class="card add-note-card text-center">
