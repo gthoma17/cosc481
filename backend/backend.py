@@ -188,7 +188,7 @@ class budgetItem:
 			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
 		except IndexError:
 			return "403 Forbidden"
-		if reqUser['canSeeNumbers']:
+		if reqUser['permissionLevel'].upper() == "ADMIN" or reqUser['permissionLevel'].upper() == "MANAGER":
 			#user is allowed to do this. 
 			#update if an identical budget item exists
 			existingItem = db.where('budgetItems', 

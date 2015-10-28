@@ -59,6 +59,30 @@ $def with (job, user, apiUrl)
 </head>
 
 <body>
+<div class="hidden" id="apiKey">$user['apiKey']</div>
+<div class="hidden" id="jobId">$job['id']</div>
+<table class="hidden">
+	<tbody id="budgetRowTemplate">
+		<tr>
+			<td>
+				<div id="name_!template!"></div>
+		  		<input type="text" class="edit_row" id="name_edit_!template!" name="name" size="10" />
+			</td>
+			<td>
+				<div id="type_!template!"></div>
+		  		<select id="type_edit_!template!" class="edit_row"><option value="select" selected>Type</option><option value="labor">Labor</option><option value="material">Material</option><option value="misc">Misc</option></select>
+			</td>
+			<td>
+				<div id="cost_!template!"></div>
+		  		<input type="text" id="cost_edit_!template!" class="edit_row" name="cost" size="5" />
+			</td>
+			<td>
+				<div id="buttons_!template!"><button class="edit_button" id="edit_!template!">Edit</button><button class="delete_button" id="delete_!template!">Delete</button></div>
+		 		<div id="buttons_edit_!template!" class="edit_row"><button class="save_button" id="save_!template!">Save</button><button class="cancel_button" id="cancel_!template!">Cancel</button></div>
+			</td>
+		</tr>
+	</tbody>
+</table>
 
 <!-- navigation bar -->
 <div class="navbar navbar-default">
@@ -102,188 +126,176 @@ $def with (job, user, apiUrl)
 	
 </div>
 
-<!-- Job information -->
-<div class="container">
-  <div class="row">
-    <div class="col-sm-12"><h4><a href="edit/job/$job['id']">(edit)</a></h4></div>
-  </div>
-  $if job['phase'] == "open":
-    $ color = "PaleGreen"
-  $else:
-    $ color = "PaleVioletRed"
-  $ job['location'] = job['street_address']+" "+job['city']+" "+job['state']+" "+job['zip']
-  <div class="row" style="background-color:$color;">
-    <div class="col-sm-2"><p style="padding:5px;">Location: <a href="http://maps.apple.com/?q=$job['location']">$job['location']</a></p></div>
-    <div class="col-sm-2"><p style="padding:5px;">Phase: $job['phase']</p></div>
-    <div class="col-sm-2"><p style="padding:5px;">Date Started: $job['date_started']</p></div>
-  </div>
-</div>
+<!-- Begin Job Information -->
+	<div class="container">
+	  <div class="row">
+	    <div class="col-sm-12"><h4><a href="edit/job/$job['id']">(edit)</a></h4></div>
+	  </div>
+	  $if job['phase'] == "open":
+	    $ color = "PaleGreen"
+	  $else:
+	    $ color = "PaleVioletRed"
+	  $ job['location'] = job['street_address']+" "+job['city']+" "+job['state']+" "+job['zip']
+	  <div class="row" style="background-color:$color;">
+	    <div class="col-sm-2"><p style="padding:5px;">Location: <a href="http://maps.apple.com/?q=$job['location']">$job['location']</a></p></div>
+	    <div class="col-sm-2"><p style="padding:5px;">Phase: $job['phase']</p></div>
+	    <div class="col-sm-2"><p style="padding:5px;">Date Started: $job['date_started']</p></div>
+	  </div>
+	</div>
+<!-- End Job Information -->
+
+
 $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper() == "MANAGER":
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-12"><h1 style="padding:5px;">Budget</h1></div>
-    </div>
-    <div class="row">
-      <div class="col-sm-12" id="apiResponse"></div>
-    </div>
-      $if 'budget' in job:
-        <div class="row">
-          <div class="col-sm-3"><strong>Name</strong></div>
-          <div class="col-sm-3"><strong>Type</strong></div>
-          <div class="col-sm-3"><strong>Cost</strong></div>
-          <div class="col-sm-3">&nbsp;</div>
-        </div>
-        $for item in job['budget']:
-          <div class="row" id="item_$item['id']">
-            <div class="col-sm-3">
-              <div id="name_$item['id']">$item['name']</div>
-              <input type="text" class="edit_row" id="name_edit_$item['id']" name="name" size="30" value="$item['name']"/>
-            </div>
-            <div class="col-sm-3">
-              <div id="type_$item['id']">$item['type']</div>
-              <select id="type_edit_$item['id']" class="edit_row"><option value="select" selected>Type</option><option value="labor">Labor</option><option value="material">Material</option><option value="misc">Misc</option></select>
-            </div>
-            <div class="col-sm-3">
-              <div id="cost_$item['id']">$item['cost']</div>
-              <input type="text" id="cost_edit_$item['id']" class="edit_row" name="cost" size="30" value="$item['cost']"/>
-            </div>
-            <div class="col-sm-3">
-              <div id="buttons_$item['id']"><button class="edit_button" id="edit_$item['id']">Edit</button><button class="delete_button" id="delete_$item['id']">Delete</button></div>
-             <div id="buttons_edit_$item['id']" class="edit_row"><button class="save_button" id="save_$item['id']">Save</button><button class="cancel_button" id="cancel_$item['id']">Cancel</button></div>
-            </div>
-          </div>
-      $else:
-        <div class="row">
-          <div class="col-sm-12">No budget items yet...</div>
-        </div>
-      <div id="addItemForm">
-          <div id="row">
-              <div class="col-sm-3"><input type="text" id="name" name="name" size="30" placeholder="Name"/></div>
-              <div class="col-sm-3"><select id="type"><option value="select" selected>Type</option><option value="labor">Labor</option><option value="material">Material</option><option value="misc">Misc</option></select></div>
-              <div class="col-sm-3"><input type="text" id="cost" name="cost" size="30" placeholder="Cost"/></div>
-              <div class="col-sm-3"><button id="budgetAdd">Add</button><button id="cancelBudgetAdd">Cancel</button></div>
-          </div>
-      </div>
-      <div id="row">
-          <button id="showBudgetAdd">Add a budget item</button>
-      </div>
-  </div>
+	<!-- Begin Budget Stuff -->
+		<div id="apiResponse"></div>
+		<div class="table-responsive">
+		<table id="budget-table" class="table table-striped table-condensed table-bordered text-center">
+  		<thead>
+  			<tr><th colspan="4" class="text-center"><h3>Budget</h3></th></tr>
+  			<tr>
+  				<th class="text-center">Name</th>
+  				<th class="text-center">Type</th>
+  				<th class="text-center">Cost</th>
+  				<th>&nbsp;</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+		$if 'budget' in job:
+			$for item in job['budget']:
+				<tr id="item_$item['id']">
+					<td>
+						<div id="name_$item['id']">$item['name']</div>
+    	          		<input type="text" class="edit_row" id="name_edit_$item['id']" name="name" size="10" value="$item['name']"/>
+					</td>
+					<td>
+						<div id="type_$item['id']">$item['type']</div>
+    	          		<select id="type_edit_$item['id']" class="edit_row"><option value="select" selected>Type</option><option value="labor">Labor</option><option value="material">Material</option><option value="misc">Misc</option></select>
+					</td>
+					<td>
+						<div id="cost_$item['id']">$item['cost']</div>
+    	          		<input type="text" id="cost_edit_$item['id']" class="edit_row" name="cost" size="5" value="$item['cost']"/>
+					</td>
+					<td>
+						<div id="buttons_$item['id']"><button class="edit_button" id="edit_$item['id']">Edit</button><button class="delete_button" id="delete_$item['id']">Delete</button></div>
+    	         		<div id="buttons_edit_$item['id']" class="edit_row"><button class="save_button" id="save_$item['id']">Save</button><button class="cancel_button" id="cancel_$item['id']">Cancel</button></div>
+					</td>
+				</tr>
+		$else:
+			<tr>
+				<td colspan="4">No budget items yet...</td>
+			</tr>
+		<tr>
+			
+		</tr>
+		<tr>
+			<td colspan="4" id="showBudgetAdd"><button>Add a budget item</button></td>
+			<td class="addItemForm"><input type="text" id="name" name="name" size="30" placeholder="Name"/></td>
+			<td class="addItemForm"><select  id="type"><option value="select" selected>Type</option><option value="labor">Labor</option><option value="material">Material</option><option value="misc">Misc</option></select></td>
+			<td class="addItemForm"><input type="text" id="cost" name="cost" size="30" placeholder="Cost"/></td>
+			<td class="addItemForm"><button  id="budgetAdd">Add</button><button id="cancelBudgetAdd">Cancel</button></td>
+		</tr>
+  		</tbody>
+		</table>
+  		</div>
+  	<!-- End Budget Stuff -->
+$else:
+	<div>Holla</div>
 
-<div class="hidden" id="apiKey">$user['apiKey']</div>
-<div class="hidden" id="jobId">$job['id']</div>
-<div class="hidden" id="budgetRowTemplate">
-  <div class="row" id="item_!template!">
-    <div class="col-sm-3">
-      <div id="name_!template!"></div>
-      <div id="name_edit_!template!" class="edit_row"></div>
-    </div>
-    <div class="col-sm-3">
-      <div id="type_!template!"></div>
-      <div id="type_edit_!template!" class="edit_row"></div>
-    </div>
-    <div class="col-sm-3">
-      <div id="cost_!template!"></div>
-      <div id="cost_edit_!template!" class="edit_row"></div>
-    </div>
-    <div class="col-sm-3">
-      <div id="buttons_!template!"><button class="edit_button" id="edit_!template!">Edit</button><button class="delete_button" id="delete_!template!">Delete</button></div>
-      <div id="buttons_edit_!template!" class="edit_row"><button class="save_button" id="save_!template!">Save</button><button class="cancel_button" id="cancel_!template!">Cancel</button></div>
-    </div>
-  </div>
-</div>
-
-<div class="container">
-	<div class="col-sm-4">
-		<div class="card-group">
-			<div class="card add-note-card text-center">
-				<div class="card-header">
-					<h5 class="card-title">Add a Note</h5>
-				</div>
-				<div class="card-block">
-					<p>
-						Note Type: <br>
-						<input type="radio" id="note-type-note" name="note-type" value="note" onclick="selectedNote()" checked> Note
-						<input type="radio" id="note-type-dailyReport" name="note-type" onclick="selectedDailyReport()" value="dailyReport"> Daily Report
-						<input type="radio" id="note-type-actionItem" name="note-type" onclick="selectedActionItem()" value="actionItem"> Action Item
-					</p>
-					<p class="daily-report-field">
-						Arrival Time:<br>
-						<input id="note-arrivalTime" type="time"> <br>
-						Departure Time:<br> 
-						<input id="note-departureTime" type="time">
-					</p>
-					<p class="daily-report-field">
-						People On Site: <br>
-						<textarea id="note-PeopleOnSite"></textarea>
-					</p>
-					<p>
-						Message: <br>
-						<textarea id="note-message"></textarea>
-					</p>
-					<p class="action-item-field">
-						Assignee: <br>
-						<input id="note-assignee" type="text">
-					</p>
-				</div>
-				<div class="card-footer">
-					<button id="submitNote" onclick="notesAjax();">Submit</button>
+<!-- Begin Note Stuff -->
+	<div class="container">
+		<div class="col-sm-4">
+			<div class="card-group">
+				<div class="card add-note-card text-center">
+					<div class="card-header">
+						<h5 class="card-title">Add a Note</h5>
+					</div>
+					<div class="card-block">
+						<p>
+							Note Type: <br>
+							<input type="radio" id="note-type-note" name="note-type" value="note" onclick="selectedNote()" checked> Note
+							<input type="radio" id="note-type-dailyReport" name="note-type" onclick="selectedDailyReport()" value="dailyReport"> Daily Report
+							<input type="radio" id="note-type-actionItem" name="note-type" onclick="selectedActionItem()" value="actionItem"> Action Item
+						</p>
+						<p class="daily-report-field">
+							Arrival Time:<br>
+							<input id="note-arrivalTime" type="time"> <br>
+							Departure Time:<br> 
+							<input id="note-departureTime" type="time">
+						</p>
+						<p class="daily-report-field">
+							People On Site: <br>
+							<textarea id="note-PeopleOnSite"></textarea>
+						</p>
+						<p>
+							Message: <br>
+							<textarea id="note-message"></textarea>
+						</p>
+						<p class="action-item-field">
+							Assignee: <br>
+							<input id="note-assignee" type="text">
+						</p>
+					</div>
+					<div class="card-footer">
+						<button id="submitNote" onclick="notesAjax();">Submit</button>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="col-sm-6">
-		<div class="container">
-			<div class="card-group note-card-group"> 
-				$for note in job['notes']:
-					$if note['tbl'] == 'dailyReports':
-						$ type = "Daily Report"
-						$ cardType = "card-warning"
-					$if note['tbl'] == 'actionItems':
-						$ type = "Action Item"
-						$ cardType = "card-danger"
-					$if note['tbl'] == 'notes':
-						$ type = "Note"
-						$ cardType = "card-info"
-					<div class="col-sm-12">
-					<div class="card $cardType note-card text-center">
-						<div class="card-header">
-							<h5 class="card-title">$type</h5>
-						</div>
-						<div class="card-block">
-							<p class="card-text">$note['contents']</p>
-						</div>
+		<div class="col-sm-6">
+			<div class="container">
+				<div class="card-group note-card-group"> 
+					$for note in job['notes']:
 						$if note['tbl'] == 'dailyReports':
-							<div class="card-block">
-								<hr>
-								<p class="card-text"><b>Arrival Time:</b> $note['arrival_time']</p>
-								<p class="card-text"><b>Departure Time:</b> $note['departure_time']</p>
-								<hr>
-								<p class="card-text"><b>People on Site:</b></p>
-								<p class="card-text">$note['people_on_site']</p>
-							</div>
+							$ type = "Daily Report"
+							$ cardType = "card-warning"
 						$if note['tbl'] == 'actionItems':
-							<div class="card-block">
-								<hr>
-								$if note['completion_time']:
-									<p class="card-text">Completed by $note['completion_user']['name'] at $note['completion_time']</p>
-								$else:
-									<p class="card-text">Assigned User: 
-									$if note['assigned_user']:
-										$note['assigned_user']
-									$else:
-										<button>Add one</button><br> (not implemented)
-									</p>
-									<hr>
-									<p class="card-text"><button>Complete</button><br>(not implemented)</p>
+							$ type = "Action Item"
+							$ cardType = "card-danger"
+						$if note['tbl'] == 'notes':
+							$ type = "Note"
+							$ cardType = "card-info"
+						<div class="col-xs-12 col-md-12">
+						<div class="card $cardType note-card text-center">
+							<div class="card-header">
+								<h5 class="card-title">$type</h5>
 							</div>
-						<div class="card-footer text-muted small">
-							Created by $note['author']['name'] at $note['entry_time']
+							<div class="card-block">
+								<p class="card-text">$note['contents']</p>
+							</div>
+							$if note['tbl'] == 'dailyReports':
+								<div class="card-block">
+									<hr>
+									<p class="card-text"><b>Arrival Time:</b> $note['arrival_time']</p>
+									<p class="card-text"><b>Departure Time:</b> $note['departure_time']</p>
+									<hr>
+									<p class="card-text"><b>People on Site:</b></p>
+									<p class="card-text">$note['people_on_site']</p>
+								</div>
+							$if note['tbl'] == 'actionItems':
+								<div class="card-block">
+									<hr>
+									$if note['completion_time']:
+										<p class="card-text">Completed by $note['completion_user']['name'] at $note['completion_time']</p>
+									$else:
+										<p class="card-text">Assigned User: 
+										$if note['assigned_user']:
+											$note['assigned_user']
+										$else:
+											<button>Add one</button><br> (not implemented)
+										</p>
+										<hr>
+										<p class="card-text"><button>Complete</button><br>(not implemented)</p>
+								</div>
+							<div class="card-footer text-muted small">
+								Created by $note['author']['name'] at $note['entry_time']
+							</div>
+						</div><br>				
 						</div>
-					</div><br>				
-					</div>
+			</div>
 		</div>
 	</div>
-</div>
+	</div>
+<!-- End Note Stuff -->
 
 
 </body>

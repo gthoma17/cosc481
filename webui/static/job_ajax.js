@@ -1,18 +1,18 @@
 $(document).ready(function(){
     $(".daily-report-field").hide()
     $(".action-item-field").hide()
-    $("#addItemForm").hide();
+    $(".addItemForm").hide();
     $(".edit_row").hide();
     $(".add-note-card").removeClass("card-warning card-danger").addClass("card-info");
     $("#cancelBudgetAdd").click(function(){
         $("#name").val("");
         $("#type").val("select");
         $("#cost").val("");
-        $("#addItemForm").hide()
+        $(".addItemForm").hide()
         $("#showBudgetAdd").show()
     });
     $("#showBudgetAdd").click(function(){
-        $("#addItemForm").show()
+        $(".addItemForm").show()
         $("#showBudgetAdd").hide()
     });
     $("#budgetAdd").click(function(){
@@ -115,9 +115,9 @@ function budgetItemAjax(divLLQ){
                 };
               } else{
                 console.log("Unsuccessful add")
-                console.log(data)
+                console.log(response)
                 //response contained non numerics. Something bad happened
-                $("#apiResponse").html(data)
+                $("#apiResponse").html(response)
               };
               
             }
@@ -140,7 +140,7 @@ function newBudgetItemRow(itemId){
     //create new row from template
     rowTemplate = $("#budgetRowTemplate").html()
     newRow = replaceAllSubsting(rowTemplate, "!template!", itemId);
-    $(newRow).insertBefore("#addItemForm");
+    $('#budget-table tr:last').before(newRow);
     //add new values to the row
     $("#name_".concat(itemId)).text($("#name").val());
     $("#type_".concat(itemId)).text($("#type").val());
@@ -175,9 +175,14 @@ function replaceAllSubsting (str, oldSubStr, newSubStr) {
     return str.split(oldSubStr).join(newSubStr);
 }
 function apiResponseIsGood(response){
-    pattStr = "^2\\d\\d.*"
-    var pattern = new RegExp(pattStr)
-    result = pattern.test(response)
+    pattStr1 = "^2\\d\\d.*"
+    pattStr2 = "^\\d+"
+    var pattern1 = new RegExp(pattStr1)
+    var pattern2 = new RegExp(pattStr2)
+    test1 = pattern1.test(response)
+    test2 = pattern2.test(response)
+    result = test1 || test2
+    console.log(result)
     return result
 }
 function notesAjax(){
