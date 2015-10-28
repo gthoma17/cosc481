@@ -119,16 +119,12 @@ class newJob:
 			passedData['isInProgress'] = 0
 		
 		#Get job info from form and insert into database
-		if 'id' in passedData:
-			db.update('jobs', where="id = "+str(job), id=passedData['id'])
 		if 'manager_id' in passedData:
 			db.update('jobs', where="id = "+str(job), manager_id=passedData['manager_id'])
 		if 'supervisor_id' in passedData:
 			db.update('jobs', where="id = "+str(job), supervisor_id=passedData['supervisor_id'])
 		if 'customer_id' in passedData:
 			db.update('jobs', where="id = "+str(job), customer_id=passedData['customer_id'])
-		if 'name' in passedData:
-			db.update('jobs', where="id = "+str(job), name=passedData['name'])
 		if 'street_address' in passedData:
 			db.update('jobs', where="id = "+str(job), street_address=passedData['street_address'])
 		if 'city' in passedData:
