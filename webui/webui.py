@@ -197,10 +197,11 @@ class dashboard:
 		text = "You are a registered user "
 		adminLink = " "
 		if userIsAdmin(session.user):
-			text += "and an admin.. People respect you "
+			text += "and an admin"
 			adminLink += "<a href=\"admin\" class=\"adminButton\">Admin Panel</a>"
 		if debug:
 			text += "..... here is your session info: " + str(session.user)
+		text += "."
 		title = "Welcome back, " + session.user['name'] + "!" 
 		return render.dashboard(title, text, adminLink)
 class admin:
