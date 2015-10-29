@@ -7,23 +7,23 @@ $(document).ready(function(){
     $("#show-budget").click(function(){
         $("#show-budget").hide();
         $("#hide-budget").show();
-        $("#budget-table").show();   
+        $("#budget-table-div").slideDown("slow");   
     });
     $("#hide-budget").click(function(){
         $("#hide-budget").hide();
         $("#show-budget").show();
-        $("#budget-table").hide();   
+        $("#budget-table-div").slideUp("slow");   
     });
     $("#show-notes").hide();
     $("#show-notes").click(function(){
         $("#show-notes").hide();
         $("#hide-notes").show();
-        $("#notes-container").show();   
+        $("#notes-container").slideDown("slow");   
     });
     $("#hide-notes").click(function(){
         $("#hide-notes").hide();
         $("#show-notes").show();
-        $("#notes-container").hide();   
+        $("#notes-container").slideUp("slow");   
     });
     $(".add-note-card").removeClass("card-warning card-danger").addClass("card-info");
     $("#cancelBudgetAdd").click(function(){
@@ -252,6 +252,7 @@ function notesAjax(){
                 console.log("Successful add")
                 console.log(JSON.stringify(postData))
                 console.log(response)
+                createNewNote(response, postData);
               } else{
                 console.log("Unsuccessful add")
                 console.log(JSON.stringify(postData))
@@ -276,3 +277,42 @@ function notesAjax(){
     }
     
 }  
+function createNewNote(noteId, note){
+    console.log("new note")
+    noteSuffix = "-" + note.tbl + "-" + noteId
+    console.log(note)
+    console.log(note.contents)
+    console.log(note.tbl)
+    newNote = $("#"+note.tbl+"-template").html()
+    newNote = replaceAllSubsting(newNote, "!tbl!", note.tbl);
+    newNote = replaceAllSubsting(newNote, "!id!", noteId);
+
+    $('#note-card-group > div:first-child').before(newNote);
+
+    $("#note-contents".concat(noteSuffix)).text(note.contents)
+    $("#note-user-name".concat(noteSuffix)).text($("#user-name").text())
+    d = new Date()
+    date = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()
+    time = " "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds()
+    datetime = date+time
+    $("#note-entry-time".concat(noteSuffix)).text(datetime)
+
+    if (note.tbl == "actionItems") {
+        if (note.assignee != "") {
+            $("#note-assigned-name".concat(noteSuffix)).text(note.assignee)
+            $("#note-add-assignee".concat(noteSuffix)).hide()
+        } else{
+            $("#note-assigned-name".concat(noteSuffix)).hide()
+        };
+    }else if (note.tbl == "dailyReports") {
+        $("#note-arrival".concat(noteSuffix)).text(date+" "+note.arrival_time)
+        $("#note-departure".concat(noteSuffix)).text(date+" "+note.departure_time)
+        $("#note-people".concat(noteSuffix)).text(note.people_on_site)
+    };
+    //empty the form
+    $("#note-message").val("")
+    $("#note-assignee").val("")
+    $("#note-arrivalTime").val("")
+    $("#note-departureTime").val("")
+    $("#note-PeopleOnSite").val("")
+}

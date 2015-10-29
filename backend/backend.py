@@ -90,7 +90,7 @@ class note:
 				)
 			except:
 				pass
-		return "201 Note Created"
+		return json.dumps(note)
 
 class index:
 	def GET(self): 

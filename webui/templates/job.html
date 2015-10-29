@@ -59,30 +59,7 @@ $def with (job, user, apiUrl)
 </head>
 
 <body>
-<div class="hidden" id="apiKey">$user['apiKey']</div>
-<div class="hidden" id="jobId">$job['id']</div>
-<table class="hidden">
-	<tbody id="budgetRowTemplate">
-		<tr>
-			<td>
-				<div id="name_!template!"></div>
-		  		<input type="text" class="edit_row" id="name_edit_!template!" name="name" size="10" />
-			</td>
-			<td>
-				<div id="type_!template!"></div>
-		  		<select id="type_edit_!template!" class="edit_row"><option value="select" selected>Type</option><option value="labor">Labor</option><option value="material">Material</option><option value="misc">Misc</option></select>
-			</td>
-			<td>
-				<div id="cost_!template!"></div>
-		  		<input type="text" id="cost_edit_!template!" class="edit_row" name="cost" size="5" />
-			</td>
-			<td>
-				<div id="buttons_!template!"><button class="edit_button" id="edit_!template!">Edit</button><button class="delete_button" id="delete_!template!">Delete</button></div>
-		 		<div id="buttons_edit_!template!" class="edit_row"><button class="save_button" id="save_!template!">Save</button><button class="cancel_button" id="cancel_!template!">Cancel</button></div>
-			</td>
-		</tr>
-	</tbody>
-</table>
+
 
 <!-- navigation bar -->
 <div class="navbar navbar-default">
@@ -150,7 +127,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 	<!-- Begin Budget Stuff -->
 		<div id="apiResponse"></div>
 		<div class="text-center"><h3>Budget <small><a href="#" id="hide-budget">[-]</a><a href="#" id="show-budget">[+]</a></div></small></h3>
-		<div class="table-responsive">
+		<div class="table-responsive" id="budget-table-div">
 		<table id="budget-table" class="table table-striped table-condensed table-bordered text-center">
   		<thead>
   			<tr>
@@ -170,7 +147,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 					</td>
 					<td>
 						<div id="type_$item['id']">$item['type']</div>
-    	          		<select id="type_edit_$item['id']" class="edit_row"><option value="select" selected>Type</option><option value="labor">Labor</option><option value="material">Material</option><option value="misc">Misc</option></select>
+    	          		<select id="type_edit_$item['id']" class="edit_row"><option value="select" selected>Type</option><option value="Labor">Labor</option><option value="Material">Material</option><option value="Misc">Misc</option></select>
 					</td>
 					<td>
 						<div id="cost_$item['id']">$item['cost']</div>
@@ -191,7 +168,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 		<tr>
 			<td colspan="4" id="showBudgetAdd"><button>Add a budget item</button></td>
 			<td class="addItemForm"><input type="text" id="name" name="name" size="30" placeholder="Name"/></td>
-			<td class="addItemForm"><select  id="type"><option value="select" selected>Type</option><option value="labor">Labor</option><option value="material">Material</option><option value="misc">Misc</option></select></td>
+			<td class="addItemForm"><select  id="type"><option value="select" selected>Type</option><option value="Labor">Labor</option><option value="Material">Material</option><option value="Misc">Misc</option></select></td>
 			<td class="addItemForm"><input type="text" id="cost" name="cost" size="30" placeholder="Cost"/></td>
 			<td class="addItemForm"><button  id="budgetAdd">Add</button><button id="cancelBudgetAdd">Cancel</button></td>
 		</tr>
@@ -219,19 +196,19 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 							<input type="radio" id="note-type-dailyReport" name="note-type" onclick="selectedDailyReport()" value="dailyReport"> Daily Report
 							<input type="radio" id="note-type-actionItem" name="note-type" onclick="selectedActionItem()" value="actionItem"> Action Item
 						</p>
-						<p class="daily-report-field">
-							Arrival Time:<br>
-							<input id="note-arrivalTime" type="time"> <br>
-							Departure Time:<br> 
-							<input id="note-departureTime" type="time">
+						<p>
+							Message: <br>
+							<textarea id="note-message"></textarea>
 						</p>
 						<p class="daily-report-field">
 							People On Site: <br>
 							<textarea id="note-PeopleOnSite"></textarea>
 						</p>
-						<p>
-							Message: <br>
-							<textarea id="note-message"></textarea>
+						<p class="daily-report-field">
+							Arrival Time:<br>
+							<input id="note-arrivalTime" type="time"> <br>
+							Departure Time:<br> 
+							<input id="note-departureTime" type="time">
 						</p>
 						<p class="action-item-field">
 							Assignee: <br>
@@ -246,7 +223,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 		</div>
 		<div class="col-sm-6">
 			<div class="container">
-				<div class="card-group note-card-group"> 
+				<div class="card-group note-card-group" id="note-card-group"> 
 					$for note in job['notes']:
 						$if note['tbl'] == 'dailyReports':
 							$ type = "Daily Report"
@@ -300,6 +277,102 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 	</div>
 <!-- End Note Stuff -->
 
+
+<!-- Begin metadata -->
+	<div class="hidden" id="user-name">$user['name']</div>
+	<div class="hidden" id="apiKey">$user['apiKey']</div>
+	<div class="hidden" id="jobId">$job['id']</div>
+<!-- End metadata -->
+
+<!-- Begin ajax templates --> 
+	<table class="hidden">
+		<tbody id="budgetRowTemplate">
+			<tr>
+				<td>
+					<div id="name_!template!"></div>
+			  		<input type="text" class="edit_row" id="name_edit_!template!" name="name" size="10" />
+				</td>
+				<td>
+					<div id="type_!template!"></div>
+			  		<select id="type_edit_!template!" class="edit_row"><option value="select" selected>Type</option><option value="Labor">Labor</option><option value="Material">Material</option><option value="Misc">Misc</option></select>
+				</td>
+				<td>
+					<div id="cost_!template!"></div>
+			  		<input type="text" id="cost_edit_!template!" class="edit_row" name="cost" size="5" />
+				</td>
+				<td>
+					<div id="buttons_!template!"><button class="edit_button" id="edit_!template!">Edit</button><button class="delete_button" id="delete_!template!">Delete</button></div>
+			 		<div id="buttons_edit_!template!" class="edit_row"><button class="save_button" id="save_!template!">Save</button><button class="cancel_button" id="cancel_!template!">Cancel</button></div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="hidden" id="dailyReports-template">
+		<div class="col-xs-12 col-md-12">
+			<div class="card card-warning note-card text-center">
+				<div class="card-header">
+					<h5 class="card-title">Daily Report</h5>
+				</div>
+				<div class="card-block">
+					<p style="display:inline;" class="card-text" id="note-contents-!tbl!-!id!"></p>
+				</div>
+				<div class="card-block">
+					<hr>
+					<p class="card-text"><b>Arrival Time:</b> <div style="display:inline;" id="note-arrival-!tbl!-!id!"></div></p>
+					<p class="card-text"><b>Departure Time:</b> <div style="display:inline;" id="note-departure-!tbl!-!id!"></div></p>
+					<hr>
+					<p class="card-text"><b>People on Site:</b></p>
+					<p class="card-text"><div style="display:inline;" id="note-people-!tbl!-!id!"></div></p>
+				</div>
+				<div class="card-footer text-muted small">
+					Created by <div style="display:inline;" id="note-user-name-!tbl!-!id!"></div> at <div style="display:inline;" id="note-entry-time-!tbl!-!id!"></div>
+				</div>
+			</div>
+		</div>
+		<br>
+	</div>
+	<div class="hidden" id="actionItems-template">
+		<div class="col-xs-12 col-md-12">
+			<div class="card card-danger note-card text-center">
+				<div class="card-header">
+					<h5 class="card-title">Action Item</h5>
+				</div>
+				<div class="card-block">
+					<p style="display:inline;" class="card-text" id="note-contents-!tbl!-!id!"></p>
+				</div>
+				<div class="card-block">
+					<hr>
+					<p class="card-text">Assigned User: 
+					<div style="display:inline;" id="note-assigned-name-!tbl!-!id!"></div>
+					<button style="display:inline;" id="note-add-assignee-!tbl!-!id!">Add one</button><br> (not implemented)
+					</p>
+					<hr>
+					<p class="card-text"><button>Complete</button><br>(not implemented)</p>
+				</div>
+				<div class="card-footer text-muted small">
+					Created by <div style="display:inline;" id="note-user-name-!tbl!-!id!"></div> at <div style="display:inline;" id="note-entry-time-!tbl!-!id!"></div>
+				</div>
+			</div>
+		</div>
+		<br>
+	</div>
+	<div class="hidden" id="notes-template">
+		<div class="col-xs-12 col-md-12">
+			<div class="card card-info note-card text-center">
+				<div class="card-header">
+					<h5 class="card-title">Note</h5>
+				</div>
+				<div class="card-block">
+					<p style="display:inline;" class="card-text" id="note-contents-!tbl!-!id!"></p>
+				</div>
+				<div class="card-footer text-muted small">
+					Created by <div style="display:inline;" id="note-user-name-!tbl!-!id!"></div> at <div style="display:inline;" id="note-entry-time-!tbl!-!id!"></div>
+				</div>
+			</div>
+		</div>
+		<br>
+	</div>
+<!-- End ajax templates -->
 
 </body>
 </html>
