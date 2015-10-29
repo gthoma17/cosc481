@@ -186,24 +186,13 @@ class budgetItem:
 			return "403 Forbidden"
 		if reqUser['permissionLevel'].upper() == "ADMIN" or reqUser['permissionLevel'].upper() == "MANAGER":
 			#user is allowed to do this. 
-			#update if an identical budget item exists
-			existingItem = db.where('budgetItems', 
-							job_id=int(passedData['job_id']),
-							name=passedData['name'],
-							type=passedData['type']
-						)
-			if not existingItem:
-				#item wasn't in database
-				newId = db.insert('budgetItems', 
-					job_id=int(passedData['job_id']),
-					name=passedData['name'],
-					cost=passedData['cost'],
-					type=passedData['type']
-				)
-				return json.dumps(newId)
-			else:
-				#update existing item
-				existingItem = existingItem[0]
+			#if passed an id, user wants to update
+			if 'id' in passedData:
+				try:
+					existingItem = db.where('budgetItems', id=int(passedData['id']))[0]
+				except:
+					#didn't find it. 
+					return "404 Not Found"
 				if 'name' in passedData:
 					db.update('budgetItems', where="id = "+str(existingItem.id), name=passedData['name'])
 				if 'cost' in passedData:
@@ -211,6 +200,15 @@ class budgetItem:
 				if 'type' in passedData:
 					db.update('budgetItems', where="id = "+str(existingItem.id), type=passedData['type'])
 				return existingItem['id']
+			else:
+				#no id passed, user wants to add
+				newId = db.insert('budgetItems', 
+					job_id=int(passedData['job_id']),
+					name=passedData['name'],
+					cost=passedData['cost'],
+					type=passedData['type']
+				)
+				return json.dumps(newId)				
 		else:
 			return "403 Forbidden"
 class job:

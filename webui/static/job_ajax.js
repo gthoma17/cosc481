@@ -77,6 +77,11 @@ $(document).ready(function(){
         $("#type_edit_".concat(itemId)).val($("#type_".concat(itemId)).text());
         $("#cost_edit_".concat(itemId)).val($("#cost_".concat(itemId)).text());
     });
+    $("[id^=save_]").click(function(){
+        buttonId = $(this).attr('id').split("_")
+        itemId = buttonId[buttonId.length -1]
+        budgetItemAjax(itemId)
+    });
 
 });
 function flashRedBackground (div) {
@@ -101,18 +106,21 @@ function selectedActionItem(){
     $(".action-item-field").show()
     $(".add-note-card").removeClass("card-info card-warning").addClass("card-danger");
 }
-function budgetItemAjax(divLLQ){
+function budgetItemAjax(itemId){
     nameDivId = "#name";
     typeDivId = "#type";
     costDivId = "#cost";
-    if (divLLQ != null){
-        nameDivId = nameDivId.concat(divLLQ);
-        typeDivId = typeDivId.concat(divLLQ);
-        costDivId = costDivId.concat(divLLQ);
+    if (itemId != null){
+        nameDivId = nameDivId.concat("_edit_"+itemId);
+        typeDivId = typeDivId.concat("_edit_"+itemId);
+        costDivId = costDivId.concat("_edit_"+itemId);
     };
     //validate the form
-    if ($(nameDivId).val() != "" && $(typeDivId).val() != "select" && $(costDivId).val() != "") {
+    if ($(nameDivId).val() != "" && $(typeDivId).val() != "select" && $(typeDivId).val() != "" && $(costDivId).val() != "") {
         postData = {}
+        if (itemId != null){
+            postData.id = itemId
+        }
         postData.job_id = $("#jobId").text()
         postData.apiKey = $("#apiKey").text()
         postData.name = $(nameDivId).val()
@@ -127,9 +135,9 @@ function budgetItemAjax(divLLQ){
               if (apiResponseIsGood(response)) {
                 console.log("Successful add")
                 //respone was only integers, adding was successful
-                if (divLLQ != null){
+                if (itemId != null){
                     //we're editing
-                    updateBudgetItemRow(divLLQ)
+                    updateBudgetItemRow(itemId)
                 }
                 else{
                     //we're adding
@@ -147,14 +155,14 @@ function budgetItemAjax(divLLQ){
     }
     else{
         //didn't validate. Tell user where they goofed
-        if ($("#name").val() == "") {
-            flashRedBackground($("#name"));
+        if ($(nameDivId).val() == "") {
+            flashRedBackground($(nameDivId));
         };
-        if ($("#type").val() == "select") {
-            flashRedBackground($("#type"));
+        if ($(typeDivId).val() == "select" || $(typeDivId).val() != "") {
+            flashRedBackground($(typeDivId));
         };
-        if ($("#cost").val() == "") {
-            flashRedBackground($("#cost"));
+        if ($(costDivId).val() == "") {
+            flashRedBackground($(costDivId));
         };
     };        
 }
