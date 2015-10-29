@@ -14,7 +14,41 @@ $(document).ready(function(){
     $("#userAdd").click(function(){
         userAjax()
     });
+    $("[id^=delete_]").click(function(){
+        buttonId = $(this).attr('id').split("_")
+        userId = buttonId[buttonId.length -1]
+        postData = {}
+        postData.id = userId
+        $.ajax({
+            url : "/forward/delete/user",
+            dataType:"text",
+            method:"POST",
+            data: JSON.stringify(postData),
+            success:function(response){
+                if (apiResponseIsGood(response)) {
+                    console.log("Successful delete")
+                    console.log(postData)
+                    console.log(response)
+                    $("#user".concat(userId)).remove()
+                } else {
+                    console.log("Unsuccessful delete")
+                    $("#apiResponse").html(response)
+                };
+            }
+        });
+    });
 });
+function apiResponseIsGood(response){
+    pattStr1 = "^2\\d\\d.*"
+    pattStr2 = "^[0-9]*$"
+    var pattern1 = new RegExp(pattStr1)
+    var pattern2 = new RegExp(pattStr2)
+    test1 = pattern1.test(response)
+    test2 = pattern2.test(response)
+    result = test1 || test2
+    console.log(result)
+    return result
+}
 function flashRedBackground (div) {
     bg = div.css("background");
     div.css("background", "red");

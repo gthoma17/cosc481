@@ -26,7 +26,8 @@ urls = (
 	"/budgetItem", "budgetItem",
 	"/note", "note",
 	"/actionItem/(.*)", "actionItem",
-	"/delete/budgetItem", "deleteBudgetItem"
+	"/delete/budgetItem", "deleteBudgetItem",
+	"/delete/user", "deleteUser"
 	)
 
 app = web.application(urls, globals())
@@ -54,7 +55,26 @@ class deleteBudgetItem:
 			return "200 OK"
 		else:
 			return "403 Forbidden"
-
+class deleteUser:
+	def GET(self): 
+		return "Shhhh... the database is sleeping."
+	def POST(self):
+		passedData = dict(web.input())
+		try:
+			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
+		except IndexError:
+			return "403 Forbidden"
+		if 	(reqUser['permissionLevel'].upper() == "ADMIN" or reqUser['permissionLevel'].upper() == "MANAGER") and \
+			(reqUser['id'] != passedData['id']) :
+			#user can do this
+			try:
+				theItem = db.where('jobAppUsers', id=passedData['id'])[0]
+			except:
+				return "404 Not Found"
+			db.delete('jobAppUsers', where="id="+passedData['id'])
+			return "200 OK"
+		else:
+			return "403 Forbidden"
 class actionItem:
 	def GET(self): 
 		return "Shhhh... the database is sleeping."
