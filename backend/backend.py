@@ -26,6 +26,7 @@ urls = (
 	"/budgetItem", "budgetItem",
 	"/note", "note",
 	"/actionItem/(.*)", "actionItem",
+	"/delete/budgetItem", "deleteBudgetItem"
 	)
 
 app = web.application(urls, globals())
@@ -33,6 +34,26 @@ db = web.database(dbn='mysql', host=config.get("Database", "host"), port=int(con
 def set_headers():
     web.header('Access-Control-Allow-Origin',      '*')
 app.add_processor(web.loadhook(set_headers))
+
+class deleteBudgetItem:
+	def GET(self): 
+		return "Shhhh... the database is sleeping."
+	def POST(self):
+		passedData = dict(web.input())
+		try:
+			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
+		except IndexError:
+			return "403 Forbidden"
+		if reqUser['permissionLevel'].upper() == "ADMIN" or reqUser['permissionLevel'].upper() == "MANAGER":
+			#user can do this
+			try:
+				theItem = db.where('budgetItems', id=passedData['id'])[0]
+			except:
+				return "404 Not Found"
+			db.delete('budgetItems', where="id="+passedData['id'])
+			return "200 OK"
+		else:
+			return "403 Forbidden"
 
 class actionItem:
 	def GET(self): 

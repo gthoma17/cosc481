@@ -82,6 +82,29 @@ $(document).ready(function(){
         itemId = buttonId[buttonId.length -1]
         budgetItemAjax(itemId)
     });
+    $("[id^=delete_]").click(function(){
+        buttonId = $(this).attr('id').split("_")
+        itemId = buttonId[buttonId.length -1]
+        postData = {}
+        postData.id = itemId
+        $.ajax({
+            url : "/forward/delete/budgetItem",
+            dataType:"text",
+            method:"POST",
+            data: JSON.stringify(postData),
+            success:function(response){
+                if (apiResponseIsGood(response)) {
+                    console.log("Successful delete")
+                    console.log(postData)
+                    console.log(response)
+                    $("#item_".concat(itemId)).remove()
+                } else {
+                    console.log("Unsuccessful delete")
+                    $("#apiResponse").html(response)
+                };
+            }
+        });
+    });
 
 });
 function flashRedBackground (div) {
@@ -206,7 +229,7 @@ function replaceAllSubsting (str, oldSubStr, newSubStr) {
 }
 function apiResponseIsGood(response){
     pattStr1 = "^2\\d\\d.*"
-    pattStr2 = "^\\d+"
+    pattStr2 = "^[0-9]*$"
     var pattern1 = new RegExp(pattStr1)
     var pattern2 = new RegExp(pattStr2)
     test1 = pattern1.test(response)
