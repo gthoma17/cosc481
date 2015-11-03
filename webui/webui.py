@@ -108,7 +108,11 @@ class forward:
 class jobs:
 	def GET(self):
 		response = urllib.urlopen(apiUrl+"/job/all?apiKey="+session.user['apiKey']).read()
-		return render.jobs("::JOBS::", json.loads(response))
+		try:
+			return render.jobs("::JOBS::", json.loads(response))
+		except ValueError: 
+			# that's no json...
+			return render.error(response)
 class job:
 	def GET(self, job):
 		if session.user.has_key('budgetResponse'):
@@ -117,12 +121,11 @@ class job:
 		else:
 			budgetResponse = ""
 		response = urllib.urlopen(apiUrl+"/job/"+str(job)+"?apiKey="+session.user['apiKey']).read()
-		print "*"*50
-		#print json.loads(response)['budget']
-		for item in json.loads(response)['budget'][0]:
-			print item
-		print "*"*50
-		return render.job(json.loads(response), session.user, apiUrl)
+		try:
+			return render.job(json.loads(response), session.user, apiUrl)
+		except ValueError: 
+			# that's no json...
+			return render.error(response)
 	def POST(self, job):
 		form = self.form()
 		if not form.validates():
@@ -233,7 +236,11 @@ class admin:
 		else:
 			response = ""
 		allUsers = urllib.urlopen(apiUrl+"/user/all?apiKey="+session.user['apiKey']).read()
-		return render.admin(response, self.form, json.loads(allUsers))
+		try:
+			return render.admin(response, self.form, json.loads(allUsers))
+		except ValueError: 
+			# that's no json...
+			return render.error(response)
 	def POST(self):
 		form = self.form()
 		if not form.validates():
