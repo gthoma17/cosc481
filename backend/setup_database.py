@@ -135,6 +135,8 @@ def createDatabase(DATABASE, cursor):
 	#create our database
 	print "Creating database: " +DATABASE
 	cursor.execute('create database '+DATABASE)
+	execStr = "ALTER DATABASE "+DATABASE+" CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+	cursor.execute(execStr)
 
 def createJobsTbl(cursor):
 	print "Creating table: jobs"
@@ -183,6 +185,11 @@ def createNotesTbl(cursor):
 	  contents TEXT(65535),
 	  PRIMARY KEY(id)
 	)
+	""")
+	cursor.execute("""
+	ALTER TABLE notes 
+		CONVERT TO CHARACTER SET utf8mb4 
+		COLLATE utf8mb4_unicode_ci;
 	""")
 def createUsersTbl(cursor):
 	print "Creating table: jobAppUsers"
@@ -378,7 +385,7 @@ def createPhotosTbl(cursor):
 	  job_id INTEGER,
 	  folder_id INTEGER,
 	  link TEXT(65535),
-	  upload_time TIMESTAMP,
+	  upload_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	  PRIMARY KEY(id)
 	)
 	""")

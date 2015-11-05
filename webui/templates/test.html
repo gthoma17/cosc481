@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script type="text/javascript">
+var imgData;
+$$(document).ready(function(){
+	$$('#imgPreview').hide()
+	document.getElementById('files').onchange = function (e) {loadFileFromInput(e.target);};
+	$$('#cancelImage').click(function(){
+		imgData = {}
+		$$('#img').removeAttr("src");
+		$$('#imgPreview').hide();
+		$$("#files").replaceWith($$("#files").clone());
+		document.getElementById('files').onchange = function (e) {loadFileFromInput(e.target);};
+	});
+	$$('#submitImage').click(function(){
+		postData = imgData;
+		postData.job_id = "9001"
+		$$.ajax({
+            url : "/forward/photos",
+            dataType:"text",
+            method:"POST",
+            data: JSON.stringify(postData),
+            success:function(response){
+            	console.log("response: " + response)
+                //if (apiResponseIsGood(response)) {
+                //    console.log("Successful delete")
+                //    console.log(postData)
+                //    console.log(response)
+                //    $$("#item_".concat(itemId)).remove()
+                //} else {
+                //    console.log("Unsuccessful delete")
+                //    $$("#apiResponse").html(response)
+                //};
+            }
+        });
+	});
+});
+function loadFileFromInput(input) {
+    var reader; 
+    if (input.files && input.files[0]) {
+    	var file = input.files[0];
+    	
+        reader = new FileReader();
+        reader.readAsDataURL(file);
+        //filereaders run on a different thread, so we
+        // need to wait for it to finish it's work before we continue
+        reader.onload = function (e) {
+        	imgData = {}
+        	imgData.name = file.name
+        	imgData.lastModified = file.lastModified
+        	imgData.src = reader.result
+            console.log(imgData)
+            $$('#img').attr("src",reader.result);
+            $$('#imgPreview').show()
+
+        }
+    }
+}
+</script>
+</head>
+<body>
+<div id="response"></div>
+<input id="files" type="file" accept="image/*">
+<br>
+<div id="imgPreview">
+	<div style="height: 100px"><img id="img" style="max-height: 100%; max-width: 100%"></div>
+	<br>
+	<button id="submitImage">Submit</button>
+	<button id="cancelImage">Cancel</button>
+</div>
+</body>
+</html>

@@ -1,4 +1,4 @@
-import web, ConfigParser, json, string, random, socket, urllib, datetime
+import web, ConfigParser, json, string, random, socket, urllib, datetime, boto
 from os import path
 from identitytoolkit import gitkitclient
 
@@ -27,14 +27,52 @@ urls = (
 	"/note", "note",
 	"/actionItem/(.*)", "actionItem",
 	"/delete/budgetItem", "deleteBudgetItem",
-	"/delete/user", "deleteUser"
+	"/delete/user", "deleteUser",
+	"/photo", "photo"
 	)
 
 app = web.application(urls, globals())
 db = web.database(dbn='mysql', host=config.get("Database", "host"), port=int(config.get("Database", "port")), user=config.get("Database", "user"), pw=config.get("Database", "password"), db=config.get("Database", "name"))
+s3Bucket = boto.connect_s3(aws_access_key_id=config.get("aws", "access_key_id"), aws_secret_access_key=config.get("aws", "secret_access_key")).get_bucket(config.get("aws", "bucket_name"))
+bucketHlq = config.get("aws", "bucket_hlq")
+
 def set_headers():
     web.header('Access-Control-Allow-Origin',      '*')
+
 app.add_processor(web.loadhook(set_headers))
+
+class photo:
+	def GET(self):
+		return "Shhhh... the database is sleeping."
+	def POST(self):
+		passedData = dict(web.input())
+		try:
+			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
+		except IndexError:
+			return "403 Forbidden"
+		#use selected job, and current timestamp to ensure uniquness
+		# it shouldn't be possible to add two photos to the same job
+		# in one millisecond
+		# ... I hope. 
+		newFileName = "/images/" 
+		newFileName += passedData['job_id'] + "_"
+		newFileName += datetime.datetime.utcnow().strftime('%Y%m%d%H%M%S%f')[:-3]
+		newFileName += passedData['file_extension']
+
+		#add the image to s3
+		newKey = bucket.new_key(newFileName)
+		newKey.set_contents_from_string(passedData['base64_image'])
+		newKey.set_acl('public-read')
+
+		#add a link to the image to the database
+		#photo folders will be implemented at a later time
+		newFileLink = bucketHlq + newFileName
+
+		photo = db.insert('photos', 
+					job_id=passedData['job_id'],
+					link=newFileLink
+				)
+		return json.dumps(photo)
 
 class deleteBudgetItem:
 	def GET(self): 
