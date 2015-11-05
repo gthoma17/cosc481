@@ -2,9 +2,22 @@
 <html>
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/1.3.4/jquery.fancybox-1.3.4.pack.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/1.3.4/jquery.fancybox-1.3.4.css" type="text/css" media="screen" />
 <script type="text/javascript">
 var imgData;
 $$(document).ready(function(){
+	$$("a.gallery").fancybox({
+        'transitionIn'  :   'elastic',
+        'transitionOut' :   'elastic',
+        'speedIn'       :   600, 
+        'speedOut'      :   200, 
+        'overlayShow'   :   false,
+        'cyclic'        :   true,
+        'showNavArrows' :   true
+    });
+	$$('#loader').hide()
 	$$('#imgPreview').hide()
 	document.getElementById('files').onchange = function (e) {loadFileFromInput(e.target);};
 	$$('#cancelImage').click(function(){
@@ -16,32 +29,22 @@ $$(document).ready(function(){
 	});
 	$$('#submitImage').click(function(){
 		postData = imgData;
-		$$.ajax({
-            url : "/forward/photo",
-            dataType:"text",
-            method:"POST",
-            data: JSON.stringify(postData),
-            success:function(response){
-            	console.log("response: " + response)
-            	$$('#apiResponse').html(response)
-                //if (apiResponseIsGood(response)) {
-                //    console.log("Successful delete")
-                //    console.log(postData)
-                //    console.log(response)
-                //    $$("#item_".concat(itemId)).remove()
-                //} else {
-                //    console.log("Unsuccessful delete")
-                //    $$("#apiResponse").html(response)
-                //};
-            }
-        });
+		$$('#loader').show()
+		$$("#loader").attr('width',$$("#img").attr('width'));
+        $$.post("/forward/photo", JSON.stringify(imgData))
+            .done(
+                function(response) {
+                    $$('#loader').hide()
+                    console.log("response: " + response)
+                    $$('#apiResponse').html(response)
+                }
+            );
 	});
 });
 function loadFileFromInput(input) {
     var reader; 
     if (input.files && input.files[0]) {
     	var file = input.files[0];
-    	
         reader = new FileReader();
         reader.readAsDataURL(file);
         //filereaders run on a different thread, so we
@@ -61,17 +64,32 @@ function loadFileFromInput(input) {
     }
 }
 </script>
+
+<style type="text/css">
+#loader{
+	height: 22px;
+}
+</style>
 </head>
 <body>
 <div id="response"></div>
 <input id="files" type="file" accept="image/*">
 <br>
 <div id="imgPreview">
-	<div style="height: 100px"><img id="img" style="max-height: 100%; max-width: 100%"></div>
-	<br>
-	<button id="submitImage">Submit</button>
-	<button id="cancelImage">Cancel</button>
+    <div style="height: 200px">
+        <img id="img" style="max-height: 100%; max-width: 100%">
+    </div>
+    <img id="loader" src="http://i.imgur.com/Bcv89it.gif">
+    <br>
+    <button id="submitImage">Submit</button>
+    <button id="cancelImage">Cancel</button>
 </div>
+
 <div id="apiResponse"></div>
+
+<a class="gallery" rel="gallery01" href="https://s3.amazonaws.com/jobapp-venture/images/9001_20151105182734220.jpg"><div style="height: 100px"><img src="https://s3.amazonaws.com/jobapp-venture/images/9001_20151105182734220.jpg" style="max-height: 100%; max-width: 100%" alt=""/></div></a><br>
+<a class="gallery" rel="gallery01" href="https://s3.amazonaws.com/jobapp-venture/images/9001_20151105183206686.jpg"><div style="height: 100px"><img src="https://s3.amazonaws.com/jobapp-venture/images/9001_20151105183206686.jpg" style="max-height: 100%; max-width: 100%" alt=""/></div></a><br>
+<a class="gallery" rel="gallery01" href="https://s3.amazonaws.com/jobapp-venture/images/9001_20151105200017549.jpg"><div style="height: 100px"><img src="https://s3.amazonaws.com/jobapp-venture/images/9001_20151105200017549.jpg" style="max-height: 100%; max-width: 100%" alt=""/></div></a><br>
+
 </body>
 </html>
