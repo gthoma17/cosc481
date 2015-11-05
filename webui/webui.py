@@ -112,13 +112,9 @@ class forward:
 		#	#this is no json
 		#	return "403 Forbidden"
 		try:
-			passedData = dict(json.loads(web.input().keys()[0]))
+			passedData = dict(json.loads(web.data()))
 		except Exception, e:
-			print web.input().keys()[0]
 			return e 
-		#passedData = dict(json.loads(web.input().keys()[0]))
-		if passedData['job_id'] == 9001:
-			return json.dumps(passedData)
 		passedData['apiKey'] = session.user['apiKey']
 		apiRequest = requests.post(apiUrl+"/"+path, data=passedData)
 		return apiRequest.text

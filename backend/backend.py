@@ -1,4 +1,4 @@
-import web, ConfigParser, json, string, random, socket, urllib, datetime, boto
+import web, ConfigParser, json, string, random, socket, urllib, datetime, boto, base64
 from os import path
 from identitytoolkit import gitkitclient
 
@@ -60,8 +60,12 @@ class photo:
 		newFileName += passedData['file_extension']
 
 		#add the image to s3
-		newKey = bucket.new_key(newFileName)
-		newKey.set_contents_from_string(passedData['base64_image'])
+
+		# get rid of the header that javascript uses.
+		img =  passedData['base64_image'].split(';base64,')[1]
+		newKey = s3Bucket.new_key(newFileName)
+		newKey.content_type = passedData['type'] # content type must be assigned before data
+		newKey.set_contents_from_string(base64.b64decode(img))
 		newKey.set_acl('public-read')
 
 		#add a link to the image to the database

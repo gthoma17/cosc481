@@ -16,14 +16,14 @@ $$(document).ready(function(){
 	});
 	$$('#submitImage').click(function(){
 		postData = imgData;
-		postData.job_id = "9001"
 		$$.ajax({
-            url : "/forward/photos",
+            url : "/forward/photo",
             dataType:"text",
             method:"POST",
             data: JSON.stringify(postData),
             success:function(response){
             	console.log("response: " + response)
+            	$$('#apiResponse').html(response)
                 //if (apiResponseIsGood(response)) {
                 //    console.log("Successful delete")
                 //    console.log(postData)
@@ -50,11 +50,13 @@ function loadFileFromInput(input) {
         	imgData = {}
         	imgData.name = file.name
         	imgData.lastModified = file.lastModified
-        	imgData.src = reader.result
+        	imgData.type = file.type
+        	imgData.file_extension = (file.name).substr((file.name).lastIndexOf('.'))
+        	imgData.job_id = "9001"
+        	imgData.base64_image = reader.result
             console.log(imgData)
             $$('#img').attr("src",reader.result);
             $$('#imgPreview').show()
-
         }
     }
 }
@@ -70,5 +72,6 @@ function loadFileFromInput(input) {
 	<button id="submitImage">Submit</button>
 	<button id="cancelImage">Cancel</button>
 </div>
+<div id="apiResponse"></div>
 </body>
 </html>
