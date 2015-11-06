@@ -49,6 +49,7 @@ function prepPhotoUploader() {
         $$.post("/forward/photo", JSON.stringify(imgData))
             .done(
                 function(response) {
+                    alert("response: " + response)
                     $$('#loader').hide()
                     console.log("response: " + response)
                     if (apiResponseIsGood(response)) {
