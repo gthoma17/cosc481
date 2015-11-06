@@ -79,7 +79,7 @@ function createNewPhoto(photo){
     newNote = $("#image-template").html()
     newNote = replaceAllSubsting(newNote, "!url!", photo.base64_image);
     newNote = replaceAllSubsting(newNote, "!gallery!", "gallery01");
-    $('#gallery > div:first-child').before(newNote);
+    $('#gallery > div:last-child').after(newNote);
     $("#add-image-card").replaceWith($("#add-image-card").clone());
     prepPhotos();
 }
