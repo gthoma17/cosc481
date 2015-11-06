@@ -4,10 +4,11 @@ server {
 	root /apps/cosc481/backend;
 	index index.py index.html index.htm;
 	server_name api.gat.im;
+	client_max_body_size 12M;
 	location / {
-        #use proxy_pass for development
-        proxy_pass http://127.0.0.1:9002;
-        proxy_set_header X-Real-IP $remote_addr;
+	        #use proxy_pass for development
+        	proxy_pass http://127.0.0.1:9002;
+       		proxy_set_header X-Real-IP $remote_addr;
 		proxy_set_header Host $host;
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
@@ -20,11 +21,13 @@ server {
 	listen 80 default_server;
 
 	#root /usr/share/nginx/html;
-    root /apps/cosc481/webui;
+	root /apps/cosc481/webui;
 	index index.py index.html index.htm;
 
 	# Make site accessible from http://localhost/
 	server_name gat.im;
+
+	client_max_body_size 12M;
 
 	location / {
         #use proxy_pass for development
@@ -38,7 +41,7 @@ server {
 		#uwsgi_pass 127.0.0.1:9000
 	}
 	location /static/ {
-        root /apps/cosc481/webui/;
+        	root /apps/cosc481/webui/;
 	}
 
 }

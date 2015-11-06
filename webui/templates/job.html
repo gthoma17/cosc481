@@ -4,15 +4,18 @@ $def with (job, user, apiUrl)
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="/static/job_ajax.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="//www.gstatic.com/authtoolkit/js/gitkit.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 <link type=text/css rel=stylesheet href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<script src="/static/job_ajax.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="//www.gstatic.com/authtoolkit/js/gitkit.js"></script>
+
 <script type=text/javascript>
   window.google.identitytoolkit.signInButton(
     '#navbar', // accepts any CSS selector
@@ -54,6 +57,11 @@ $def with (job, user, apiUrl)
 .note-card > .card-footer {
     padding: .0125rem;
     margin-bottom: 0rem;
+}
+#img-loader{
+	height: 22px;
+    position: relative;
+    top: -22px;
 }
 </style>
 </head>
@@ -102,6 +110,7 @@ $def with (job, user, apiUrl)
 	</div>
 	
 </div>
+<!-- end navigation bar -->
 
 <!-- Begin Job Information -->
 	<div class="container">
@@ -121,12 +130,50 @@ $def with (job, user, apiUrl)
 	</div>
 <!-- End Job Information -->
 
+<!-- Begin Photo Stuff -->
+	<hr>
+	<div class="text-center"><h3>Photos <small><button id="hide-photos">[-]</button><button id="show-photos">[+]</button></div></small></h3>
+	<div id="photos-container" class="container">
+	    <div class="col-sm-3" id="add-image-card">
+	        <div class="card text-center">
+	        	<div class="card-block">
+	            	<input id="img-file" type="file" accept="image/*">
+            	</div>
+            	<div id="img-preview-container">
+	            	<div class="card-block" style="max-height: 200px">
+	            		<img id="img-preview" style="max-height: 200px; max-width: 100%">
+	            		<br>
+	            		<img id="img-loader" src="http://i.imgur.com/Bcv89it.gif">
+	            	</div>
+	            	<div class="card-block">
+	            	    <button id="submitImage">Submit</button>
+	            	    <button id="cancelImage">Cancel</button>
+        	    	</div>
+    	    	</div>
+	        </div>
+	    </div>
+	    <div class="col-sm-9">
+	        <div class="container">
+	            <div class="card-group" id="gallery">    
+	        		$for photo in job['photos']:
+	        		    <div class="col-sm-3">
+	        		        <div class="card">
+	        		            <a class="gallery" rel="gallery01" href="$photo['link']"><div style="height: 100px"><img src="$photo['link']" class="card-img-top" style="max-height: 100%; max-width: 100%" alt=""/></div></a>
+	        		        </div>
+	        		    </div>
+	    		</div>
+	   		</div>
+		</div>
+	</div>
+
+<!-- End Photo Stuff -->
+
 
 $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper() == "MANAGER":
 	<hr>
 	<!-- Begin Budget Stuff -->
 		<div id="apiResponse"></div>
-		<div class="text-center"><h3>Budget <small><a href="#" id="hide-budget">[-]</a><a href="#" id="show-budget">[+]</a></div></small></h3>
+		<div class="text-center"><h3>Budget <small><button id="hide-budget">[-]</button><button id="show-budget">[+]</button></div></small></h3>
 		<div class="table-responsive" id="budget-table-div">
 		<table id="budget-table" class="table table-striped table-condensed table-bordered text-center">
   		<thead>
@@ -181,7 +228,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 
 <!-- Begin Note Stuff -->
 	<hr>
-	<div class="text-center"><h3>Notes <small><a href="#" id="hide-notes">[-]</a><a href="#" id="show-notes">[+]</a></div></small></h3>
+	<div class="text-center"><h3>Notes <small><button id="hide-notes">[-]</button><button id="show-notes">[+]</button></div></small></h3>
 	<div class="container" id="notes-container">
 		<div class="col-sm-4">
 			<div class="card-group">
@@ -371,6 +418,13 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 			</div>
 		</div>
 		<br>
+	</div>
+	<div class="hidden" id="image-template" style="display:none;">
+    	<div class="col-sm-3">
+    	    <div class="card">
+    	        <a class="gallery" rel="!gallery!" href="!url!"><div style="height: 100px"><img src="!url!" class="card-img-top" style="max-height: 100%; max-width: 100%" alt=""/></div></a>
+    	    </div>
+    	</div>
 	</div>
 <!-- End ajax templates -->
 

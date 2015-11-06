@@ -1,4 +1,4 @@
-import web, ConfigParser, json, sys, urllib, requests, tempfile, socket
+import web, ConfigParser, json, sys, urllib, requests, tempfile, socket, base64
 from os import path
 from identitytoolkit import gitkitclient
 
@@ -43,6 +43,7 @@ urls = (
 	"/job/(.*)", "job",
 	"/newJob", "newJob",
 	"/forward/(.*)", "forward",
+	"/test","test"
 	)
 render = web.template.render(path.join(root,'templates/'))
 app = web.application(urls, globals())
@@ -93,6 +94,10 @@ class index:
 				text += "Here is your session info: "  + str(session.user)
 			title = "Wait.. what?"
 			return render.index(title, text)
+
+class test:
+	def GET(self):
+		return render.test()
 			
 class forward:
 	def GET(self, path):
@@ -101,7 +106,15 @@ class forward:
 		return apiRequest
 	def POST(self, path):
 		print "Forwarding post request"
-		passedData = dict(json.loads(web.input().keys()[0]))
+		#try:
+		#	passedData = dict(json.loads(web.input().keys()[0]))
+		#except:
+		#	#this is no json
+		#	return "403 Forbidden"
+		try:
+			passedData = dict(json.loads(web.data()))
+		except Exception, e:
+			return e 
 		passedData['apiKey'] = session.user['apiKey']
 		apiRequest = requests.post(apiUrl+"/"+path, data=passedData)
 		return apiRequest.text

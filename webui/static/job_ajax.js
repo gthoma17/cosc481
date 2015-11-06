@@ -1,6 +1,110 @@
-$(document).ready(function(){
+var imgData;
+
+//**************************Start Photos stuff********************************************************************************************
+function photosInit() {
+    //things that have to the first time the page loads
+    prepPhotos()
+    $('#img-loader').hide()
+    $("a.gallery").fancybox({
+        'transitionIn'  :   'elastic',
+        'transitionOut' :   'elastic',
+        'speedIn'       :   600, 
+        'speedOut'      :   200, 
+        'overlayShow'   :   false,
+        'cyclic'        :   true,
+        'showNavArrows' :   true
+    });
+    $("#show-photos").hide();
+    $("#show-photos").click(function(){
+        $("#show-photos").hide();
+        $("#hide-photos").show();
+        $("#photos-container").slideDown("slow");   
+    });
+    $("#hide-photos").click(function(){
+        $("#hide-photos").hide();
+        $("#show-photos").show();
+        $("#photos-container").slideUp("slow");   
+    });
+}
+function prepPhotos() {
+    //things that have to happen every time a new photo is added
+    document.getElementById('img-file').onchange = function (e) {loadFileFromInput(e.target);};
+    $('#cancelImage').click(function(){
+        imgData = {}
+        $('#img-preview').removeAttr("src");
+        $('#img-preview-container').hide();
+        $("#img-file").replaceWith($("#img-file").clone());
+        document.getElementById('img-file').onchange = function (e) {loadFileFromInput(e.target);};
+    });
+    $('#submitImage').click(function(){
+        $('#img-loader').show()
+        $("#img-loader").width($("#img-preview").width());
+        $.post("/forward/photo", JSON.stringify(imgData))
+            .done(
+                function(response) {
+                    $('#img-loader').hide()
+                    console.log("response: " + response)
+                    if (apiResponseIsGood(response)) {
+                        createNewPhoto(imgData);
+                    };
+                }
+            );
+    });
+    $('#img-preview-container').hide()
+}
+function loadFileFromInput(input) {
+    var reader; 
+    if (input.files && input.files[0]) {
+        var file = input.files[0];
+        reader = new FileReader();
+        reader.readAsDataURL(file);
+        //filereaders run on a different thread, so we
+        // need to wait for it to finish it's work before we continue
+        reader.onload = function (e) {
+            imgData = {}
+            imgData.name = file.name
+            imgData.lastModified = file.lastModified
+            imgData.type = file.type
+            imgData.file_extension = (file.name).substr((file.name).lastIndexOf('.'))
+            imgData.job_id = $('#jobId').text()
+            imgData.base64_image = reader.result
+            console.log(imgData)
+            $('#img-preview').attr("src",reader.result);
+            $('#img-preview-container').show()
+        }
+    }
+}
+function createNewPhoto(photo){
+    console.log("new photo")
+    newNote = $("#image-template").html()
+    newNote = replaceAllSubsting(newNote, "!url!", photo.base64_image);
+    newNote = replaceAllSubsting(newNote, "!gallery!", "gallery01");
+    $('#gallery > div:first-child').before(newNote);
+    $("#add-image-card").replaceWith($("#add-image-card").clone());
+    prepPhotos();
+}
+
+//**************************End Photos stuff********************************************************************************************
+
+
+
+function prepNotes() {
     $(".daily-report-field").hide()
     $(".action-item-field").hide()
+    $("#show-notes").hide();
+    $("#show-notes").click(function(){
+        $("#show-notes").hide();
+        $("#hide-notes").show();
+        $("#notes-container").slideDown("slow");   
+    });
+    $("#hide-notes").click(function(){
+        $("#hide-notes").hide();
+        $("#show-notes").show();
+        $("#notes-container").slideUp("slow");   
+    });
+    $(".add-note-card").removeClass("card-warning card-danger").addClass("card-info");
+}
+function prepBudget(){
     $(".addItemForm").hide();
     $(".edit_row").hide();
     $("#show-budget").hide();
@@ -14,18 +118,6 @@ $(document).ready(function(){
         $("#show-budget").show();
         $("#budget-table-div").slideUp("slow");   
     });
-    $("#show-notes").hide();
-    $("#show-notes").click(function(){
-        $("#show-notes").hide();
-        $("#hide-notes").show();
-        $("#notes-container").slideDown("slow");   
-    });
-    $("#hide-notes").click(function(){
-        $("#hide-notes").hide();
-        $("#show-notes").show();
-        $("#notes-container").slideUp("slow");   
-    });
-    $(".add-note-card").removeClass("card-warning card-danger").addClass("card-info");
     $("#cancelBudgetAdd").click(function(){
         $("#name").val("");
         $("#type").val("select");
@@ -105,8 +197,7 @@ $(document).ready(function(){
             }
         });
     });
-
-});
+}
 function flashRedBackground (div) {
     bg = div.css("background");
     div.css("background", "red");
@@ -347,3 +438,8 @@ function createNewNote(noteId, note){
     $("#note-departureTime").val("")
     $("#note-PeopleOnSite").val("")
 }
+$(document).ready(function(){
+    photosInit()
+    prepNotes()
+    prepBudget()
+});
