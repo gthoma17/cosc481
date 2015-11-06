@@ -24,6 +24,12 @@
 	color:#7F7F7F;
 }
 
+.job-name { 
+    font-size:2em;
+    font-weight:bold;
+    color:#7F7F7F;
+}
+
 .jobs{
 	position:relative;	
 	font-size:2em;

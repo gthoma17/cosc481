@@ -103,6 +103,7 @@ function prepNotes() {
         $("#notes-container").slideUp("slow");   
     });
     $(".add-note-card").removeClass("card-warning card-danger").addClass("card-info");
+    $('.note-card').width($('.add-note-card').width())
 }
 function prepBudget(){
     $(".addItemForm").hide();
@@ -437,6 +438,8 @@ function createNewNote(noteId, note){
     $("#note-arrivalTime").val("")
     $("#note-departureTime").val("")
     $("#note-PeopleOnSite").val("")
+    //make all notes the same size
+    $('.note-card').width($('.add-note-card').width())
 }
 $(document).ready(function(){
     photosInit()

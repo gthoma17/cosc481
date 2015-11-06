@@ -78,7 +78,6 @@ $def with (job, user, apiUrl)
 			
 			<a href="http://gat.im/dashboard"><img class="logo" alt="Jobn" src="/static/logo_small.png"  /></a>
 			
-			<h1 class="navbar-brand">$job['name']</h1>
 			
 
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -113,10 +112,15 @@ $def with (job, user, apiUrl)
 <!-- end navigation bar -->
 
 <!-- Begin Job Information -->
+	
+	
+	
 	<div class="container">
-	  <div class="row">
-	    <div class="col-sm-12"><h4><a href="edit/job/$job['id']">(edit)</a></h4></div>
-	  </div>
+		<div class="row">
+			<div class="col-sm-12">
+				<h1 class="job-name text-center">$job['name']<small><a id="edit-job" href="#">(edit)</a></small></h1>
+			</div>
+		</div>
 	  $if job['phase'] == "open":
 	    $ color = "PaleGreen"
 	  $else:
@@ -159,10 +163,8 @@ $def with (job, user, apiUrl)
 	        <div class="container">
 	            <div class="card-group" id="gallery">    
 	        		$for photo in job['photos']:
-	        		    <div class="col-sm-3">
-	        		        <div class="card">
-	        		            <a class="gallery" rel="gallery01" href="$photo['link']"><div style="height: 100px"><img src="$photo['link']" class="card-img-top" style="max-height: 100%; max-width: 100%" alt=""/></div></a>
-	        		        </div>
+	        		    <div class="col-sm-2">
+	       		        	<a class="gallery" rel="gallery01" href="$photo['link']"><div style="height: 100px"><img src="$photo['link']" class="card-img-top" style="max-height: 100%; max-width: 100%" alt=""/></div></a>
 	        		    </div>
 	    		</div>
 	   		</div>
@@ -423,10 +425,8 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 		<br>
 	</div>
 	<div class="hidden" id="image-template" style="display:none;">
-    	<div class="col-sm-3">
-    	    <div class="card">
-    	        <a class="gallery" rel="!gallery!" href="!url!"><div style="height: 100px"><img src="!url!" class="card-img-top" style="max-height: 100%; max-width: 100%" alt=""/></div></a>
-    	    </div>
+    	<div class="col-sm-2">
+    		<a class="gallery" rel="!gallery!" href="!url!"><div style="height: 100px"><img src="!url!" class="card-img-top" style="max-height: 100%; max-width: 100%" alt=""/></div></a>
     	</div>
 	</div>
 <!-- End ajax templates -->
