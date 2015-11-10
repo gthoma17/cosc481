@@ -153,45 +153,6 @@ class job:
 		user_form = {}
 		raise web.seeother('/job/'+str(job))
 class newJob:
-	form = web.form.Form(
-        #Necessary Job Fields to create a job
-        web.form.Textbox('name', web.form.notnull,
-            size=30,
-            description="Job Name: "),
-        web.form.Textbox('street_address', web.form.notnull,
-            size=30,
-            description="Street Address: "),
-        web.form.Textbox('city', web.form.notnull,
-            size=30,
-            description="City: "),
-        web.form.Textbox('state', web.form.notnull,
-            size=30,
-            description="State: "),
-        web.form.Textbox('zip', web.form.notnull,
-            size=30,
-            description="Zip Code: "),
-        web.form.Checkbox('phase',
-            description="Is Job In Progress?",
-            value="isInProgress"),
-        web.form.Textbox('date_started',
-            size=30,
-            description="Date Started: "),
-        web.form.Textbox('description',
-            size=30,
-            description="Description: "),
-
-        #Optional Job Fields when creating a job
-        web.form.Textbox('manager_id', web.form,
-            size=30,
-            description="Manager: "),
-        web.form.Textbox('supervisor_id', web.form,
-            size=30,
-            description="Supervisor: "),
-        web.form.Textbox('customer_id', web.form,
-            size=30,
-            description="Customer (Bill To):"),
-        web.form.Button('Add Job'),
-    )
 	def GET(self):
 		if not userAuthed(session.user) or not userIsAdmin(session.user):
 			raise web.seeother('/')
@@ -200,21 +161,22 @@ class newJob:
 			del session.user['apiResponse']
 		else:
 			response = ""
-		return render.newJob(response, self.form)
-	def POST(self):
-		form = self.form()
-		if not form.validates():
-			return render.admin("Form validation failed", self.form)
-		user_form = dict(form.d)
-		if user_form['isInProgress'] == True:
-			user_form['isInProgress'] = "True"
-		else:
-			user_form['isInProgress'] = "False"
-		user_form['apiKey'] = session.user['apiKey']
-		apiRequest = requests.post(apiUrl+"/job", data=user_form)
-		session.user['apiResponse'] = apiRequest.text
-		user_form = {}
-		raise web.seeother('/newJob')
+        #newStuuf!
+		newJobVals = {}
+		newJobVals['name'] = "New Job"
+		newJobVals['street_address'] = ""
+		newJobVals['city'] = ""
+		newJobVals['state'] = ""
+		newJobVals['zip'] = ""
+		newJobVals['phase'] = "open"
+		newJobVals['description'] = ""
+		newJobVals['date_started'] = ""
+		newJobVals['id'] = "new"
+		newJobVals['date_closed'] = ""
+		newJobVals['date_billed'] = ""
+		newJobVals['photos'] = ""
+		newJobVals['notes'] = ""
+		return render.job(newJobVals, session.user, apiUrl)
 class login:
 	def GET(self):
 		return render.login(config.get("WebUi","url"))
