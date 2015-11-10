@@ -5,8 +5,8 @@ $def with (title, text, adminLink)
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" />
 <link type=text/css rel=stylesheet href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
@@ -31,51 +31,46 @@ $def with (title, text, adminLink)
 <link rel="stylesheet" type="text/css" href="/static/style.css">
 <link rel="icon" type="image/png" href="/static/favicon.png">
 </head>
+
 <body> 
 
 <!-- navigation bar -->
-<div class="navbar navbar-default">
-	
-	<div class="container">
+<nav role="navigation" class="navbar navbar-default navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+		<!--brand and toggle grouped for better mobile display-->
+		<a href="http://gat.im/dashboard" class="pull-left"><img class="logo" alt="Jobn" src="/static/logo_small.png"  /></a>
 		
-		<div class="navbar-header">
+		<div class="navbar-brand">Dashboard</div>
 		
-			
-			<a href="http://gat.im/dashboard"><img class="logo" alt="Jobn" src="/static/logo_small.png"  /></a>
-			
-			<h1 class="navbar-brand">Dashboard</h1>
-			
 
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-				
-				<span class="sr-only">Toggle navigation</span>
-				
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				
-			</button>
-				
-		</div>
-		
-		<div class="collapse navbar-collapse">
-		
-			<ul class="nav navbar-nav">
-				
-				<li style="z-index:512;" class="pages"><a href="">Reports</a></li>
-				<li style="z-index:512;" class="pages"><a href="/admin">Admin Panel</a></li>
-				<li style="z-index:512;" class="pages"><a href="/jobs">Jobs</a></li>
-				<li class="pages"><div id="accountSwitcher"><div id="navbar" style="vertical-align:middle;width:100%;" class="center-block"></div></div></li>
-				
-				
-			</ul>
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 			
-		</div>
+			<span class="sr-only">Toggle navigation</span>
 			
-	</div>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			
+		</button>
+		
+    </div>
+	<!--content for toggling-->
+    <div class="collapse navbar-collapse">
 	
-</div>
+		<ul class="nav navbar-nav">
+			
+			<li style="z-index:512;" id="tiles" class="pages"><a href="">Reports</a></li>
+			<li style="z-index:512;" id="tiles" class="pages"><a href="/admin">Admin Panel</a></li>
+			<li style="z-index:512;" id="tiles" class="pages"><a href="/jobs">Jobs</a></li>
+			<li class="pages"><div id="accountSwitcher"><div id="navbar" style="vertical-align:middle;width:100%;" class="center-block"></div></div></li>
+			
+		</ul>
+		
+	</div>
+  </div>
+</nav>
 
 <!-- Welcome message -->
 <div class="container">

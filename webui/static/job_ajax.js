@@ -441,8 +441,49 @@ function createNewNote(noteId, note){
     //make all notes the same size
     $('.note-card').width($('.add-note-card').width())
 }
+//dynamic text area for the job name and job description
+//hides all the fields with the job-edit id
+function jobEditInit(){
+	$(".job-edit").hide();
+	
+	//function to show hidden stuff when ' (edit)' clicked
+	$("#edit-job").click(function(){
+        $(".job-show").hide();
+		$(".job-edit").show();  
+    });
+	
+	$(function(){
+		$("#edit-job-desc").redactor({
+			focus: true,
+			callbacks: {
+				init: function(){
+					this.code.set($('#job-desc').text());
+				}
+			}
+		});
+		
+		$("#edit-job-name").redactor({
+			focus: true,
+			callbacks: {
+				init: function(){
+					this.code.set($('#job-name').text());
+				}
+			}
+		});
+	});	
+}
+//changes the edit link to save link
+/*$("#edit-job").click(function(){
+		var container = $('#jobInfoTemplate');
+		container.find('a#edit-job').unbind('click').click(SaveEditState).html(' (save)'); //this changes edit button to save button
+		
+});*/
+
 $(document).ready(function(){
     photosInit()
     prepNotes()
     prepBudget()
+	jobEditInit()
 });
+
+

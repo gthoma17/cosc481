@@ -76,45 +76,41 @@ $def with (job, user, apiUrl)
 
 
 <!-- navigation bar -->
-<div class="navbar navbar-default">
-	
-	<div class="container">
+<nav role="navigation" class="navbar navbar-default navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+		<!--brand and toggle grouped for better mobile display-->
+		<a href="http://gat.im/dashboard" class="pull-left"><img class="logo" alt="Jobn" src="/static/logo_small.png"  /></a>
 		
-		<div class="navbar-header">
-			
-			<a href="http://gat.im/dashboard"><img class="logo" alt="Jobn" src="/static/logo_small.png"  /></a>
-			
-			
+		<div class="navbar-brand"></div>
+		
 
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-				
-				<span class="sr-only">Toggle navigation</span>
-				
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				
-			</button>
-				
-		</div>
-		
-		<div class="collapse navbar-collapse">
-		
-			<ul class="nav navbar-nav">
-				
-				<li class="pages"><a href="/jobs">Jobs</a></li>
-				<li class="pages"><a href="/dashboard">Dashboard</a></li>
-				<li class="pages"><div id="accountSwitcher"><div id="navbar" style="vertical-align:middle;width:100%;" class="center-block"></div></div></li>
-				
-				
-			</ul>
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 			
-		</div>
+			<span class="sr-only">Toggle navigation</span>
 			
-	</div>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			
+		</button>
+		
+    </div>
+	<!--content for toggling-->
+    <div class="collapse navbar-collapse">
 	
-</div>
+		<ul class="nav navbar-nav">
+			
+			<li style="z-index:512;" id="tiles" class="pages"><a href="/jobs">Jobs</a></li>
+			<li style="z-index:512;" id="tiles" class="pages"><a href="/dashboard">Dashboard</a></li>
+			<li style="z-index:512;" id="tiles" class="pages"><div id="accountSwitcher"><div id="navbar" style="vertical-align:middle;width:100%;" class="center-block"></div></div></li>
+				
+		</ul>
+		
+	</div>
+  </div>
+</nav>
 <!-- end navigation bar -->
 
 <!-- Begin Job Information -->
@@ -128,39 +124,55 @@ $def with (job, user, apiUrl)
 			<div class="col-sm-12">
 				<div class="card $color job-info" style="border-width:.15rem;">
 					<div class="card-header">
-						<h1 class="job-name text-center">$job['name']<small><a id="edit-job" href="#">(edit)</a></small></h1>
+						<h1 class="job-show text-center" id="job-name">$job['name']<small><a id="edit-job" href="#"> (edit)</a></small></h1>
+						<h1 class="job-edit text-center"><input type="text" id="edit-job-name" name="jobName" size="10" /><small><a id="edit-job" href="#"> (save)</a></small></h1>
 					</div>
 					<div class="card-block" style="background-color: #f5f5f5;border-bottom: .0625rem solid #e5e5e5;padding:0.5rem;">
 						<div class="row" style="border-bottom: .0625rem solid #e5e5e5;padding-bottom:0.5rem;">
-							<div class="col-sm-6">
+							<div class="col-sm-6 job-show">
 								Location:
 								<a href="http://maps.apple.com/?q=$job['location']" target="blank" role="button" class="btn btn-primary" aria-label="Left Align">
                   					<span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>$job['street_address'] $job['city']
                 				</a>
             				</div>
-							<div class="col-sm-6"><p style="margin-bottom: 0px;">Customer:</p></div>
+							<div class="col-sm-6 job-edit">
+									Street: <input name="job-street" value="$job['street_address']" type="text" /><br>
+									City: <input name="job-city" value="$job['city']" type="text" /><br>
+									State: <input name="job-state" value="$job['state']" type="text" /><br>
+									Zip: <input name="job-zip" value="$job['zip']" type="text" /><br>
+							</div>
+							<div class="col-sm-6 job-show"><p style="margin-bottom: 0px;">Customer:</p></div>
+							<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Customer: <input type="text" name="customer" size="20" /></p></div>
 						</div>
 	    				<div class="row" style="border-bottom: .0625rem solid #e5e5e5;padding-bottom:0.5rem;">
-	    					<div class="col-sm-6"><p style="margin-bottom: 0px;">Supervisor: </p></div>
-	    					<div class="col-sm-6"><p style="margin-bottom: 0px;">Manager: </p></div>
+	    					<div class="col-sm-6 job-display job-show"><p style="margin-bottom: 0px;">Supervisor: </p></div>
+							<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Supervisor: <input type="text" name="supervisor" size="20" /></p></div>
+	    					<div class="col-sm-6 job-show"><p style="margin-bottom: 0px;">Manager: </p></div>
+							<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Manager: <input type="text" name="manager" size="20" /></p></div>
 	    				</div>
 	    				$if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper() == "MANAGER":
 	    					<div class="row">
-	    						<div class="col-sm-6"><p style="margin-bottom: 0px;">Budget availiable: </p></div>
-	    						<div class="col-sm-6"><p style="margin-bottom: 0px;">Budget allocated: </p></div>
+	    						<div class="col-sm-6 job-show"><p style="margin-bottom: 0px;">Budget availiable: </p></div>
+								<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Budget availiable: <input type="text" name="budget_available" size="10" /></p></div>
+	    						<div class="col-sm-6 job-show"><p style="margin-bottom: 0px;">Budget allocated: </p></div>
+								<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Budget allocated: <input type="text" name="budget_allocated" size="10" /></p></div>
 	    					</div>
 					</div>
-					<div class="card-block" style="background-color: #f5f5f5;">
+					<div class="card-block job-show" id="job-desc" style="background-color: #f5f5f5;">
 						<p style="margin-bottom: 0px;">$job['description']</p>
+					</div>
+					<div class="card-block job-edit" style="background-color: #f5f5f5;">
+						<p style="margin-bottom: 0px;"><input type="textarea" class="" id="edit-job-desc" name="job_description" size="100" placeholder="$job['description']"/></p>
 					</div>
 					<div class="card-footer text-muted small">
 						<div class="container">
-							<div class="col-sm-3"><p style="margin-bottom: 0px;">Phase: $job['phase']</p></div>
-							<div class="col-sm-3"><p style="margin-bottom: 0px;">Opened: $job['date_started']</p></div>
+							<div class="col-sm-3 job-show"><p style="margin-bottom: 0px;">Phase: $job['phase']</p></div>
+							<div class="col-sm-3 job-edit"><p style="margin-bottom: 0px;">Phase: $job['phase'] <select class="" id=""><option value="Open" selected>Open</option><option value="Billed">Billed</option><option value="Closed">Closed</option></select></p></div>
+							<div class="col-sm-3 job-show"><p style="margin-bottom: 0px;">Opened: $job['date_started']</p></div>
 							$if job['date_closed']:
-								<div class="col-sm-3"><p style="margin-bottom: 0px;">Closed: $job['date_closed']</p></div>
+								<div class="col-sm-3 job-show"><p style="margin-bottom: 0px;">Closed: $job['date_closed']</p></div>
 							$if job['date_billed']:
-								<div class="col-sm-3"><p style="margin-bottom: 0px;">Billed: $job['date_billed']</p></div>
+								<div class="col-sm-3 job-show"><p style="margin-bottom: 0px;">Billed: $job['date_billed']</p></div>
 						</div>
 					</div>
 				</div>
@@ -372,7 +384,8 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 	<div class="hidden" id="jobId">$job['id']</div>
 <!-- End metadata -->
 
-<!-- Begin ajax templates --> 
+<!-- Begin ajax templates -->
+	
 	<table class="hidden">
 		<tbody id="budgetRowTemplate">
 			<tr>
