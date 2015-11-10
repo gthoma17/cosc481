@@ -25,7 +25,7 @@ urls = (
 	"/job/(.*)", "job",
 	"/budgetItem", "budgetItem",
 	"/note", "note",
-	"/actionItem/(.*)", "actionItem",
+	"/editNote/(.*)", "editNote",
 	"/delete/budgetItem", "deleteBudgetItem",
 	"/delete/user", "deleteUser",
 	"/photo", "photo"
@@ -117,7 +117,7 @@ class deleteUser:
 			return "200 OK"
 		else:
 			return "403 Forbidden"
-class actionItem:
+class editNote:
 	def GET(self): 
 		return "Shhhh... the database is sleeping."
 	def POST(self):
@@ -127,14 +127,40 @@ class actionItem:
 			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
 		except IndexError:
 			return "403 Forbidden"
+		tbl = passedData['tbl']
+		db.update(tbl, where="id = "+str(passedData['note_id']), 
+					edit_user=req_user['id'],
+					edit_time="CURRENT_TIMESTAMP"
+				)
+		if "contents" in passedData:
+			db.update(tbl, where="id = "+str(passedData['note_id']), 
+					contents=passedData['contents']
+				)
+
 		if "assigned_user" in passedData:
 			db.update(tbl, where="id = "+str(passedData['note_id']), 
 					assigned_user=passedData['assigned_user']
 				)
 		if "completion_user" in passedData:
 			db.update(tbl, where="id = "+str(passedData['note_id']), 
-					completion_user=passedData['arrival_time'],
+					completion_user=req_user['id'],
 					completion_time="CURRENT_TIMESTAMP"
+				)
+		if "arrival_time" in passedData:
+			date = datetime.datetime.now().strftime("%d/%m/%Y")
+			arrivalTime = datetime.datetime.strptime(passedData['arrival_time']+" "+date, "%H:%M %d/%m/%Y")
+			db.update(tbl, where="id = "+str(passedData['note_id']), 
+					arrival_time=passedData['arrival_time']
+				)
+		if "departure_time" in passedData:
+			date = datetime.datetime.now().strftime("%d/%m/%Y")
+			departureTime = datetime.datetime.strptime(passedData['departure_time']+" "+date, "%H:%M %d/%m/%Y")
+			db.update(tbl, where="id = "+str(passedData['note_id']), 
+					departure_time=passedData['departureTime']
+				)
+		if "people_on_site" in passedData:
+			db.update(tbl, where="id = "+str(passedData['note_id']), 
+					people_on_site=passedData['people_on_site']
 				)
 		return "202 Note Updated"
 

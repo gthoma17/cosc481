@@ -183,6 +183,8 @@ def createNotesTbl(cursor):
 	  author_id INTEGER,
 	  entry_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	  contents TEXT(65535),
+	  edit_user INTEGER,
+	  edit_time TIMESTAMP,
 	  PRIMARY KEY(id)
 	)
 	""")
@@ -214,6 +216,8 @@ def createReportsTbl(cursor):
 	  entry_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	  arrival_time TIMESTAMP,
 	  departure_time TIMESTAMP,
+	  edit_user INTEGER,
+	  edit_time TIMESTAMP,
 	  contents TEXT(65535),
 	  people_on_site TEXT(65535),
 	  PRIMARY KEY(id)
@@ -230,6 +234,8 @@ def createActionItemsTbl(cursor):
 	  completion_time TIMESTAMP,
 	  completion_user INTEGER,
 	  assigned_user INTEGER,
+	  edit_user INTEGER,
+	  edit_time TIMESTAMP,
 	  contents TEXT(65535),
 	  PRIMARY KEY(id)
 	)
