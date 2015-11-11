@@ -448,3 +448,8 @@ body {
     float: none;
     height: 100%;
 }
+/*job edit*/
+#edit-job-desc {
+    width: 280px;
+    height: 50px;
+}
