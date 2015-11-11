@@ -21,6 +21,7 @@ urls = (
 	"/", "index",
 	"/user/(.*)", "user",
 	"/user", "newUser",
+	"/users/type/(.*)", "userType",
 	"/job", "newJob",
 	"/job/(.*)", "job",
 	"/budgetItem", "budgetItem",
@@ -40,6 +41,23 @@ def set_headers():
     web.header('Access-Control-Allow-Origin',      '*')
 
 app.add_processor(web.loadhook(set_headers))
+
+class userType:
+	def GET(self, reqTypes):
+		#try:
+		#	reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
+		#except IndexError:
+		#	return "403 Forbidden"
+		outList = []
+		if reqTypes == "all":
+			outList.extend(list(db.select('jobAppUsers')))
+		else:
+			types = reqTypes.split("|")
+			for reqType in types:
+				outList.extend(list(db.select('jobAppUsers', what="id, name, permissionLevel, email, phone",  where="permissionLevel like '%"+reqType+"%'")))
+		return json.dumps(outList)
+	def POST(self):
+		return "Shhhh... the database is sleeping."
 
 class photo:
 	def GET(self):
