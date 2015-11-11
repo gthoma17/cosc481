@@ -5,10 +5,9 @@ $def with (response, form, users)
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" />
 <link type=text/css rel=stylesheet href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="//www.gstatic.com/authtoolkit/js/gitkit.js"></script>
@@ -21,59 +20,51 @@ $def with (response, form, users)
     }
   );
 </script>
+<title>Jobn - Admin Panel</title>
+<script src="/static/user_ajax.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/style.css">
 <link rel="icon" type="image/png" href="/static/favicon.png">
-<script src="/static/user_ajax.js"></script>
-<title>Jobn - Admin Panel</title>
-
 </head>
 
 <body>
 
 <!-- navigation bar -->
-<div class="navbar navbar-default">
-	
-	<div class="container">
-		
-		<div class="navbar-header">
-		
-			
-			<a href="http://gat.im/dashboard"><img class="logo" alt="Jobn" src="/static/logo_small.png"  /></a>
-			
-			<h1 class="navbar-brand">Admin Panel</h1>
-			
+<nav role="navigation" class="navbar navbar-default navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+    <!--brand and toggle grouped for better mobile display-->
+    <a href="http://gat.im/dashboard" class="pull-left"><img class="logo" alt="Jobn" src="/static/logo_small.png"  /></a>
+    
+    <div class="navbar-brand">Dashboard</div>
+    
 
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-				
-				<span class="sr-only">Toggle navigation</span>
-				
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				
-			</button>
-				
-		</div>
-		
-		<div class="collapse navbar-collapse">
-		
-			<ul class="nav navbar-nav">
-				
-				<li class="pages"><a href="">Reports</a></li>
-				<li class="pages"><a href="/jobs">Jobs</a></li>
-				<li class="pages"><a href="/dashboard">Dashboard</a></li>
-				<li class="pages"><div id="accountSwitcher"><div id="navbar" style="vertical-align:middle;width:100%;" class="center-block"></div></div></li>
-				
-				
-			</ul>
-			
-		</div>
-			
-	</div>
-	
-</div>
-
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+      
+      <span class="sr-only">Toggle navigation</span>
+      
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      
+    </button>
+    
+    </div>
+  <!--content for toggling-->
+    <div class="collapse navbar-collapse">
+  
+    <ul class="nav navbar-nav">
+      
+        <li class="pages"><a href="">Reports</a></li>
+        <li class="pages"><a href="/jobs">Jobs</a></li>
+        <li class="pages"><a href="/dashboard">Dashboard</a></li>
+        <li id="accountSwitcherLI"><div id="accountSwitcher"><div id="navbar" style="vertical-align:middle;width:100%;" class="center-block"></div></div></li>
+      
+    </ul>
+    
+  </div>
+  </div>
+</nav>
 <!-- admin info -->
 <div class="container">
   <div class="row">

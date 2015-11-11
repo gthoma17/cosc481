@@ -1,21 +1,20 @@
 $def with (job, user, apiUrl)
 <!DOCTYPE html>
 <html lang="en">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.css" type="text/css" media="screen" />
+<link type=text/css rel=stylesheet href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<script src="/static/job_ajax.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="//www.gstatic.com/authtoolkit/js/gitkit.js"></script>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-<link type=text/css rel=stylesheet href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/css/bootstrap.min.css">
-
 <script type=text/javascript>
   window.google.identitytoolkit.signInButton(
     '#navbar', // accepts any CSS selector
@@ -25,53 +24,11 @@ $def with (job, user, apiUrl)
     }
   );
 </script>
-
+<title>Jobn - $job['name']</title>
+<script src="/static/job_ajax.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/style.css">
 <link rel="icon" type="image/png" href="/static/favicon.png">
-<title>Jobn - $job['name']</title>
-<style type="text/css">
-.note-card {
-    background-color: aliceblue;
-    border-width: .15rem;
-}
-.note-card > .card-header  {
-	padding: .0125rem;
-    margin-bottom: 0rem;
-}
-.note-card > .card-header > .card-title {
-	padding: .0125rem;
-	margin-bottom: 0rem;
-}
-.note-card > .card-block {
-    padding: .0125rem;
-    margin-bottom: 0rem;
-}.note-card > .card-block > p {
-    padding: .0125rem;
-    margin-left: .1rem;
-    margin-bottom: 0rem;
-}
-.note-card > .card-block > hr {
-    margin-top: .1rem;
-    margin-bottom: .1rem;
-}
-.note-card > .card-footer {
-    padding: .0125rem;
-    margin-bottom: 0rem;
-}
-#img-loader{
-	height: 22px;
-    position: relative;
-    top: -22px;
-}
-.vcenter {
-    display: inline-block;
-    vertical-align: middle;
-    float: none;
-    height: 100%;
-}
-</style>
 </head>
-
 <body>
 
 
@@ -102,9 +59,9 @@ $def with (job, user, apiUrl)
 	
 		<ul class="nav navbar-nav">
 			
-			<li style="z-index:512;" id="tiles" class="pages"><a href="/jobs">Jobs</a></li>
-			<li style="z-index:512;" id="tiles" class="pages"><a href="/dashboard">Dashboard</a></li>
-			<li style="z-index:512;" id="tiles" class="pages"><div id="accountSwitcher"><div id="navbar" style="vertical-align:middle;width:100%;" class="center-block"></div></div></li>
+			<li style="z-index:512;" class="pages"><a href="/jobs">Jobs</a></li>
+			<li style="z-index:512;" class="pages"><a href="/dashboard">Dashboard</a></li>
+			<li style="z-index:512;" id="accountSwticherLI"><div id="accountSwitcher"><div id="navbar" style="vertical-align:middle;width:100%;" class="center-block"></div></div></li>
 				
 		</ul>
 		

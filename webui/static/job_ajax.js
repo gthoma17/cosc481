@@ -452,7 +452,7 @@ function jobEditInit(){
 		$(".job-edit").show();  
     });
 	
-	$(function(){
+	/*$(function(){
 		$("#edit-job-desc").redactor({
 			focus: true,
 			callbacks: {
@@ -470,7 +470,7 @@ function jobEditInit(){
 				}
 			}
 		});
-	});	
+	});*/
 }
 //changes the edit link to save link
 /*$("#edit-job").click(function(){
