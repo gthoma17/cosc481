@@ -1,5 +1,5 @@
 /*mobile screen size*/
-@media (max-width: 550px) {
+@media (max-width: 800px) {
 	.navbar-brand {
 		position:absolute;
 		width:100%;
@@ -18,7 +18,7 @@
 }
 
 /*bigger screens*/
-@media (min-width: 550px) {
+@media (min-width: 800px) {
 	.logo {
 		margin-right:20px;
 	}
@@ -111,6 +111,12 @@
 #accountSwitcherLI {
     padding-top:0px;
     margin-top:0px;
+    margin-right: -15px;
+}
+@media (max-width: 800px) {
+    #accountSwitcherLI {
+      margin-right: 0px;
+    }
 }
 
 /*end of navigation bar*/	
