@@ -27,6 +27,7 @@ urls = (
 	"/budgetItem", "budgetItem",
 	"/note", "note",
 	"/editNote/(.*)", "editNote",
+	"/actionItem", "actionItem",
 	"/delete/budgetItem", "deleteBudgetItem",
 	"/delete/user", "deleteUser",
 	"/photo", "photo"
@@ -135,6 +136,22 @@ class deleteUser:
 			return "200 OK"
 		else:
 			return "403 Forbidden"
+class actionItem:
+	def GET(self):
+		return "Shhhh... the database is sleeping."
+	def POST(self):
+		passedData = dict(web.input())
+		try:
+			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
+		except IndexError:
+			return "403 Forbidden"
+		if "assigned_user" in passedData:
+			db.update("actionItems", where="id = "+str(passedData['id']), 
+					assigned_user=passedData['assigned_user']
+				)
+			return json.dumps(db.where('jobAppUsers', id=passedData['assigned_user'])[0])
+
+		return "481 WTF?"
 class editNote:
 	def GET(self): 
 		return "Shhhh... the database is sleeping."

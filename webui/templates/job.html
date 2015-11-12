@@ -242,7 +242,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 	<div class="container" id="notes-container">
 		<div class="col-sm-4">
 			<div class="card-group">
-				<div class="card add-note-card text-center">
+				<div class="card add-note-card text-center" id="add-note-card">
 					<div class="card-header">
 						<h5 class="card-title">Add a Note</h5>
 					</div>
@@ -294,19 +294,19 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 						<div class="col-xs-12 col-md-12">
 						<div class="card $cardType note-card text-center">
 							<div class="card-header">
-								<h5 class="card-title">$type</h5>
+								<h5 class="card-title">$type <button id="note-edit-button-$note['tbl']-$note['id']">Edit</button></h5>
 							</div>
 							<div class="card-block">
-								<p class="card-text">$note['contents']</p>
+								<p style="display:inline;" class="card-text" id="note-contents-$note['tbl']-$note['id']">$note['contents']</p>
 							</div>
 							$if note['tbl'] == 'dailyReports':
 								<div class="card-block">
 									<hr>
-									<p class="card-text"><b>Arrival Time:</b> $note['arrival_time']</p>
-									<p class="card-text"><b>Departure Time:</b> $note['departure_time']</p>
+									<p class="card-text"><b>Arrival Time:</b> <div style="display:inline;" id="note-arrival-$note['tbl']-$note['id']">$note['arrival_time']</div></p>
+									<p class="card-text"><b>Departure Time:</b> <div style="display:inline;" id="note-departure-$note['tbl']-$note['id']">$note['departure_time']</div></p>
 									<hr>
 									<p class="card-text"><b>People on Site:</b></p>
-									<p class="card-text">$note['people_on_site']</p>
+									<p class="card-text"><div style="display:inline;" id="note-people-$note['tbl']-$note['id']">$note['people_on_site']</div></p>
 								</div>
 							$if note['tbl'] == 'actionItems':
 								<div class="card-block">
@@ -315,13 +315,24 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 										<p class="card-text">Completed by $note['completion_user']['name'] at $note['completion_time']</p>
 									$else:
 										<p class="card-text">Assigned User: 
-										$if note['assigned_user']:
-											$note['assigned_user']
-										$else:
-											<button>Add one</button><br> (not implemented)
+										<div style="display:inline;" id="note-assignee-$note['tbl']-$note['id']">
+											$if note['assigned_user']:
+												<div style="display:inline;" id="note-assigned-name-$note['tbl']-$note['id']">
+													$note['assigned_user']['name'] (
+													<a href="tel:$note['assigned_user']['phone']"><span class="glyphicon glyphicon-earphone"></span></a>|
+													<a href="mailto:$note['assigned_user']['email']"><span class="glyphicon glyphicon-envelope"></span></a>)
+												</div>
+												<button class="note-add-assignee" style="display:inline;" id="note-add-assignee-$note['tbl']-$note['id']">Edit</button>
+											$else:
+												<button class="note-add-assignee" style="display:inline;" id="note-add-assignee-$note['tbl']-$note['id']">Add one</button>
+											<select class="note-edit note-select-assignee" style="display:inline;" id="note-select-assignee-$note['tbl']-$note['id']"></select>
+											<button class="note-edit note-save-assignee" style="display:inline;" id="note-save-assignee-$note['tbl']-$note['id']">Save</button>
+											<button class="note-edit note-cancel-assignee" style="display:inline;" id="note-cancel-assignee-$note['tbl']-$note['id']">Cancel</button>
+											<br> (not implemented)
+										</div>
 										</p>
 										<hr>
-										<p class="card-text"><button>Complete</button><br>(not implemented)</p>
+										<p class="card-text"><button id="note-complete-button-$note['tbl']-$note['id']">Complete</button><br>(not implemented)</p>
 								</div>
 							<div class="card-footer text-muted small">
 								Created by $note['author']['name'] at $note['entry_time']
@@ -405,7 +416,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 					<button style="display:inline;" id="note-add-assignee-!tbl!-!id!">Add one</button><br> (not implemented)
 					</p>
 					<hr>
-					<p class="card-text"><button>Complete</button><br>(not implemented)</p>
+					<p class="card-text"><button id="note-complete-button-!tbl!-!id!">Complete</button><br>(not implemented)</p>
 				</div>
 				<div class="card-footer text-muted small">
 					Created by <div style="display:inline;" id="note-user-name-!tbl!-!id!"></div> at <div style="display:inline;" id="note-entry-time-!tbl!-!id!"></div>
@@ -435,6 +446,18 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
     		<a class="gallery" rel="!gallery!" href="!url!"><div style="height: 100px"><img src="!url!" class="card-img-top" style="max-height: 100%; max-width: 100%" alt=""/></div></a>
     	</div>
 	</div>
+	<div class="hidden" id="assigned-user-template" style="display:none;">
+		<div style="display:inline;" id="note-assigned-name-actionItems-!id!">
+			!name! (
+			<a href="tel:!phone!"><span class="glyphicon glyphicon-earphone"></span></a>|
+			<a href="mailto:!email!"><span class="glyphicon glyphicon-envelope"></span></a>)
+		</div>
+	    <button class="note-add-assignee" style="display:inline;" id="note-add-assignee-actionItems-!id!">Edit</button>
+		<select class="note-edit note-select-assignee" style="display: none;" id="note-select-assignee-actionItems-!id!"></select>
+		<button class="note-edit note-save-assignee" style="display: none;" id="note-save-assignee-actionItems-!id!">Save</button>
+		<button class="note-edit note-cancel-assignee" style="display: none;" id="note-cancel-assignee-actionItems-!id!">Cancel</button>
+		<br> (not implemented)
+    </div>
 <!-- End ajax templates -->
 
 </body>

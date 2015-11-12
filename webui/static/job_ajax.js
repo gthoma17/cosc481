@@ -91,6 +91,7 @@ function createNewPhoto(photo){
 function prepNotes() {
     $(".daily-report-field").hide()
     $(".action-item-field").hide()
+    $(".note-edit").hide()
     $("#show-notes").hide();
     $("#show-notes").click(function(){
         $("#show-notes").hide();
@@ -103,7 +104,62 @@ function prepNotes() {
         $("#notes-container").slideUp("slow");   
     });
     $(".add-note-card").removeClass("card-warning card-danger").addClass("card-info");
-    $('.note-card').width($('.add-note-card').width())
+    $('.note-card').width($('#add-note-card').width())
+    $('.note-add-assignee').click(function(){
+        buttonId = $(this).attr('id').split("-")
+        noteId = buttonId[buttonId.length -1]
+        noteTbl = buttonId[buttonId.length -2]
+        $("#note-assigned-name-"+noteTbl+"-"+noteId).hide()
+        $("#note-add-assignee-"+noteTbl+"-"+noteId).hide()
+        $("#note-select-assignee-"+noteTbl+"-"+noteId).show()
+        $("#note-save-assignee-"+noteTbl+"-"+noteId).show()
+        $("#note-cancel-assignee-"+noteTbl+"-"+noteId).show()
+        makeUsersDropdown("all", "#note-select-assignee-"+noteTbl+"-"+noteId)
+    });
+    $('.note-cancel-assignee').click(function(){
+        buttonId = $(this).attr('id').split("-")
+        noteId = buttonId[buttonId.length -1]
+        noteTbl = buttonId[buttonId.length -2]
+        $("#note-assigned-name-"+noteTbl+"-"+noteId).show()
+        $("#note-add-assignee-"+noteTbl+"-"+noteId).show()
+        $("#note-select-assignee-"+noteTbl+"-"+noteId).hide()
+        $("#note-save-assignee-"+noteTbl+"-"+noteId).hide()
+        $("#note-cancel-assignee-"+noteTbl+"-"+noteId).hide()
+        $("#note-select-assignee-"+noteTbl+"-"+noteId).html("")
+    });
+    $('.note-save-assignee').click(function(){
+        buttonId = $(this).attr('id').split("-")
+        noteId = buttonId[buttonId.length -1]
+        noteTbl = buttonId[buttonId.length -2]
+        var noteId = noteId
+        postData = {}
+        postData.id = noteId
+        postData.assigned_user = $("#note-select-assignee-"+noteTbl+"-"+noteId).val() 
+        $.ajax({
+            url : "/forward/actionItem",
+            dataType:"text",
+            method:"POST",
+            data: JSON.stringify(postData),
+            success:function(response){
+                if (apiResponseIsGood(response)) {
+                    console.log("Successful update")
+                    console.log(postData)
+                    console.log(response)
+                    assignee = jQuery.parseJSON(response);
+                    newAssignee = $("#assigned-user-template").html()
+                    newAssignee = replaceAllSubsting(newAssignee, "!email!", assignee.email);
+                    newAssignee = replaceAllSubsting(newAssignee, "!phone!", assignee.phone);
+                    newAssignee = replaceAllSubsting(newAssignee, "!name!", assignee.name);
+                    newAssignee = replaceAllSubsting(newAssignee, "!id!", noteId);
+                    $("#note-assignee-actionItems-"+noteId).html(newAssignee)
+                    prepNotes();
+                } else {
+                    console.log("Unsuccessful delete")
+                    $("#apiResponse").html(response)
+                };
+            }
+        })
+    });
 }
 function prepBudget(){
     $(".addItemForm").hide();
@@ -281,6 +337,16 @@ function budgetItemAjax(itemId){
         };
     };        
 }
+function makeUsersDropdown(type, selectId){
+    var selectId = selectId;
+    $.get( "/forward/users/type/"+type, function(data){
+        var data = jQuery.parseJSON(data);
+        data.forEach(function(obj) {
+            option = "<option value=\""+obj.id+"\">"+obj.name+"</option>";
+            $(selectId).append(option);
+        });
+    });
+}
 function newBudgetItemRow(itemId){
     //create new row from template
     rowTemplate = $("#budgetRowTemplate").html()
@@ -322,11 +388,17 @@ function replaceAllSubsting (str, oldSubStr, newSubStr) {
 function apiResponseIsGood(response){
     pattStr1 = "^2\\d\\d.*"
     pattStr2 = "^[0-9]*$"
+    pattStr3 = "^\\{.*$"
     var pattern1 = new RegExp(pattStr1)
     var pattern2 = new RegExp(pattStr2)
     test1 = pattern1.test(response)
     test2 = pattern2.test(response)
-    result = test1 || test2
+    result = test1 || test2 || (response.charAt(0) == "{")
+    if(!result){
+        console.log(test1)
+        console.log(test2)
+        console.log(test3)
+    }
     console.log(result)
     return result
 }
@@ -440,6 +512,7 @@ function createNewNote(noteId, note){
     $("#note-PeopleOnSite").val("")
     //make all notes the same size
     $('.note-card').width($('.add-note-card').width())
+    prepNotes();
 }
 //dynamic text area for the job name and job description
 //hides all the fields with the job-edit id
@@ -485,5 +558,3 @@ $(document).ready(function(){
     prepBudget()
 	jobEditInit()
 });
-
-
