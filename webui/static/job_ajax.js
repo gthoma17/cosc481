@@ -91,6 +91,7 @@ function createNewPhoto(photo){
 function prepNotes() {
     $(".daily-report-field").hide()
     $(".action-item-field").hide()
+    $(".date-time-error").hide();
     $(".note-edit").hide()
     $("#show-notes").hide();
     $("#show-notes").click(function(){
