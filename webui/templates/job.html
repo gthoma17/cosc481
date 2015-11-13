@@ -292,21 +292,29 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 							$ type = "Note"
 							$ cardType = "card-info"
 						<div class="col-xs-12 col-md-12">
-						<div class="card $cardType note-card text-center">
+						<div class="card $cardType note-card text-center" id="note-$note['tbl']-$note['id']">
 							<div class="card-header">
-								<h5 class="card-title">$type <button id="note-edit-button-$note['tbl']-$note['id']">Edit</button></h5>
+								<h5 class="card-title">
+									$type
+									<button class="note-edit-button note-display" id="note-edit-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-edit"></span></button>
+									<button class="note-save-button note-edit" id="note-save-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-ok"></span></button>
+									<button class="note-cancel-button note-edit" id="note-cancel-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-remove"></span></button>
+								</h5>
+								
 							</div>
 							<div class="card-block">
-								<p style="display:inline;" class="card-text" id="note-contents-$note['tbl']-$note['id']">$note['contents']</p>
+								<p style="display:inline;" class="card-text note-display" id="note-contents-$note['tbl']-$note['id']">$note['contents']</p>
+								<textarea class="note-edit" id="note-edit-contents-$note['tbl']-$note['id']">$note['contents']</textarea>
 							</div>
 							$if note['tbl'] == 'dailyReports':
 								<div class="card-block">
 									<hr>
-									<p class="card-text"><b>Arrival Time:</b> <div style="display:inline;" id="note-arrival-$note['tbl']-$note['id']">$note['arrival_time']</div></p>
-									<p class="card-text"><b>Departure Time:</b> <div style="display:inline;" id="note-departure-$note['tbl']-$note['id']">$note['departure_time']</div></p>
+									<p class="card-text"><b>Arrival Time:</b> <div class="note-display" style="display:inline;" id="note-arrival-$note['tbl']-$note['id']">$note['arrival_time']</div><input class="note-edit" id="note-edit-arrival-$note['tbl']-$note['id']" type="time"></p>
+									<p class="card-text"><b>Departure Time:</b> <div class="note-display" style="display:inline;" id="note-departure-$note['tbl']-$note['id']">$note['departure_time']</div><input class="note-edit" id="note-edit-departure-$note['tbl']-$note['id']" type="time"></p>
 									<hr>
 									<p class="card-text"><b>People on Site:</b></p>
-									<p class="card-text"><div style="display:inline;" id="note-people-$note['tbl']-$note['id']">$note['people_on_site']</div></p>
+									<p class="card-text"><div class="note-display" style="display:inline;" id="note-people-$note['tbl']-$note['id']">$note['people_on_site']</div></p>
+									<textarea class="note-edit" id="note-edit-people-$note['tbl']-$note['id']">$note['people_on_site']</textarea>
 								</div>
 							$if note['tbl'] == 'actionItems':
 								<div class="card-block">
@@ -314,22 +322,22 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 									$if note['completion_time']:
 										<p class="card-text">Completed by $note['completion_user']['name'] at $note['completion_time']</p>
 									$else:
-										<p class="card-text">Assigned User: 
-										<div style="display:inline;" id="note-assignee-$note['tbl']-$note['id']">
-											$if note['assigned_user']:
-												<div style="display:inline;" id="note-assigned-name-$note['tbl']-$note['id']">
-													$note['assigned_user']['name'] (
-													<a href="tel:$note['assigned_user']['phone']"><span class="glyphicon glyphicon-earphone"></span></a>|
-													<a href="mailto:$note['assigned_user']['email']"><span class="glyphicon glyphicon-envelope"></span></a>)
-												</div>
-												<button class="note-add-assignee" style="display:inline;" id="note-add-assignee-$note['tbl']-$note['id']">Edit</button>
-											$else:
-												<button class="note-add-assignee" style="display:inline;" id="note-add-assignee-$note['tbl']-$note['id']">Add one</button>
-											<select class="note-edit note-select-assignee" style="display:inline;" id="note-select-assignee-$note['tbl']-$note['id']"></select>
-											<button class="note-edit note-save-assignee" style="display:inline;" id="note-save-assignee-$note['tbl']-$note['id']">Save</button>
-											<button class="note-edit note-cancel-assignee" style="display:inline;" id="note-cancel-assignee-$note['tbl']-$note['id']">Cancel</button>
-										</div>
+										<p class="card-text" style="margin-bottom:5px;">
+										Assigned User
 										</p>
+										<div style="display:inline;" id="note-assignee-$note['tbl']-$note['id']">
+											<select class="note-edit note-assignee-edit note-select-assignee" style="display:inline;" id="note-select-assignee-$note['tbl']-$note['id']"></select>
+											$if note['assigned_user']:
+												<div class="note-display" style="display:inline;" id="note-assigned-name-$note['tbl']-$note['id']">
+													$note['assigned_user']['name']&nbsp;
+													<a class="button" href="tel:$note['assigned_user']['phone']"><span class="glyphicon glyphicon-earphone"></span></a>&nbsp;
+													<a class="button" href="mailto:$note['assigned_user']['email']"><span class="glyphicon glyphicon-envelope"></span></a>
+												</div>
+											$else:
+												<button class="note-add-assignee note-display" style="display:inline;" id="note-add-assignee-$note['tbl']-$note['id']">Add One</button>
+												<button class="note-assignee-edit note-save-assignee" style="display:inline;" id="note-save-assignee-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-ok"></span></button>
+												<button class="note-assignee-edit note-cancel-assignee" style="display:inline;" id="note-cancel-assignee-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-remove"></span></button>	
+										</div>
 										<hr>
 										<p class="card-text"><button id="note-complete-button-$note['tbl']-$note['id']">Complete</button><br>(not implemented)</p>
 								</div>

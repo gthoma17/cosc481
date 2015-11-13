@@ -92,7 +92,7 @@ function prepNotes() {
     $(".daily-report-field").hide()
     $(".action-item-field").hide()
     $(".date-time-error").hide();
-    $(".note-edit").hide()
+    $(".note-assignee-edit").hide()
     $("#show-notes").hide();
     $("#show-notes").click(function(){
         $("#show-notes").hide();
@@ -132,41 +132,67 @@ function prepNotes() {
         buttonId = $(this).attr('id').split("-")
         noteId = buttonId[buttonId.length -1]
         noteTbl = buttonId[buttonId.length -2]
-        var noteId = noteId
-        if ($("#note-select-assignee-"+noteTbl+"-"+noteId).val() >= 0){
-            postData = {}
-            postData.id = noteId
-            postData.assigned_user = $("#note-select-assignee-"+noteTbl+"-"+noteId).val() 
-            $.ajax({
-                url : "/forward/actionItem",
-                dataType:"text",
-                method:"POST",
-                data: JSON.stringify(postData),
-                success:function(response){
-                    if (apiResponseIsGood(response)) {
-                        console.log("Successful update")
-                        console.log(postData)
-                        console.log(response)
-                        assignee = jQuery.parseJSON(response);
-                        newAssignee = $("#assigned-user-template").html()
-                        newAssignee = replaceAllSubsting(newAssignee, "!email!", assignee.email);
-                        newAssignee = replaceAllSubsting(newAssignee, "!phone!", assignee.phone);
-                        newAssignee = replaceAllSubsting(newAssignee, "!name!", assignee.name);
-                        newAssignee = replaceAllSubsting(newAssignee, "!id!", noteId);
-                        $("#note-assignee-actionItems-"+noteId).html(newAssignee)
-                        prepNotes();
-                    } else {
-                        console.log("Unsuccessful delete")
-                        $("#apiResponse").html(response)
-                    };
-                }
-            })
-        }
-        else{
-            flashRedBackground($("#note-select-assignee-"+noteTbl+"-"+noteId))
+        assigneeAjax(noteId, noteTbl);
+    });
+    $('.note-edit').hide();
+    $('.note-edit-button').click(function(){
+        buttonId = $(this).attr('id').split("-")
+        noteId = buttonId[buttonId.length -1]
+        noteTbl = buttonId[buttonId.length -2]
+        $("#note-"+noteTbl+"-"+noteId+" .note-display").hide()
+        $("#note-"+noteTbl+"-"+noteId+" .note-edit").show()
+        if (noteTbl == "actionItems") {
+            makeUsersDropdown("all", "#note-select-assignee-"+noteTbl+"-"+noteId)
         };
     });
+    $('.note-cancel-button').click(function(){
+        buttonId = $(this).attr('id').split("-")
+        noteId = buttonId[buttonId.length -1]
+        noteTbl = buttonId[buttonId.length -2]
+        $("#note-"+noteTbl+"-"+noteId+" .note-display").show()
+        $("#note-"+noteTbl+"-"+noteId+" .note-edit").hide()
+        resetNote(noteTbl, noteId);
+    });
     makeUsersDropdown("all", "#note-assignee-select")
+}
+function resetNote(tbl, id){
+    llq = "-"+tbl+"-"+id;
+    $('#note-edit-contents'+llq).val($('#note-contents'+llq).text())
+    $('#note-edit-people'+llq).val($('#note-people'+llq).text())
+}
+function assigneeAjax(noteId, noteTbl){
+    var noteId = noteId
+    if ($("#note-select-assignee-"+noteTbl+"-"+noteId).val() >= 0){
+        postData = {}
+        postData.id = noteId
+        postData.assigned_user = $("#note-select-assignee-"+noteTbl+"-"+noteId).val() 
+        $.ajax({
+            url : "/forward/actionItem",
+            dataType:"text",
+            method:"POST",
+            data: JSON.stringify(postData),
+            success:function(response){
+                if (apiResponseIsGood(response)) {
+                    console.log("Successful update")
+                    console.log(postData)
+                    console.log(response)
+                    assignee = jQuery.parseJSON(response);
+                    newAssignee = $("#assigned-user-template").html()
+                    newAssignee = replaceAllSubsting(newAssignee, "!email!", assignee.email);
+                    newAssignee = replaceAllSubsting(newAssignee, "!phone!", assignee.phone);
+                    newAssignee = replaceAllSubsting(newAssignee, "!name!", assignee.name);
+                    newAssignee = replaceAllSubsting(newAssignee, "!id!", noteId);
+                    $("#note-assignee-actionItems-"+noteId).html(newAssignee)
+                    prepNotes();
+                } else {
+                    $("#apiResponse").html(response)
+                };
+            }
+        })
+    }
+    else{
+        flashRedBackground($("#note-select-assignee-"+noteTbl+"-"+noteId))
+    };
 }
 function prepBudget(){
     $(".addItemForm").hide();
