@@ -269,7 +269,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 						</p>
 						<p class="action-item-field">
 							Assignee: <br>
-							<input id="note-assignee" type="text">
+							<select id="note-assignee-select"></select>
 						</p>
 					</div>
 					<div class="card-footer">
@@ -328,7 +328,6 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 											<select class="note-edit note-select-assignee" style="display:inline;" id="note-select-assignee-$note['tbl']-$note['id']"></select>
 											<button class="note-edit note-save-assignee" style="display:inline;" id="note-save-assignee-$note['tbl']-$note['id']">Save</button>
 											<button class="note-edit note-cancel-assignee" style="display:inline;" id="note-cancel-assignee-$note['tbl']-$note['id']">Cancel</button>
-											<br> (not implemented)
 										</div>
 										</p>
 										<hr>
@@ -413,7 +412,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 					<hr>
 					<p class="card-text">Assigned User: 
 					<div style="display:inline;" id="note-assigned-name-!tbl!-!id!"></div>
-					<button style="display:inline;" id="note-add-assignee-!tbl!-!id!">Add one</button><br> (not implemented)
+					<button style="display:inline;" id="note-add-assignee-!tbl!-!id!">Add one</button>
 					</p>
 					<hr>
 					<p class="card-text"><button id="note-complete-button-!tbl!-!id!">Complete</button><br>(not implemented)</p>
@@ -456,7 +455,6 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 		<select class="note-edit note-select-assignee" style="display: none;" id="note-select-assignee-actionItems-!id!"></select>
 		<button class="note-edit note-save-assignee" style="display: none;" id="note-save-assignee-actionItems-!id!">Save</button>
 		<button class="note-edit note-cancel-assignee" style="display: none;" id="note-cancel-assignee-actionItems-!id!">Cancel</button>
-		<br> (not implemented)
     </div>
 <!-- End ajax templates -->
 

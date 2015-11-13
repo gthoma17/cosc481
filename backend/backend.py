@@ -230,7 +230,7 @@ class note:
 			try:
 				assignedUser = db.where('jobAppUsers', name=passedData['assigned_user'])[0]
 				db.update(tbl, where="id = "+str(note), 
-					assigned_user=assignedUser['id']
+					assigned_user=passedData['assigned_user']
 				)
 			except:
 				pass

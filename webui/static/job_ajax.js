@@ -132,34 +132,40 @@ function prepNotes() {
         noteId = buttonId[buttonId.length -1]
         noteTbl = buttonId[buttonId.length -2]
         var noteId = noteId
-        postData = {}
-        postData.id = noteId
-        postData.assigned_user = $("#note-select-assignee-"+noteTbl+"-"+noteId).val() 
-        $.ajax({
-            url : "/forward/actionItem",
-            dataType:"text",
-            method:"POST",
-            data: JSON.stringify(postData),
-            success:function(response){
-                if (apiResponseIsGood(response)) {
-                    console.log("Successful update")
-                    console.log(postData)
-                    console.log(response)
-                    assignee = jQuery.parseJSON(response);
-                    newAssignee = $("#assigned-user-template").html()
-                    newAssignee = replaceAllSubsting(newAssignee, "!email!", assignee.email);
-                    newAssignee = replaceAllSubsting(newAssignee, "!phone!", assignee.phone);
-                    newAssignee = replaceAllSubsting(newAssignee, "!name!", assignee.name);
-                    newAssignee = replaceAllSubsting(newAssignee, "!id!", noteId);
-                    $("#note-assignee-actionItems-"+noteId).html(newAssignee)
-                    prepNotes();
-                } else {
-                    console.log("Unsuccessful delete")
-                    $("#apiResponse").html(response)
-                };
-            }
-        })
+        if ($("#note-select-assignee-"+noteTbl+"-"+noteId).val() >= 0){
+            postData = {}
+            postData.id = noteId
+            postData.assigned_user = $("#note-select-assignee-"+noteTbl+"-"+noteId).val() 
+            $.ajax({
+                url : "/forward/actionItem",
+                dataType:"text",
+                method:"POST",
+                data: JSON.stringify(postData),
+                success:function(response){
+                    if (apiResponseIsGood(response)) {
+                        console.log("Successful update")
+                        console.log(postData)
+                        console.log(response)
+                        assignee = jQuery.parseJSON(response);
+                        newAssignee = $("#assigned-user-template").html()
+                        newAssignee = replaceAllSubsting(newAssignee, "!email!", assignee.email);
+                        newAssignee = replaceAllSubsting(newAssignee, "!phone!", assignee.phone);
+                        newAssignee = replaceAllSubsting(newAssignee, "!name!", assignee.name);
+                        newAssignee = replaceAllSubsting(newAssignee, "!id!", noteId);
+                        $("#note-assignee-actionItems-"+noteId).html(newAssignee)
+                        prepNotes();
+                    } else {
+                        console.log("Unsuccessful delete")
+                        $("#apiResponse").html(response)
+                    };
+                }
+            })
+        }
+        else{
+            flashRedBackground($("#note-select-assignee-"+noteTbl+"-"+noteId))
+        };
     });
+    makeUsersDropdown("all", "#note-assignee-select")
 }
 function prepBudget(){
     $(".addItemForm").hide();
@@ -345,6 +351,8 @@ function makeUsersDropdown(type, selectId){
             option = "<option value=\""+obj.id+"\">"+obj.name+"</option>";
             $(selectId).append(option);
         });
+        option = "<option value=\"-1\">Select</option>";
+        $(selectId).prepend(option);
     });
 }
 function newBudgetItemRow(itemId){
@@ -420,6 +428,7 @@ function notesAjax(){
         ) {
         postData = {}
         if($("#note-type-actionItem").prop("checked") == true){
+
             postData.assignee = $(assigneeDivId).val();
             postData.tbl = "actionItems"
         }
