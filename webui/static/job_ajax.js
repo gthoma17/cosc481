@@ -295,6 +295,23 @@ function flashRedBackground (div) {
         div.css("background", bg);
     }, 2000);
 }
+
+/*Daily Reports time validation*/
+function validateTime() {
+    arrival = $("#note-arrivalTime").val()
+    departure = $("#note-departureTime").val()
+    var validMilTime = new RegExp("(([01]?[0-9]|2[0-3]):([0-5][0-9]))");
+    if(validMilTime.test(arrival) && validMilTime.test(departure)){
+        //alert("Correct time for arrival time, yo!");
+        return true;
+    }
+    else{
+        return false;
+    }
+    
+}
+
+
 function selectedNote(){
     $(".daily-report-field").hide()
     $(".action-item-field").hide()
@@ -450,7 +467,8 @@ function notesAjax(){
         ($("#note-type-dailyReport").prop("checked") == true &&
             ($(messageDivId).val() != "") &&
             ($(arrivalDivId).val() != "") &&
-            ($(departureDivId).val() != ""))
+            ($(departureDivId).val() != "") &&
+            (validateTime()))
         ) {
         postData = {}
         if($("#note-type-actionItem").prop("checked") == true){
@@ -459,12 +477,13 @@ function notesAjax(){
             postData.tbl = "actionItems"
         }
         else if($("#note-type-dailyReport").prop("checked") == true){
-            if($(arrivalDivId).val() != "" && $(departureDivId).val() != ""){
+            if($(arrivalDivId).val() != "" && $(departureDivId).val() != "" && validateTime()){
                 postData.arrival_time = $(arrivalDivId).val()
                 postData.departure_time = $(departureDivId).val()
                 postData.people_on_site = $(peopleOnsiteDivId).val()
                 postData.tbl = "dailyReports"
             }
+            
         }
         else{
             postData.tbl = "notes"
@@ -495,6 +514,9 @@ function notesAjax(){
     }
     else{
         console.log("Note didn't validate")
+        if(!validateTime()){
+            $(".date-time-error").show()
+        };
         if($("#note-arrivalTime").val() == ""){
             flashRedBackground($("#note-arrivalTime"))
         };
