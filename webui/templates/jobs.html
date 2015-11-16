@@ -73,8 +73,9 @@ $def with (title, jobs)
             $ cardType = "card-danger"
           <div class="col-sm-3">
             <div class="card card-inverse $cardType text-center">
-              <div class="card-block">
-                <a href="job/$job['id']"><h4 class="card-title">$job['name']</h4></a>
+              <div class="card-block" onclick="window.location.href='job/$job['id']';">
+                <h4 class="card-title">$job['name']</h4>
+                <!--<a href="job/$job['id']"><h4 class="card-title">$job['name']</h4></a>-->
                 <a href="http://maps.apple.com/?q=$job['location']" target="blank" role="button" class="btn btn-default" aria-label="Left Align">
                   <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>$job['street_address']
                 </a>

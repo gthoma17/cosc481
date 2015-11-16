@@ -221,6 +221,12 @@ body {
   padding: 1.25rem;
 }
 
+.card-block:hover {
+	box-shadow: 5px 5px grey;
+	background-color: #468C46;
+  	border-color: #468C46;
+}
+
 .card-title {
   margin-top: 0;
   margin-bottom: .75rem;
