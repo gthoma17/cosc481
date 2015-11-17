@@ -705,6 +705,80 @@ function jobEditInit(){
 		
 });*/
 
+//update the job information
+function updateJobInfo () {
+	jobNameId = "#edit-job-name";
+    streetId = "#edit-job-street";
+    cityId = "#edit-job-city";
+    stateId = "#edit-job-state";
+    zipId = "#edit-job-zip";
+    customerId = "#edit-job-customer";
+    supervisorId = "#edit-job-supervisor";
+    managerId = "#edit-job-manager";
+    budgetAvailableId = "#edit-job-budgetAvailable";
+    budgetAllocatedId = "#edit-job-budgetAllocated";
+    descriptionId = "#edit-job-desc";
+    phaseId = "#edit-job-phase";
+	
+	postData = {}
+	postData.job_id = $("#jobId").text()
+	postData.name = $(jobNameId).val()
+	postData.street_address = $(streetId).val()
+	postData.city = $(cityId).val()
+	postData.state = $(stateId).val()
+	postData.zip = $(zipId).val()
+	postData.customer_name = $(customerId).val()
+	postData.supervisor_name = $(supervisorId).val()
+	postData.manager_name = $(managerId).val()
+	postData.budget_available = $(budgetAvailableId).val()
+	postData.budget_allocated = $(budgetAllocatedId).val()
+	postData.description = $(descriptionId).val()
+	postData.phase = $(phaseId).val()
+
+	$.ajax({
+		url : "/forward/job",
+		dataType:"text",
+		method:"POST",
+		data: JSON.stringify(postData),
+		success:function(response){
+		  if (apiResponseIsGood(response)) {
+			console.log("Successful add")
+			console.log(JSON.stringify(postData))
+			console.log(response)
+			showUpdatedJobInfo(response);
+		  } else{
+			console.log("Unsuccessful add")
+			console.log(JSON.stringify(postData))
+			console.log(response)
+			$("#apiResponse").html(response)
+		  };
+		  
+		}
+	}); 
+}
+
+//display the updated job information
+//but wouldn't the refresh page just get us the updated values?
+function showUpdatedJobInfo(jobId) {
+	//move new values into display cols
+	$("#job-name").text($("#edit-job-name").val());  
+	$("#job-location").text(($("#edit-job-street").val()).concat($("#edit-job-city").val()));
+	$("#job-customer").text($("#edit-job-customer").val());
+	$("#job-supervisor").text($("#edit-job-supervisor").val());
+	$("#job-manager").text($("#edit-job-manager").val());
+	$("#job-budgetAvailable").text($("#edit-job-budgetAvailable").val());
+	$("#job-budgetAllocated").text($("#edit-job-budgetAllocated").val());
+	$("#job-desc").text($("#edit-job-desc").val());
+	$("#job-phase").text($("#edit-job-phase").val());
+    
+    //hide the edit cols
+    $(".job-edit").hide()
+    
+    //show the display cols
+    $(".job-show").show()
+    
+}
+
 $(document).ready(function(){
     photosInit()
     prepNotes()
