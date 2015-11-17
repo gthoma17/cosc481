@@ -188,13 +188,13 @@ class note:
 				date = datetime.datetime.now().strftime("%d/%m/%Y")
 				arrivalTime = datetime.datetime.strptime(passedData['arrival_time']+" "+date, "%H:%M %d/%m/%Y")
 				db.update(tbl, where="id = "+str(passedData['id']), 
-						arrival_time=passedData['arrival_time']
+						arrival_time=arrivalTime.isoformat()
 					)
 			if "departure_time" in passedData:
 				date = datetime.datetime.now().strftime("%d/%m/%Y")
 				departureTime = datetime.datetime.strptime(passedData['departure_time']+" "+date, "%H:%M %d/%m/%Y")
 				db.update(tbl, where="id = "+str(passedData['id']), 
-						departure_time=passedData['departureTime']
+						departure_time=departureTime.isoformat()
 					)
 			if "people_on_site" in passedData:
 				db.update(tbl, where="id = "+str(passedData['id']), 

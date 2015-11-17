@@ -305,11 +305,11 @@ function flashRedBackground (div) {
 }
 
 /*Daily Reports time validation*/
-function validateTime() {
+function validateTime(llq) {
 
     if (llq != null){
-        arrival = $('note-edit-arrival'+llq).val()
-        departure = $('note-edit-departure'+llq).val()
+        arrival = $('#note-edit-arrival'+llq).val()
+        departure = $('#note-edit-departure'+llq).val()
     } else{
         arrival = $("#note-arrivalTime").val()
         departure = $("#note-departureTime").val()
@@ -320,6 +320,7 @@ function validateTime() {
         return true;
     }
     else{
+        console.log("Didn't validate: "+arrival+" - "+departure)
         return false;
     }
     
@@ -468,6 +469,7 @@ function apiResponseIsGood(response){
     return result
 }
 function notesAjax(llq){
+    var llq = llq
     postData = {}
     if (llq != null){
         messageDivId = "#note-edit-contents"+llq;
@@ -529,7 +531,11 @@ function notesAjax(llq){
                 console.log("Successful Note POST")
                 console.log(JSON.stringify(postData))
                 console.log(response)
-                createNewNote(response, postData);
+                if (llq != null){
+                    updateNote(llq, postData)
+                }else{
+                    createNewNote(response, postData);
+                };
               } else{
                 console.log("Unsuccessful Note POST")
                 console.log(JSON.stringify(postData))
@@ -541,7 +547,9 @@ function notesAjax(llq){
         });
     } else{
         console.log("Note didn't validate")
-        if(!validateTime()){
+        if(!validateTime(llq)){
+            flashRedBackground($(departureDivId))
+            flashRedBackground($(arrivalDivId))
             $(".date-time-error").show()
         };
         if($(arrivalDivId).val() == ""){
@@ -555,76 +563,33 @@ function notesAjax(llq){
         };
     }
     
-    
-
-    //validate the form
-    if (($("#note-type-dailyReport").prop("checked") == false &&
-            ($(messageDivId).val() != "")) ||
-        ($("#note-type-dailyReport").prop("checked") == true &&
-            ($(messageDivId).val() != "") &&
-            ($(arrivalDivId).val() != "") &&
-            ($(departureDivId).val() != "") &&
-            (validateTime()))
-        ) {
-        
-        if($("#note-type-actionItem").prop("checked") == true){
-
-            postData.assignee = $(assigneeDivId).val();
-            postData.tbl = "actionItems"
-        }
-        else if($("#note-type-dailyReport").prop("checked") == true){
-            if($(arrivalDivId).val() != "" && $(departureDivId).val() != "" && validateTime()){
-                postData.arrival_time = $(arrivalDivId).val()
-                postData.departure_time = $(departureDivId).val()
-                postData.people_on_site = $(peopleOnsiteDivId).val()
-                postData.tbl = "dailyReports"
-            }
-            
-        }
-        else{
-            postData.tbl = "notes"
-        }
-        postData.job_id = $("#jobId").text()
-        postData.contents = $(messageDivId).val()
-
-        $.ajax({
-            url : "/forward/note",
-            dataType:"text",
-            method:"POST",
-            data: JSON.stringify(postData),
-            success:function(response){
-              if (apiResponseIsGood(response)) {
-                console.log("Successful add")
-                console.log(JSON.stringify(postData))
-                console.log(response)
-                createNewNote(response, postData);
-              } else{
-                console.log("Unsuccessful add")
-                console.log(JSON.stringify(postData))
-                console.log(response)
-                $("#apiResponse").html(response)
-              };
-              
-            }
-        }); 
-    }
-    else{
-        console.log("Note didn't validate")
-        if(!validateTime()){
-            $(".date-time-error").show()
-        };
-        if($("#note-arrivalTime").val() == ""){
-            flashRedBackground($("#note-arrivalTime"))
-        };
-        if($("#note-departureTime").val() == ""){
-            flashRedBackground($("#note-departureTime"))
-        };
-        if($("#note-message").val() == ""){
-            flashRedBackground($("#note-message"))
-        };
-    }
-    
 }  
+function updateNote(llq, note){
+    $('#note-contents'+llq).text($('#note-edit-contents'+llq).val())
+    $('#note-people'+llq).text($('#note-edit-people'+llq).val())
+    $('#note-select-assignee'+llq).html($('#note-select-assignee'+llq+' option:selected').text())
+    $('#note-arrival'+llq).text($('#note-edit-arrival'+llq).val())
+    $('#note-departure'+llq).text($('#note-edit-departure'+llq).val())
+    if(note.tbl == "actionItems" && note.assigned_user != ""){
+        console.log("/forward/user/"+note.assigned_user)
+        $.get( "/forward/user/"+note.assigned_user)
+            .done(function( response ) {
+                response = JSON.parse(response)
+                console.log(response)
+                newAssignee = $("#assigned-user-template").html()
+                newAssignee = replaceAllSubsting(newAssignee, "!tbl!", llq.split('-')[1]);
+                newAssignee = replaceAllSubsting(newAssignee, "!id!", llq.split('-')[2]);
+                newAssignee = replaceAllSubsting(newAssignee, "!name!", response.name);
+                newAssignee = replaceAllSubsting(newAssignee, "!phone!", response.phone);
+                newAssignee = replaceAllSubsting(newAssignee, "!email!", response.email);
+                $("#note-assignee"+llq).html(newAssignee)
+            });
+    }
+    $("#note"+llq+" .note-display").show()
+    $("#note"+llq+" .note-edit").hide()
+
+}
+
 function createNewNote(noteId, note){
     console.log("new note")
     noteSuffix = "-" + note.tbl + "-" + noteId
@@ -646,8 +611,8 @@ function createNewNote(noteId, note){
     $("#note-entry-time".concat(noteSuffix)).text(datetime)
 
     if (note.tbl == "actionItems") {
-        if (note.assignee != "") {
-            $("#note-assigned-name".concat(noteSuffix)).text(note.assignee)
+        if (note.assigned_user != "") {
+            $("#note-assigned-name".concat(noteSuffix)).text(note.assigned_user)
             $("#note-add-assignee".concat(noteSuffix)).hide()
         } else{
             $("#note-assigned-name".concat(noteSuffix)).hide()

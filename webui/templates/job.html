@@ -383,6 +383,14 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 			</tr>
 		</tbody>
 	</table>
+	<div class="hidden" id="assigned-user-template">
+		<select class="note-edit note-assignee-edit note-select-assignee" style="display: none;" id="note-select-assignee-!tbl!-!id!"></select>
+		<div class="note-display" style="display:inline;" id="note-assigned-name-!tbl!-!id!">
+			!name!&nbsp;
+			<a class="button" href="tel:!phone!"><span class="glyphicon glyphicon-earphone"></span></a>&nbsp;
+			<a class="button" href="mailto:!email!"><span class="glyphicon glyphicon-envelope"></span></a>
+		</div>
+	</div>
 	<div class="hidden" id="dailyReports-template">
 		<div class="col-xs-12 col-md-12">
 			<div class="card card-warning note-card text-center">
