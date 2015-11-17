@@ -15,6 +15,28 @@
 		height:100%;
 	}
 	
+	#a-note-card-group {
+		width:122%;
+		position:relative;
+		left:-11%;
+		/*width:120%;
+		position:absolute;
+		left:0%;
+		margin-top:30px;
+		margin-left:0;
+		padding:0;*/
+	}
+	
+	#note-card-group {
+		margin-top: 30px;
+	}
+	/*#add-a-note-card" {
+		margin-bottom:50px;*/ /*doesn't work for some reason*/
+		/*width:120%;
+		position:absolute;
+		left:0%;*/
+	/*}*/
+	
 }
 
 /*bigger screens*/
@@ -73,9 +95,6 @@
 #tiles {
 	margin-top:10px;
 }
-/*.navbar-nav {
-	background-color:white;
-}*/
 
 .pages {
 	padding-top:3px;
@@ -159,6 +178,7 @@ body {
 	padding-top:70px;
 }
 
+/*NOTES*/
 #notes_container{
     width: 34%;
     height: 350px;
@@ -174,6 +194,8 @@ body {
     border: 2px #ff6633 solid;
     height: 500px;
 }
+
+
 
 /*Invalid input dailyReports error message*/
 .date-time-error{

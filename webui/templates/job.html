@@ -241,7 +241,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 	<div class="text-center"><h3>Notes <small><button id="hide-notes">[-]</button><button id="show-notes">[+]</button></div></small></h3>
 	<div class="container" id="notes-container">
 		<div class="col-sm-4">
-			<div class="card-group">
+			<div class="card-group" id="add-a-note-card">
 				<div class="card add-note-card text-center" id="add-note-card">
 					<div class="card-header">
 						<h5 class="card-title">Add a Note</h5>
@@ -291,7 +291,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 						$if note['tbl'] == 'notes':
 							$ type = "Note"
 							$ cardType = "card-info"
-						<div class="col-xs-12 col-md-12">
+						<div class="col-xs-12 col-md-12" id="a-note-card-group">
 						<div class="card $cardType note-card text-center">
 							<div class="card-header">
 								<h5 class="card-title">$type <button id="note-edit-button-$note['tbl']-$note['id']">Edit</button></h5>
