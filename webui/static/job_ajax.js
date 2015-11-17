@@ -92,7 +92,7 @@ function prepNotes() {
     $(".daily-report-field").hide()
     $(".action-item-field").hide()
     $(".date-time-error").hide();
-    $(".note-edit").hide()
+    $(".note-assignee-edit").hide()
     $("#show-notes").hide();
     $("#show-notes").click(function(){
         $("#show-notes").hide();
@@ -132,7 +132,45 @@ function prepNotes() {
         buttonId = $(this).attr('id').split("-")
         noteId = buttonId[buttonId.length -1]
         noteTbl = buttonId[buttonId.length -2]
-        var noteId = noteId
+        assigneeAjax(noteId, noteTbl);
+    });
+    $('.note-edit').hide();
+    $('.note-edit-button').click(function(){
+        buttonId = $(this).attr('id').split("-")
+        noteId = buttonId[buttonId.length -1]
+        noteTbl = buttonId[buttonId.length -2]
+        $("#note-"+noteTbl+"-"+noteId+" .note-display").hide()
+        $("#note-"+noteTbl+"-"+noteId+" .note-edit").show()
+        if (noteTbl == "actionItems") {
+            makeUsersDropdown("all", "#note-select-assignee-"+noteTbl+"-"+noteId)
+        };
+    });
+    $('.note-save-button').click(function(){
+        buttonId = $(this).attr('id').split("-");
+        noteId = buttonId[buttonId.length -1];
+        noteTbl = buttonId[buttonId.length -2];
+        llq = "-"+noteTbl+"-"+noteId;
+        notesAjax(llq);
+    });
+    $('.note-cancel-button').click(function(){
+        buttonId = $(this).attr('id').split("-")
+        noteId = buttonId[buttonId.length -1]
+        noteTbl = buttonId[buttonId.length -2]
+        $("#note-"+noteTbl+"-"+noteId+" .note-display").show()
+        $("#note-"+noteTbl+"-"+noteId+" .note-edit").hide()
+        resetNote(noteTbl, noteId);
+    });
+    makeUsersDropdown("all", "#note-assignee-select")
+}
+function resetNote(tbl, id){
+    llq = "-"+tbl+"-"+id;
+    $('#note-edit-contents'+llq).val($('#note-contents'+llq).text())
+    $('#note-edit-people'+llq).val($('#note-people'+llq).text())
+    $("#note-select-assignee"+llq).html("")
+}
+function assigneeAjax(noteId, noteTbl){
+    var noteId = noteId
+    if ($("#note-select-assignee-"+noteTbl+"-"+noteId).val() >= 0){
         postData = {}
         postData.id = noteId
         postData.assigned_user = $("#note-select-assignee-"+noteTbl+"-"+noteId).val() 
@@ -155,12 +193,14 @@ function prepNotes() {
                     $("#note-assignee-actionItems-"+noteId).html(newAssignee)
                     prepNotes();
                 } else {
-                    console.log("Unsuccessful delete")
                     $("#apiResponse").html(response)
                 };
             }
         })
-    });
+    }
+    else{
+        flashRedBackground($("#note-select-assignee-"+noteTbl+"-"+noteId))
+    };
 }
 function prepBudget(){
     $(".addItemForm").hide();
@@ -265,15 +305,22 @@ function flashRedBackground (div) {
 }
 
 /*Daily Reports time validation*/
-function validateTime() {
-    arrival = $("#note-arrivalTime").val()
-    departure = $("#note-departureTime").val()
+function validateTime(llq) {
+
+    if (llq != null){
+        arrival = $('#note-edit-arrival'+llq).val()
+        departure = $('#note-edit-departure'+llq).val()
+    } else{
+        arrival = $("#note-arrivalTime").val()
+        departure = $("#note-departureTime").val()
+    };
     var validMilTime = new RegExp("^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$");
 
     if(validMilTime.test(arrival) && validMilTime.test(departure)){
         return true;
     }
     else{
+        console.log("Didn't validate: "+arrival+" - "+departure)
         return false;
     }
     
@@ -363,6 +410,8 @@ function makeUsersDropdown(type, selectId){
             option = "<option value=\""+obj.id+"\">"+obj.name+"</option>";
             $(selectId).append(option);
         });
+        option = "<option value=\"-1\">Select</option>";
+        $(selectId).prepend(option);
     });
 }
 function newBudgetItemRow(itemId){
@@ -419,43 +468,59 @@ function apiResponseIsGood(response){
     console.log(result)
     return result
 }
-function notesAjax(){
-    messageDivId = "#note-message";
-    assigneeDivId = "#note-assignee";
-    arrivalDivId = "#note-arrivalTime";
-    departureDivId = "#note-departureTime";
-    peopleOnsiteDivId = "#note-PeopleOnSite";
-    
-    //alert("notesAjax called still works");
-    //validate the form
-    if (($("#note-type-dailyReport").prop("checked") == false &&
-            ($(messageDivId).val() != "")) ||
-        ($("#note-type-dailyReport").prop("checked") == true &&
-            ($(messageDivId).val() != "") &&
-            ($(arrivalDivId).val() != "") &&
-            ($(departureDivId).val() != "") &&
-            (validateTime()))
-        ) {
-        postData = {}
-        if($("#note-type-actionItem").prop("checked") == true){
-            postData.assignee = $(assigneeDivId).val();
+function notesAjax(llq){
+    var llq = llq
+    postData = {}
+    if (llq != null){
+        messageDivId = "#note-edit-contents"+llq;
+        arrivalDivId = "#note-edit-arrival"+llq;
+        departureDivId = "#note-edit-departure"+llq;
+        assigneeDivId = "#note-select-assignee"+llq;
+        peopleOnsiteDivId = "#note-edit-people"+llq;
+        postData.tbl = llq.split('-')[1];
+        postData.id = llq.split('-')[2];
+    } else{
+        messageDivId = "#note-message";
+        assigneeDivId = "#note-assignee";
+        arrivalDivId = "#note-arrivalTime";
+        departureDivId = "#note-departureTime";
+        peopleOnsiteDivId = "#note-PeopleOnSite";
+        if ($("#note-type-dailyReport").prop("checked")) {
+            postData.tbl = "dailyReports"
+        } else if ($("#note-type-actionItem").prop("checked")){
             postData.tbl = "actionItems"
-        }
-        else if($("#note-type-dailyReport").prop("checked") == true){
-            if($(arrivalDivId).val() != "" && $(departureDivId).val() != "" && validateTime()){
-                postData.arrival_time = $(arrivalDivId).val()
-                postData.departure_time = $(departureDivId).val()
-                postData.people_on_site = $(peopleOnsiteDivId).val()
-                postData.tbl = "dailyReports"
-            }
-            
-        }
-        else{
+        } else {
             postData.tbl = "notes"
-        }
+        };
+    };
+
+    if ((
+            postData.tbl == 'dailyReports' &&
+            $(messageDivId).val() != "" &&
+            $(arrivalDivId).val() != "" &&
+            $(departureDivId).val() != "" &&
+            validateTime(llq)
+        ) ||
+        (
+            postData.tbl == 'actionItems' &&
+            $(messageDivId).val() != ""
+        ) ||
+        (
+            postData.tbl == 'notes' &&
+            $(messageDivId).val() != ""
+        )
+       )
+    {
+        //form validated
         postData.job_id = $("#jobId").text()
         postData.contents = $(messageDivId).val()
-
+        if (postData.tbl == 'dailyReports') {
+            postData.arrival_time = $(arrivalDivId).val()
+            postData.departure_time = $(departureDivId).val()
+            postData.people_on_site = $(peopleOnsiteDivId).val()
+        } else if (postData.tbl == 'actionItems' && $(assigneeDivId).val() > 0){
+            postData.assigned_user = $(assigneeDivId).val()
+        };
         $.ajax({
             url : "/forward/note",
             dataType:"text",
@@ -463,37 +528,68 @@ function notesAjax(){
             data: JSON.stringify(postData),
             success:function(response){
               if (apiResponseIsGood(response)) {
-                console.log("Successful add")
+                console.log("Successful Note POST")
                 console.log(JSON.stringify(postData))
                 console.log(response)
-                createNewNote(response, postData);
+                if (llq != null){
+                    updateNote(llq, postData)
+                }else{
+                    createNewNote(response, postData);
+                };
               } else{
-                console.log("Unsuccessful add")
+                console.log("Unsuccessful Note POST")
                 console.log(JSON.stringify(postData))
                 console.log(response)
                 $("#apiResponse").html(response)
               };
               
             }
-        }); 
-    }
-    else{
+        });
+    } else{
         console.log("Note didn't validate")
-        if(!validateTime()){
+        if(!validateTime(llq)){
+            flashRedBackground($(departureDivId))
+            flashRedBackground($(arrivalDivId))
             $(".date-time-error").show()
         };
-        if($("#note-arrivalTime").val() == ""){
-            flashRedBackground($("#note-arrivalTime"))
+        if($(arrivalDivId).val() == ""){
+            flashRedBackground($(arrivalDivId))
         };
-        if($("#note-departureTime").val() == ""){
-            flashRedBackground($("#note-departureTime"))
+        if($(departureDivId).val() == ""){
+            flashRedBackground($(departureDivId))
         };
-        if($("#note-message").val() == ""){
-            flashRedBackground($("#note-message"))
+        if($(messageDivId).val() == ""){
+            flashRedBackground($(messageDivId))
         };
     }
     
 }  
+function updateNote(llq, note){
+    $('#note-contents'+llq).text($('#note-edit-contents'+llq).val())
+    $('#note-people'+llq).text($('#note-edit-people'+llq).val())
+    $('#note-select-assignee'+llq).html($('#note-select-assignee'+llq+' option:selected').text())
+    $('#note-arrival'+llq).text($('#note-edit-arrival'+llq).val())
+    $('#note-departure'+llq).text($('#note-edit-departure'+llq).val())
+    if(note.tbl == "actionItems" && note.assigned_user != ""){
+        console.log("/forward/user/"+note.assigned_user)
+        $.get( "/forward/user/"+note.assigned_user)
+            .done(function( response ) {
+                response = JSON.parse(response)
+                console.log(response)
+                newAssignee = $("#assigned-user-template").html()
+                newAssignee = replaceAllSubsting(newAssignee, "!tbl!", llq.split('-')[1]);
+                newAssignee = replaceAllSubsting(newAssignee, "!id!", llq.split('-')[2]);
+                newAssignee = replaceAllSubsting(newAssignee, "!name!", response.name);
+                newAssignee = replaceAllSubsting(newAssignee, "!phone!", response.phone);
+                newAssignee = replaceAllSubsting(newAssignee, "!email!", response.email);
+                $("#note-assignee"+llq).html(newAssignee)
+            });
+    }
+    $("#note"+llq+" .note-display").show()
+    $("#note"+llq+" .note-edit").hide()
+
+}
+
 function createNewNote(noteId, note){
     console.log("new note")
     noteSuffix = "-" + note.tbl + "-" + noteId
@@ -515,8 +611,8 @@ function createNewNote(noteId, note){
     $("#note-entry-time".concat(noteSuffix)).text(datetime)
 
     if (note.tbl == "actionItems") {
-        if (note.assignee != "") {
-            $("#note-assigned-name".concat(noteSuffix)).text(note.assignee)
+        if (note.assigned_user != "") {
+            $("#note-assigned-name".concat(noteSuffix)).text(note.assigned_user)
             $("#note-add-assignee".concat(noteSuffix)).hide()
         } else{
             $("#note-assigned-name".concat(noteSuffix)).hide()
