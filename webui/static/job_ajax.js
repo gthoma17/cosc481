@@ -300,9 +300,9 @@ function flashRedBackground (div) {
 function validateTime() {
     arrival = $("#note-arrivalTime").val()
     departure = $("#note-departureTime").val()
-    var validMilTime = new RegExp("(([01]?[0-9]|2[0-3]):([0-5][0-9]))");
+    var validMilTime = new RegExp("^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$");
+
     if(validMilTime.test(arrival) && validMilTime.test(departure)){
-        //alert("Correct time for arrival time, yo!");
         return true;
     }
     else{
