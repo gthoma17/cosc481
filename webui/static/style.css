@@ -296,6 +296,22 @@ body {
   	cursor:pointer;
 }
 
+.street-address {
+	font-weight: bold;
+	float: left;
+	margin-top: 5px;
+	margin-right: 5px;
+}
+
+.jobs-map-glyphicon {
+	float: right;
+}
+
+.address-and-map {
+	margin-top: 15px;
+	margin-bottom: 50px;
+}
+
 .card-info {
   background-color: #5bc0de;
   border-color: #5bc0de;
