@@ -280,10 +280,15 @@ body {
 .card-success {
   background-color: #5cb85c;
   border-color: #5cb85c;
+}
+
+.jobs-card {
+  background-color: #5cb85c;
+  border-color: #5cb85c;
   border-radius:5%;
 }
 
-.card-success:hover {
+.jobs-card:hover {
 	box-shadow: 5px 5px LightGray;
   	border-style: solid;
   	border-width: 2px;
