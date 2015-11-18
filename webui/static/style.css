@@ -443,6 +443,9 @@ body {
 .card-group .card:not(:first-child):not(:last-child) .card-img-bottom {
   border-radius: 0;
 }
+.card-group > div {
+	margin-bottom: 10px;
+}
 
 .card-columns {
   -webkit-column-count: 3;
