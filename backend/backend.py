@@ -26,7 +26,6 @@ urls = (
 	"/job/(.*)", "job",
 	"/budgetItem", "budgetItem",
 	"/note", "note",
-	"/editNote/(.*)", "editNote",
 	"/actionItem", "actionItem",
 	"/delete/budgetItem", "deleteBudgetItem",
 	"/delete/user", "deleteUser",
@@ -152,52 +151,6 @@ class actionItem:
 			return json.dumps(db.where('jobAppUsers', id=passedData['assigned_user'])[0])
 
 		return "481 WTF?"
-class editNote:
-	def GET(self): 
-		return "Shhhh... the database is sleeping."
-	def POST(self):
-		#create a new note
-		passedData = dict(web.input())
-		try:
-			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
-		except IndexError:
-			return "403 Forbidden"
-		tbl = passedData['tbl']
-		db.update(tbl, where="id = "+str(passedData['note_id']), 
-					edit_user=req_user['id'],
-					edit_time="CURRENT_TIMESTAMP"
-				)
-		if "contents" in passedData:
-			db.update(tbl, where="id = "+str(passedData['note_id']), 
-					contents=passedData['contents']
-				)
-
-		if "assigned_user" in passedData:
-			db.update(tbl, where="id = "+str(passedData['note_id']), 
-					assigned_user=passedData['assigned_user']
-				)
-		if "completion_user" in passedData:
-			db.update(tbl, where="id = "+str(passedData['note_id']), 
-					completion_user=req_user['id'],
-					completion_time="CURRENT_TIMESTAMP"
-				)
-		if "arrival_time" in passedData:
-			date = datetime.datetime.now().strftime("%d/%m/%Y")
-			arrivalTime = datetime.datetime.strptime(passedData['arrival_time']+" "+date, "%H:%M %d/%m/%Y")
-			db.update(tbl, where="id = "+str(passedData['note_id']), 
-					arrival_time=passedData['arrival_time']
-				)
-		if "departure_time" in passedData:
-			date = datetime.datetime.now().strftime("%d/%m/%Y")
-			departureTime = datetime.datetime.strptime(passedData['departure_time']+" "+date, "%H:%M %d/%m/%Y")
-			db.update(tbl, where="id = "+str(passedData['note_id']), 
-					departure_time=passedData['departureTime']
-				)
-		if "people_on_site" in passedData:
-			db.update(tbl, where="id = "+str(passedData['note_id']), 
-					people_on_site=passedData['people_on_site']
-				)
-		return "202 Note Updated"
 
 class note:
 	def GET(self): 
@@ -212,29 +165,66 @@ class note:
 		if not db.where('jobs', id=passedData['job_id']):
 			return "403 Forbidden"
 		tbl = passedData['tbl']
-		note = db.insert(tbl, 
-					job_id=passedData['job_id'],
-					author_id=reqUser['id'],
-					contents=passedData['contents']
+
+		if 'id' in passedData: #user passed an ID, they want to update
+			db.update(tbl, where="id = "+str(passedData['id']), 
+					edit_user=reqUser['id'],
+					edit_time="CURRENT_TIMESTAMP"
 				)
-		if tbl == "dailyReports":
-			date = datetime.datetime.now().strftime("%d/%m/%Y")
-			arrivalTime = datetime.datetime.strptime(passedData['arrival_time']+" "+date, "%H:%M %d/%m/%Y")
-			departureTime = datetime.datetime.strptime(passedData['departure_time']+" "+date, "%H:%M %d/%m/%Y")
-			db.update(tbl, where="id = "+str(note), 
-					arrival_time=arrivalTime.isoformat(),
-					departure_time=departureTime.isoformat(),
-					people_on_site=passedData['people_on_site']
-				)
-		if tbl == "actionItems" and "assigned_user" in passedData:
-			try:
-				assignedUser = db.where('jobAppUsers', name=passedData['assigned_user'])[0]
+			if "contents" in passedData:
+				db.update(tbl, where="id = "+str(passedData['id']), 
+						contents=passedData['contents']
+					)
+			if "assigned_user" in passedData:
+				db.update(tbl, where="id = "+str(passedData['id']), 
+						assigned_user=passedData['assigned_user']
+					)
+			if "completion_user" in passedData:
+				db.update(tbl, where="id = "+str(passedData['id']), 
+						completion_user=reqUser['id'],
+						completion_time="CURRENT_TIMESTAMP"
+					)
+			if "arrival_time" in passedData:
+				date = datetime.datetime.now().strftime("%d/%m/%Y")
+				arrivalTime = datetime.datetime.strptime(passedData['arrival_time']+" "+date, "%H:%M %d/%m/%Y")
+				db.update(tbl, where="id = "+str(passedData['id']), 
+						arrival_time=arrivalTime.isoformat()
+					)
+			if "departure_time" in passedData:
+				date = datetime.datetime.now().strftime("%d/%m/%Y")
+				departureTime = datetime.datetime.strptime(passedData['departure_time']+" "+date, "%H:%M %d/%m/%Y")
+				db.update(tbl, where="id = "+str(passedData['id']), 
+						departure_time=departureTime.isoformat()
+					)
+			if "people_on_site" in passedData:
+				db.update(tbl, where="id = "+str(passedData['id']), 
+						people_on_site=passedData['people_on_site']
+					)
+			return "202 Note Updated"
+		else: #no ID passed, user wants to create
+			note = db.insert(tbl, 
+						job_id=passedData['job_id'],
+						author_id=reqUser['id'],
+						contents=passedData['contents']
+					)
+			if tbl == "dailyReports":
+				date = datetime.datetime.now().strftime("%d/%m/%Y")
+				arrivalTime = datetime.datetime.strptime(passedData['arrival_time']+" "+date, "%H:%M %d/%m/%Y")
+				departureTime = datetime.datetime.strptime(passedData['departure_time']+" "+date, "%H:%M %d/%m/%Y")
 				db.update(tbl, where="id = "+str(note), 
-					assigned_user=assignedUser['id']
-				)
-			except:
-				pass
-		return json.dumps(note)
+						arrival_time=arrivalTime.isoformat(),
+						departure_time=departureTime.isoformat(),
+						people_on_site=passedData['people_on_site']
+					)
+			if tbl == "actionItems" and "assigned_user" in passedData:
+				try:
+					assignedUser = db.where('jobAppUsers', name=passedData['assigned_user'])[0]
+					db.update(tbl, where="id = "+str(note), 
+						assigned_user=passedData['assigned_user']
+					)
+				except:
+					pass
+			return json.dumps(note)
 
 class index:
 	def GET(self): 

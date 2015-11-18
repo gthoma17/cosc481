@@ -229,12 +229,7 @@ body {
 
 .card-block {
   padding: 1.25rem;
-}
-
-.card-block:hover {
-	box-shadow: 5px 5px grey;
-	background-color: #468C46;
-  	border-color: #468C46;
+  
 }
 
 .card-title {
@@ -297,6 +292,36 @@ body {
   border-color: #5cb85c;
 }
 
+.jobs-card {
+  background-color: #5cb85c;
+  border-color: #5cb85c;
+  border-radius:5%;
+}
+
+.jobs-card:hover {
+	box-shadow: 5px 5px LightGray;
+  	border-style: solid;
+  	border-width: 2px;
+  	border-color: white;
+  	cursor:pointer;
+}
+
+.street-address {
+	font-weight: bold;
+	float: left;
+	margin-top: 5px;
+	margin-right: 5px;
+}
+
+.jobs-map-glyphicon {
+	float: right;
+}
+
+.address-and-map {
+	margin-top: 15px;
+	margin-bottom: 50px;
+}
+
 .card-info {
   background-color: #5bc0de;
   border-color: #5bc0de;
@@ -310,6 +335,15 @@ body {
 .card-danger {
   background-color: #d9534f;
   border-color: #d9534f;
+  border-radius:5%;
+}
+
+.card-danger:hover {
+	box-shadow: 5px 5px LightGray;
+  	border-style: solid;
+  	border-width: 2px;
+  	border-color: white;
+  	cursor:pointer;
 }
 
 .card-inverse .card-header,
@@ -418,6 +452,9 @@ body {
 .card-group .card:not(:first-child):not(:last-child) .card-img-top,
 .card-group .card:not(:first-child):not(:last-child) .card-img-bottom {
   border-radius: 0;
+}
+.card-group > div {
+	margin-bottom: 10px;
 }
 
 .card-columns {
