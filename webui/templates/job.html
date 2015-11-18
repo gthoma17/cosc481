@@ -291,7 +291,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 						$if note['tbl'] == 'notes':
 							$ type = "Note"
 							$ cardType = "card-info"
-						<div class="col-xs-12 col-md-12">
+						<div class="col-xs-12 col-md-12" id="a-note-card-group">
 						<div class="card $cardType note-card text-center" id="note-$note['tbl']-$note['id']">
 							<div class="card-header">
 								<h5 class="card-title">

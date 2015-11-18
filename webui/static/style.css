@@ -15,6 +15,15 @@
 		height:100%;
 	}
 	
+	#a-note-card-group {
+		width:122%;
+		position:relative;
+		left:-11%;
+	}
+	
+	#note-card-group {
+		margin-top: 30px;
+	}	
 }
 
 /*bigger screens*/
@@ -159,6 +168,7 @@ body {
 	padding-top:70px;
 }
 
+/*notes*/
 #notes_container{
     width: 34%;
     height: 350px;
