@@ -335,15 +335,6 @@ body {
 .card-danger {
   background-color: #d9534f;
   border-color: #d9534f;
-  border-radius:5%;
-}
-
-.card-danger:hover {
-	box-shadow: 5px 5px LightGray;
-  	border-style: solid;
-  	border-width: 2px;
-  	border-color: white;
-  	cursor:pointer;
 }
 
 .card-inverse .card-header,
