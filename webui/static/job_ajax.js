@@ -207,7 +207,7 @@ function assigneeAjax(noteId, noteTbl){
                     $("#note-assignee-actionItems-"+noteId).html(newAssignee)
                     prepNotes();
                 } else {
-                    $("#apiResponse").html(response)
+                    $("#apiResponse").html(response+" assigneeAjax")
                 };
             }
         })
@@ -304,7 +304,7 @@ function prepBudget(){
                     $("#item_".concat(itemId)).remove()
                 } else {
                     console.log("Unsuccessful delete")
-                    $("#apiResponse").html(response)
+                    $("#apiResponse").html(response+" id^=delete_")
                 };
             }
         });
@@ -397,7 +397,7 @@ function budgetItemAjax(itemId){
                 console.log("Unsuccessful add")
                 console.log(response)
                 //response contained non numerics. Something bad happened
-                $("#apiResponse").html(response)
+                $("#apiResponse").html(response+" budgetItemAjax")
               };
               
             }
@@ -554,7 +554,7 @@ function notesAjax(llq){
                 console.log("Unsuccessful Note POST")
                 console.log(JSON.stringify(postData))
                 console.log(response)
-                $("#apiResponse").html(response)
+                $("#apiResponse").html(response+" notesAjax")
               };
               
             }
@@ -677,7 +677,7 @@ function jobEditInit(){
 		$("#edit-job-phase").val($("#job-phase").text());
 	})
 	
-	$("#edit-job-save").click(updateJobInfo());
+	$("#edit-job-save").click(function(){updateJobInfo()});
 }
 
 //update the job information
@@ -725,7 +725,7 @@ function updateJobInfo () {
 			console.log("Unsuccessful add")
 			console.log(JSON.stringify(postData))
 			console.log(response)
-			$("#apiResponse").html(response)
+			$("#apiResponse").html(response+" updateJobInfo")
 		  };
 		  
 		}
