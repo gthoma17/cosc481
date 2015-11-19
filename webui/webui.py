@@ -72,9 +72,9 @@ class index:
 			session.user['state'] = None
 
 		if session.user['state'] == "registered":
-			if redirect_location:
+			try:
 				raise web.seeother(redirect_location)
-			else:
+			except NameError:
 				raise web.seeother('dashboard')
 		elif session.user['state'] == "unregistered":
 			text = "You have logged in with Google, but are not a member of this company. Please contact your administrator if you feel you need access" 
