@@ -64,16 +64,16 @@ class index:
 			gVars = vars(gitkit_instance.VerifyGitkitToken(gtoken))
 			if not session.user.has_key('isInTable'):
 				if session.user['state'] != 'unregistered':
-					print "*"*50
-					print gVars
-					print type(gVars)
+					#preserve redirect
+					if 'redirect' in session.user:
+						redirect_location = session.user['redirect']
 					session.user = makeUserSession(gVars)
 		else:
 			session.user['state'] = None
 
 		if session.user['state'] == "registered":
-			if session.user.has_key('redirect'):
-				raise web.seeother(session.user['redirect'])
+			if redirect_location:
+				raise web.seeother(redirect_location)
 			else:
 				raise web.seeother('dashboard')
 		elif session.user['state'] == "unregistered":
@@ -86,7 +86,10 @@ class index:
 			text = "" 
 			if debug:
 				text += "Here is your session info: "  + str(session.user)
-			title = "Welcome, Stranger!"
+			if 'redirect' in session.user:
+				title = "You have to sign in to do that!"
+			else:
+				title = "Welcome, Stranger!"
 			return render.unauthed(title, text)
 		else:
 			text = "Strange error. Contact an admin." 
@@ -101,16 +104,9 @@ class test:
 			
 class forward:
 	def GET(self, path):
-		print "Forwarding get request"
 		apiRequest = urllib.urlopen(apiUrl+"/"+path+"?apiKey="+session.user['apiKey']).read()
 		return apiRequest
 	def POST(self, path):
-		print "Forwarding post request"
-		#try:
-		#	passedData = dict(json.loads(web.input().keys()[0]))
-		#except:
-		#	#this is no json
-		#	return "403 Forbidden"
 		try:
 			passedData = dict(json.loads(web.data()))
 		except Exception, e:
@@ -120,6 +116,9 @@ class forward:
 		return apiRequest.text
 class jobs:
 	def GET(self):
+		if not userAuthed(session.user):
+			session.user['redirect'] = web.ctx.path
+			raise web.seeother('/')
 		response = urllib.urlopen(apiUrl+"/job/all?apiKey="+session.user['apiKey']).read()
 		try:
 			return render.jobs("::JOBS::", json.loads(response))
@@ -128,6 +127,9 @@ class jobs:
 			return render.error(response)
 class job:
 	def GET(self, job):
+		if not userAuthed(session.user):
+			session.user['redirect'] = web.ctx.path
+			raise web.seeother('/')
 		if session.user.has_key('budgetResponse'):
 			budgetResponse = session.user['budgetResponse']
 			del session.user['budgetResponse']
@@ -149,11 +151,13 @@ class job:
 		user_form['job_id'] = str(job)
 		apiRequest = requests.post(apiUrl+"/budgetItem", data=user_form)
 		session.user['budgetResponse'] = apiRequest.text
-		print apiRequest.text
 		user_form = {}
 		raise web.seeother('/job/'+str(job))
 class newJob:
 	def GET(self):
+		if not userAuthed(session.user):
+			session.user['redirect'] = web.ctx.path
+			raise web.seeother('/')
 		if not userAuthed(session.user) or not userIsAdmin(session.user):
 			raise web.seeother('/')
 		if session.user.has_key('apiResponse'):
@@ -221,6 +225,9 @@ class admin:
     )
 
 	def GET(self):
+		if not userAuthed(session.user):
+			session.user['redirect'] = web.ctx.path
+			raise web.seeother('/')
 		if not userAuthed(session.user) or not userIsAdmin(session.user):
 			raise web.seeother('/')
 		if session.user.has_key('apiResponse'):
