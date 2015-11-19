@@ -376,16 +376,16 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 		<tbody id="budgetRowTemplate">
 			<tr>
 				<td>
-					<div id="name_!template!"></div>
-			  		<input type="text" class="edit_row" id="name_edit_!template!" name="name" size="10" />
+					<div id="name_!template!">!name!</div>
+			  		<input type="text" class="edit_row" id="name_edit_!template!" name="name" size="10" value="!name!" />
 				</td>
 				<td>
-					<div id="type_!template!"></div>
+					<div id="type_!template!">!type!</div>
 			  		<select id="type_edit_!template!" class="edit_row"><option value="select" selected>Type</option><option value="Labor">Labor</option><option value="Material">Material</option><option value="Misc">Misc</option></select>
 				</td>
 				<td>
-					<div id="cost_!template!"></div>
-			  		<input type="text" id="cost_edit_!template!" class="edit_row" name="cost" size="5" />
+					<div id="cost_!template!">!cost!</div>
+			  		<input type="text" id="cost_edit_!template!" class="edit_row" name="cost" size="5" value="!cost!" />
 				</td>
 				<td>
 					<div id="buttons_!template!"><button class="edit_button" id="edit_!template!">Edit</button><button class="delete_button" id="delete_!template!">Delete</button></div>

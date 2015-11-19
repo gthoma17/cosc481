@@ -254,7 +254,8 @@ function assigneeAjax(noteId, noteTbl){
         flashRedBackground($("#note-select-assignee-"+noteTbl+"-"+noteId))
     };
 }
-function prepBudget(){
+function budgetInit(){
+    //budget things that have to be run once at page load
     $(".addItemForm").hide();
     $(".edit_row").hide();
     $("#show-budget").hide();
@@ -282,6 +283,10 @@ function prepBudget(){
     $("#budgetAdd").click(function(){
         budgetItemAjax()
     });
+    prepBudget()
+}
+function prepBudget(){
+    //budget things that have to be run everytime a budget thing is added/modified
     $(".edit_button").click(function(){
         //hide all display cols, show all edit cols
         buttonId = $(this).attr('id').split("_")
@@ -431,6 +436,7 @@ function budgetItemAjax(itemId){
                     //we're adding
                     newBudgetItemRow(response);
                 };
+                prepBudget()
               } else{
                 console.log("Unsuccessful add")
                 console.log(response)
@@ -470,16 +476,15 @@ function newBudgetItemRow(itemId){
     //create new row from template
     rowTemplate = $("#budgetRowTemplate").html()
     newRow = replaceAllSubsting(rowTemplate, "!template!", itemId);
+    newRow = replaceAllSubsting(newRow, "!name!", $("#name").val());
+    newRow = replaceAllSubsting(newRow, "!type!", $("#type").val());
+    newRow = replaceAllSubsting(newRow, "!cost!", $("#cost").val());
     $('#budget-table tr:last').before(newRow);
-    //add new values to the row
-    $("#name_".concat(itemId)).text($("#name").val());
-    $("#type_".concat(itemId)).text($("#type").val());
-    $("#cost_".concat(itemId)).text($("#cost").val());
     //hide edit options initially
-    $("#name_edit_".concat(itemId)).hide()
-    $("#type_edit_".concat(itemId)).hide()
-    $("#cost_edit_".concat(itemId)).hide()
-    $("#buttons_edit_".concat(itemId)).hide()
+    //$("#name_edit_".concat(itemId)).hide()
+    //$("#type_edit_".concat(itemId)).hide()
+    //$("#cost_edit_".concat(itemId)).hide()
+    //$("#buttons_edit_".concat(itemId)).hide()
     //empty the form
     $("#name").val("");
     $("#type").val("select");
@@ -797,6 +802,6 @@ function showUpdatedJobInfo(jobId) {
 $(document).ready(function(){
     photosInit()
     prepNotes()
-    prepBudget()
+    budgetInit()
 	jobEditInit()
 });
