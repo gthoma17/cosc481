@@ -15,6 +15,15 @@
 		height:100%;
 	}
 	
+	#a-note-card-group {
+		width:122%;
+		position:relative;
+		left:-11%;
+	}
+	
+	#note-card-group {
+		margin-top: 30px;
+	}	
 }
 
 /*bigger screens*/
@@ -159,6 +168,7 @@ body {
 	padding-top:70px;
 }
 
+/*notes*/
 #notes_container{
     width: 34%;
     height: 350px;
@@ -219,12 +229,7 @@ body {
 
 .card-block {
   padding: 1.25rem;
-}
-
-.card-block:hover {
-	box-shadow: 5px 5px grey;
-	background-color: #468C46;
-  	border-color: #468C46;
+  
 }
 
 .card-title {
@@ -285,6 +290,36 @@ body {
 .card-success {
   background-color: #5cb85c;
   border-color: #5cb85c;
+}
+
+.jobs-card {
+  background-color: #5cb85c;
+  border-color: #5cb85c;
+  border-radius:5%;
+}
+
+.jobs-card:hover {
+	box-shadow: 5px 5px LightGray;
+  	border-style: solid;
+  	border-width: 2px;
+  	border-color: white;
+  	cursor:pointer;
+}
+
+.street-address {
+	font-weight: bold;
+	float: left;
+	margin-top: 5px;
+	margin-right: 5px;
+}
+
+.jobs-map-glyphicon {
+	float: right;
+}
+
+.address-and-map {
+	margin-top: 15px;
+	margin-bottom: 50px;
 }
 
 .card-info {
@@ -409,6 +444,9 @@ body {
 .card-group .card:not(:first-child):not(:last-child) .card-img-bottom {
   border-radius: 0;
 }
+.card-group > div {
+	margin-bottom: 10px;
+}
 
 .card-columns {
   -webkit-column-count: 3;
@@ -468,3 +506,16 @@ body {
     width: 280px;
     height: 50px;
 }
+
+/*Add a Photo border fix*/
+#add-a-image-card {
+	border: 1px solid #5bc0de;
+}
+
+/*Add a Note border fix*/
+#add-note-card {
+	border-top: 1px solid #5bc0de;
+	border-left: 1px solid #5bc0de;
+	border-right: 1px solid #5bc0de;
+}
+
