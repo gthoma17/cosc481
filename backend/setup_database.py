@@ -135,7 +135,7 @@ def createDatabase(DATABASE, cursor):
 	#create our database
 	print "Creating database: " +DATABASE
 	cursor.execute('create database '+DATABASE)
-	execStr = "ALTER DATABASE "+DATABASE+" CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+	execStr = "ALTER DATABASE "+DATABASE+" CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;"
 	cursor.execute(execStr)
 
 def createJobsTbl(cursor):

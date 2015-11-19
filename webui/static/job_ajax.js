@@ -160,6 +160,20 @@ function prepNotes() {
         $("#note-"+noteTbl+"-"+noteId+" .note-edit").hide()
         resetNote(noteTbl, noteId);
     });
+    $('.note-complete').click(function(){
+        buttonId = $(this).attr('id').split("-")
+        noteId = buttonId[buttonId.length -1]
+        noteTbl = buttonId[buttonId.length -2]
+        $("#note-"+noteTbl+"-"+noteId+" .note-complete").hide()
+        $("#note-"+noteTbl+"-"+noteId+" .note-complete-edit").show()
+    });
+    $('.note-complete-cancel').click(function(){
+        buttonId = $(this).attr('id').split("-")
+        noteId = buttonId[buttonId.length -1]
+        noteTbl = buttonId[buttonId.length -2]
+        $("#note-"+noteTbl+"-"+noteId+" .note-complete").show()
+        $("#note-"+noteTbl+"-"+noteId+" .note-complete-edit").hide()
+    });
     makeUsersDropdown("all", "#note-assignee-select")
 }
 function resetNote(tbl, id){

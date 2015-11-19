@@ -339,7 +339,13 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 												<button class="note-assignee-edit note-cancel-assignee" style="display:inline;" id="note-cancel-assignee-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-remove"></span></button>	
 										</div>
 										<hr>
-										<p class="card-text"><button id="note-complete-button-$note['tbl']-$note['id']">Complete</button><br>(not implemented)</p>
+										<p class="card-text">
+											<button class="note-complete" id="note-complete-button-$note['tbl']-$note['id']">Complete</button>
+											<p class="note-complete-edit">Are You Sure?</p>
+											<button class="note-complete-edit note-complete-confirm" id="note-complete-confirm-button-$note['tbl']-$note['id']">Yes</button>
+											<button class="note-complete-edit note-complete-cancel" id="note-complete-cancel-button-$note['tbl']-$note['id']">No</button>
+											<br>(not implemented)
+										</p>
 								</div>
 							<div class="card-footer text-muted small">
 								Created by $note['author']['name'] at $note['entry_time']

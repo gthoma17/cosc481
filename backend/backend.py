@@ -149,6 +149,12 @@ class actionItem:
 					assigned_user=passedData['assigned_user']
 				)
 			return json.dumps(db.where('jobAppUsers', id=passedData['assigned_user'])[0])
+		if "complete" in passedData:
+			db.update("actionItems", where="id = "+str(passedData['id']), 
+						completion_user=reqUser['id'],
+						completion_time="CURRENT_TIMESTAMP"
+					)
+			return json.dumps(db.where('jobAppUsers', id=passedData['assigned_user'])[0])
 
 		return "481 WTF?"
 
