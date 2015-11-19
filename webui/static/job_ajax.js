@@ -174,6 +174,7 @@ function prepNotes() {
         $("#note-"+noteTbl+"-"+noteId+" .note-complete").show()
         $("#note-"+noteTbl+"-"+noteId+" .note-complete-edit").hide()
     });
+    $('.note-complete-edit').hide();
     makeUsersDropdown("all", "#note-assignee-select")
 }
 function resetNote(tbl, id){
