@@ -325,16 +325,26 @@ body {
 .card-info {
   background-color: #5bc0de;
   border-color: #5bc0de;
+  border-top: 1px solid #5bc0de;
+  border-left: 1px solid #5bc0de;
+  border-right: 1px solid #5bc0de;
 }
 
 .card-warning {
   background-color: #f0ad4e;
   border-color: #f0ad4e;
+  border-top: 1px solid #f0ad4e;
+  border-left: 1px solid #f0ad4e;
+  border-right: 1px solid #f0ad4e;
+  
 }
 
 .card-danger {
   background-color: #d9534f;
   border-color: #d9534f;
+  border-top: 1px solid #D9534F;
+  border-left: 1px solid #D9534F;
+  border-right: 1px solid #D9534F;
 }
 
 .card-inverse .card-header,
@@ -511,11 +521,3 @@ body {
 #add-a-image-card {
 	border: 1px solid #5bc0de;
 }
-
-/*Add a Note border fix*/
-#add-note-card {
-	border-top: 1px solid #5bc0de;
-	border-left: 1px solid #5bc0de;
-	border-right: 1px solid #5bc0de;
-}
-
