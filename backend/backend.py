@@ -33,7 +33,7 @@ urls = (
 	)
 
 app = web.application(urls, globals())
-db = web.database(dbn='mysql', host=config.get("Database", "host"), port=int(config.get("Database", "port")), user=config.get("Database", "user"), pw=config.get("Database", "password"), db=config.get("Database", "name"))
+db = web.database(dbn='mysql', host=config.get("Database", "host"), port=int(config.get("Database", "port")), user=config.get("Database", "user"), pw=config.get("Database", "password"), db=config.get("Database", "name"), charset='utf8mb4')
 s3Bucket = boto.connect_s3(aws_access_key_id=config.get("aws", "access_key_id"), aws_secret_access_key=config.get("aws", "secret_access_key")).get_bucket(config.get("aws", "bucket_name"))
 bucketHlq = config.get("aws", "bucket_hlq")
 
