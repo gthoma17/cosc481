@@ -287,7 +287,10 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 							$ cardType = "card-warning"
 						$if note['tbl'] == 'actionItems':
 							$ type = "Action Item"
-							$ cardType = "card-danger"
+							$if note['completion_time']:
+								$ cardType = "card-success"
+							$else:
+								$ cardType = "card-danger"
 						$if note['tbl'] == 'notes':
 							$ type = "Note"
 							$ cardType = "card-info"
@@ -317,30 +320,38 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 									<textarea class="note-edit" id="note-edit-people-$note['tbl']-$note['id']">$note['people_on_site']</textarea>
 								</div>
 							$if note['tbl'] == 'actionItems':
-								<div class="card-block">
-									<hr>
 									$if note['completion_time']:
-										<p class="card-text">Completed by $note['completion_user']['name'] at $note['completion_time']</p>
-									$else:
-										<p class="card-text" style="margin-bottom:5px;">
-										Assigned User
-										</p>
-										<div style="display:inline;" id="note-assignee-$note['tbl']-$note['id']">
-											<select class="note-edit note-assignee-edit note-select-assignee" style="display:inline;" id="note-select-assignee-$note['tbl']-$note['id']"></select>
-											$if note['assigned_user']:
-												<div class="note-display" style="display:inline;" id="note-assigned-name-$note['tbl']-$note['id']">
-													$note['assigned_user']['name']&nbsp;
-													<a class="button" href="tel:$note['assigned_user']['phone']"><span class="glyphicon glyphicon-earphone"></span></a>&nbsp;
-													<a class="button" href="mailto:$note['assigned_user']['email']"><span class="glyphicon glyphicon-envelope"></span></a>
-												</div>
-											$else:
-												<button class="note-add-assignee note-display" style="display:inline;" id="note-add-assignee-$note['tbl']-$note['id']">Add One</button>
-												<button class="note-assignee-edit note-save-assignee" style="display:inline;" id="note-save-assignee-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-ok"></span></button>
-												<button class="note-assignee-edit note-cancel-assignee" style="display:inline;" id="note-cancel-assignee-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-remove"></span></button>	
+										<div class="card-footer text-muted small" id="note-completer-$note['tbl']-$note['id']">
+											<p class="card-text">Completed by $note['completion_user']['name'] at $note['completion_time']</p>
 										</div>
-										<hr>
-										<p class="card-text"><button id="note-complete-button-$note['tbl']-$note['id']">Complete</button><br>(not implemented)</p>
-								</div>
+									$else:
+										<div class="card-block" id="note-completer-$note['tbl']-$note['id']">
+											<hr>
+											<p class="card-text" style="margin-bottom:5px;">
+											Assigned User
+											</p>
+											<div style="display:inline;" id="note-assignee-$note['tbl']-$note['id']">
+												<select class="note-edit note-assignee-edit note-select-assignee" style="display:inline;" id="note-select-assignee-$note['tbl']-$note['id']"></select>
+												$if note['assigned_user']:
+													<div class="note-display" style="display:inline;" id="note-assigned-name-$note['tbl']-$note['id']">
+														$note['assigned_user']['name']&nbsp;
+														<a class="button" href="tel:$note['assigned_user']['phone']"><span class="glyphicon glyphicon-earphone"></span></a>&nbsp;
+														<a class="button" href="mailto:$note['assigned_user']['email']"><span class="glyphicon glyphicon-envelope"></span></a>
+													</div>
+												$else:
+													<button class="note-add-assignee note-display" style="display:inline;" id="note-add-assignee-$note['tbl']-$note['id']">Add One</button>
+													<button class="note-assignee-edit note-save-assignee" style="display:inline;" id="note-save-assignee-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-ok"></span></button>
+													<button class="note-assignee-edit note-cancel-assignee" style="display:inline;" id="note-cancel-assignee-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-remove"></span></button>	
+											</div>
+											<hr>
+											<p class="card-text" >
+												<button class="note-complete" id="note-complete-button-$note['tbl']-$note['id']">Complete</button>
+												<p class="note-complete-edit">Are You Sure?</p>
+												<button class="note-complete-edit note-complete-confirm" id="note-complete-confirm-button-$note['tbl']-$note['id']">Yes</button>
+												<button class="note-complete-edit note-complete-cancel" id="note-complete-cancel-button-$note['tbl']-$note['id']">No</button>
+												(not implemented)
+											</p>
+										</div>
 							<div class="card-footer text-muted small">
 								Created by $note['author']['name'] at $note['entry_time']
 							</div>
@@ -383,6 +394,11 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 			</tr>
 		</tbody>
 	</table>
+	<div class="hidden" id="completion-user-template">
+		<p class="card-text">
+		Completed by !name! at !time!
+		</p>
+	</div>
 	<div class="hidden" id="assigned-user-template">
 		<select class="note-edit note-assignee-edit note-select-assignee" style="display: none;" id="note-select-assignee-!tbl!-!id!"></select>
 		<div class="note-display" style="display:inline;" id="note-assigned-name-!tbl!-!id!">

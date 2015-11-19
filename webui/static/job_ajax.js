@@ -160,9 +160,61 @@ function prepNotes() {
         $("#note-"+noteTbl+"-"+noteId+" .note-edit").hide()
         resetNote(noteTbl, noteId);
     });
+    $('.note-complete').click(function(){
+        buttonId = $(this).attr('id').split("-")
+        noteId = buttonId[buttonId.length -1]
+        noteTbl = buttonId[buttonId.length -2]
+        $("#note-"+noteTbl+"-"+noteId+" .note-complete").hide()
+        $("#note-"+noteTbl+"-"+noteId+" .note-complete-edit").show()
+    });
+    $('.note-complete-cancel').click(function(){
+        buttonId = $(this).attr('id').split("-")
+        noteId = buttonId[buttonId.length -1]
+        noteTbl = buttonId[buttonId.length -2]
+        $("#note-"+noteTbl+"-"+noteId+" .note-complete").show()
+        $("#note-"+noteTbl+"-"+noteId+" .note-complete-edit").hide()
+    });
+    $('.note-complete-confirm').click(function(){
+        buttonId = $(this).attr('id').split("-")
+        noteId = buttonId[buttonId.length -1]
+        noteTbl = buttonId[buttonId.length -2]
+        completeAjax(noteId, noteTbl);
+    });
+    $('.note-complete-edit').hide();
     makeUsersDropdown("all", "#note-assignee-select")
 }
-function resetNote(tbl, id){
+function completeAjax(id, tbl){
+    var id = id
+    postData = {}
+    postData.id = id
+    postData.complete = "True"
+    $.ajax({
+        url : "/forward/actionItem",
+        dataType:"text",
+        method:"POST",
+        data: JSON.stringify(postData),
+        success:function(response){
+            if (apiResponseIsGood(response)) {
+                console.log("Successful update")
+                console.log(postData)
+                console.log(response)
+                newCompleter = $("#completion-user-template").html()
+                newCompleter = replaceAllSubsting(newCompleter, "!name!", $('#user-name').text());
+                newCompleter = replaceAllSubsting(newCompleter, "!time!", getCurrentDateTime());
+                $("#note-completer-actionItems-"+noteId).html(newCompleter)
+                $("#note-completer-actionItems-"+noteId).removeClass("card-block")
+                $("#note-completer-actionItems-"+noteId).addClass("card-footer text-muted small")
+                console.log(newCompleter)
+                console.log($("#note-completer-actionItems-"+id).html())
+                prepNotes();
+            } else {
+                console.log(JSON.stringify(postData))
+                $("#apiResponse").html(response+" assigneeAjax")
+            };
+        }
+    })
+}
+function resetNote(noteId, noteTbl){
     llq = "-"+tbl+"-"+id;
     $('#note-edit-contents'+llq).val($('#note-contents'+llq).text())
     $('#note-edit-people'+llq).val($('#note-people'+llq).text())
@@ -589,7 +641,13 @@ function updateNote(llq, note){
     $("#note"+llq+" .note-edit").hide()
 
 }
-
+function getCurrentDateTime(){
+    d = new Date()
+    date = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()
+    time = " "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds()
+    datetime = date+time
+    return datetime
+}
 function createNewNote(noteId, note){
     console.log("new note")
     noteSuffix = "-" + note.tbl + "-" + noteId
@@ -604,11 +662,7 @@ function createNewNote(noteId, note){
 
     $("#note-contents".concat(noteSuffix)).text(note.contents)
     $("#note-user-name".concat(noteSuffix)).text($("#user-name").text())
-    d = new Date()
-    date = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()
-    time = " "+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds()
-    datetime = date+time
-    $("#note-entry-time".concat(noteSuffix)).text(datetime)
+    $("#note-entry-time".concat(noteSuffix)).text(getCurrentDateTime())
 
     if (note.tbl == "actionItems") {
         if (note.assigned_user != "") {

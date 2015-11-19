@@ -149,6 +149,12 @@ class actionItem:
 					assigned_user=passedData['assigned_user']
 				)
 			return json.dumps(db.where('jobAppUsers', id=passedData['assigned_user'])[0])
+		if "complete" in passedData:
+			db.update("actionItems", where="id = "+str(passedData['id']), 
+						completion_user=reqUser['id'],
+						completion_time=datetime.datetime.now().isoformat()
+					)
+			return json.dumps(makeDumpable(db.where('actionItems', id=passedData['id'])[0]))
 
 		return "481 WTF?"
 
@@ -169,7 +175,7 @@ class note:
 		if 'id' in passedData: #user passed an ID, they want to update
 			db.update(tbl, where="id = "+str(passedData['id']), 
 					edit_user=reqUser['id'],
-					edit_time="CURRENT_TIMESTAMP"
+					edit_time=datetime.datetime.now().isoformat()
 				)
 			if "contents" in passedData:
 				db.update(tbl, where="id = "+str(passedData['id']), 
@@ -182,7 +188,7 @@ class note:
 			if "completion_user" in passedData:
 				db.update(tbl, where="id = "+str(passedData['id']), 
 						completion_user=reqUser['id'],
-						completion_time="CURRENT_TIMESTAMP"
+						completion_time=datetime.datetime.now().isoformat()
 					)
 			if "arrival_time" in passedData:
 				date = datetime.datetime.now().strftime("%d/%m/%Y")
