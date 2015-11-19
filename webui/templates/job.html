@@ -82,7 +82,7 @@ $def with (job, user, apiUrl)
 				<div class="card $color job-info" style="border-width:.15rem;">
 					<div class="card-header">
 						<h1 class="job-show text-center" id="job-name">$job['name']<small><a id="edit-job" href="#"> (edit)</a></small></h1>
-						<h1 class="job-edit text-center"><input type="text" id="edit-job-name" name="jobName" size="10" /><small><a id="edit-job" href="#"> (save)</a><a id="edit-job-cancel" href="#"> (cancel)</a></small></h1>
+						<h1 class="job-edit text-center"><input type="text" id="edit-job-name" name="jobName" size="10" value="$job['name']"/><small><a id="edit-job-save" href="#"> (save)</a><a id="edit-job-cancel" href="#"> (cancel)</a></small></h1>
 					</div>
 					<div class="card-block" style="background-color: #f5f5f5;border-bottom: .0625rem solid #e5e5e5;padding:0.5rem;">
 						<div class="row" style="border-bottom: .0625rem solid #e5e5e5;padding-bottom:0.5rem;">
@@ -144,7 +144,7 @@ $def with (job, user, apiUrl)
 	<div class="text-center"><h3>Photos <small><button id="hide-photos">[-]</button><button id="show-photos">[+]</button></div></small></h3>
 	<div id="photos-container" class="container">
 	    <div class="col-sm-3" id="add-image-card">
-	        <div class="card text-center card-info">
+	        <div class="card text-center card-info" id="add-a-image-card">
 	        	<div class="card-header">
 						<h5 class="card-title">Add a Photo</h5>
 				</div>

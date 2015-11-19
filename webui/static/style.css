@@ -506,3 +506,16 @@ body {
     width: 280px;
     height: 50px;
 }
+
+/*Add a Photo border fix*/
+#add-a-image-card {
+	border: 1px solid #5bc0de;
+}
+
+/*Add a Note border fix*/
+#add-note-card {
+	border-top: 1px solid #5bc0de;
+	border-left: 1px solid #5bc0de;
+	border-right: 1px solid #5bc0de;
+}
+

@@ -643,32 +643,28 @@ function jobEditInit(){
 		$(".job-edit").show();  
     });
 	
-	/*$(function(){
-		$("#edit-job-desc").redactor({
-			focus: true,
-			callbacks: {
-				init: function(){
-					this.code.set($('#job-desc').text());
-				}
-			}
-		});
-		
-		$("#edit-job-name").redactor({
-			focus: true,
-			callbacks: {
-				init: function(){
-					this.code.set($('#job-name').text());
-				}
-			}
-		});
-	});*/
+	$("#edit-job-cancel").click(function() {
+		$(".job-edit").hide();
+		$(".job-show").show();
+		//reset all fields
+		$("#edit-job-name").val($("#job-name").text());
+		//how to extract street, city, state, zip from the location?
+		//$("#edit-job-street").val($("#job-location").text());
+		//$("#edit-job-city").val($("#job-location").text());
+		//$("#edit-job-state").val($("#job-location").text());
+		//$("#edit-job-zip").val($("#job-location").text());
+		//end of the questionable area
+		$("#edit-job-customer").val($("#job-customer").text());
+		$("#edit-job-supervisor").val($("#job-supervisor").text());
+		$("#edit-job-manager").val($("#job-manager").text());
+		$("#edit-job-budgetAvailable").val($("#job-budgetAvailable").text());
+		$("#edit-job-budgetAllocated").val($("#job-budgetAllocated").text());
+		$("#edit-job-desc").val($("#job-desc").text());
+		$("#edit-job-phase").val($("#job-phase").text());
+	})
+	
+	$("#edit-job-save").click(updateJobInfo());
 }
-//changes the edit link to save link
-/*$("#edit-job").click(function(){
-		var container = $('#jobInfoTemplate');
-		container.find('a#edit-job').unbind('click').click(SaveEditState).html(' (save)'); //this changes edit button to save button
-		
-});*/
 
 //update the job information
 function updateJobInfo () {
