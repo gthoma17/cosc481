@@ -203,7 +203,7 @@ class dashboard:
 			text += "..... here is your session info: " + str(session.user)
 		text += "."
 		title = "Welcome back, " + session.user['name'] + "!" 
-		return render.dashboard(title, text, adminLink)
+		return render.dashboard(title, text, adminLink, session.user)
 class admin:
 	form = web.form.Form(
 		web.form.Textbox('email',
