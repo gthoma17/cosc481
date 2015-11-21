@@ -404,7 +404,89 @@ class job:
 		if 'isInProgress' in passedData:
 			db.update('jobs', where="id = "+str(job), isInProgress=passedData['isInProgress'])
 		return "202 Item Updated"	
+
+#Begin Equipment Section
+class newEquipment:
+	def GET(self): 
+		return "Shhhh... the database is sleeping."
+	def POST(self):
+		passedData = dict(web.input())
+		try:
+			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
+		except IndexError:
+			return "403 Forbidden"
+		if db.where('jobs', name=passedData['name']):
+			return "403 Forbidden"
+		#are there any people that shouldn't be allowed to create equipment?
+		#if so put a check here
+		equipment = db.insert('equipment', 
+					name=passedData['name']
+				)
 		
+		#Get equipment info from form and insert into database
+		if 'category' in passedData:
+			db.update('equipment', where="id = "+str(equipment), category=passedData['category'])
+		if 'description' in passedData:
+			db.update('equipment', where="id = "+str(equipment), description=passedData['description'])
+		if 'storage_location' in passedData:
+			db.update('equipment', where="id = "+str(equipment), storage_location=passedData['storage_location'])
+		
+		return "201 Equipment Created"
+
+class equipment:
+	def GET(self, equipment):
+		#make sure the requestor is a real user
+		try:
+			apiKey = web.input().apiKey
+			reqUser = db.where('jobAppUsers', apiKey=apiKey)[0]
+		except:
+			return "403 Forbidden"
+		allEquipment = list(db.select('equipment'))			
+		#then return
+		return json.dumps(allEquipment)
+	def POST(self, equipment):
+		#if you're posting here, the equipment already exists.
+		passedData = dict(web.input())
+		try:
+			apiKey = web.input().apiKey
+			reqUser = db.where('jobAppUsers', apiKey=apiKey)[0]
+		except:
+			return "403 Forbidden"
+		try:
+			theJob = dict(db.where('equipment', id=passedData['id'])[0])
+		except IndexError:
+			return "404 Not Found"
+		#Get equipment info from form and insert into database
+		if 'category' in passedData:
+			db.update('equipment', where="id = "+str(equipment), category=passedData['category'])
+		if 'description' in passedData:
+			db.update('equipment', where="id = "+str(equipment), description=passedData['description'])
+		if 'storage_location' in passedData:
+			db.update('equipment', where="id = "+str(equipment), storage_location=passedData['storage_location'])
+		
+		return "201 Equipment Updated"	
+		
+class deleteEquipment:
+	def GET(self): 
+		return "Shhhh... the database is sleeping."
+	def POST(self):
+		passedData = dict(web.input())
+		try:
+			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
+		except IndexError:
+			return "403 Forbidden"
+		if reqUser['permissionLevel'].upper() == "ADMIN" or reqUser['permissionLevel'].upper() == "MANAGER":
+			#user can do this
+			try:
+				theItem = db.where('equipment', id=passedData['id'])[0]
+			except:
+				return "404 Not Found"
+			db.delete('equipment', where="id="+passedData['id'])
+			return "200 OK"
+		else:
+			return "403 Forbidden"
+
+#End Equipment Section		
 
 
 class user:
