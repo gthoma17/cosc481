@@ -39,19 +39,20 @@ $def with (title, text)
 
 </head>
 <body style="background-color:lavender;">
-<div class="container">
+<div class="container" id="welcome_msg">
 	<div class="row">
 		<div class="col-sm-12"><h1>$title</h1></div>
 	</div>
 	<div class="row">
 		<div class="col-sm-12"><p>$:text</p></div>
 	</div>
-<div class="container-fluid">
-	<div class="row">
+</div>
+<div class="container-fluid" id="sign_in">
+	<div class="row" id="sign_in_button">
 		<div class="col-sm-12" style="z-index:255;"><div id="navbar" class="scaled" style="vertical-align:middle;"></div></div>
 		<!--<div id="navbar" style="float:right;position:relative;right:15px"></div>-->
 	</div>
-	<div class="row">
+	<div class="row" id="sign_in_logo">
 		<div><img src="/static/logo_large.png" class="img-responsive centerLogo" alt="Jobn"></div>
 	</div>
 </div>

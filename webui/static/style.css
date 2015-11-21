@@ -23,7 +23,24 @@
 	
 	#note-card-group {
 		margin-top: 30px;
-	}	
+	}
+
+	#welcome_msg {
+		top:15%;
+	}
+	
+	#sign_in {
+		left:9%;
+		top:30%;
+		width:32%;
+	}
+	
+	#sign_in_logo {
+		width:300%;
+		top:40%;
+		left:8%;
+	}
+	
 }
 
 /*bigger screens*/
@@ -520,4 +537,28 @@ body {
 /*Add a Photo border fix*/
 #add-a-image-card {
 	border: 1px solid #5bc0de;
+}
+
+/*sign in page*/
+#welcome_msg {
+	position: absolute;
+	top:2%;
+	left:3%;
+}
+
+#sign_in {
+	position: absolute;
+	left:8%;
+	top:20%;
+	width:30%;
+}
+#sign_in_button div{
+	position: relative;
+	left:20%;
+}
+
+#sign_in_logo {
+	position:relative;
+	width:280%;
+	
 }
