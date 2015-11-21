@@ -707,12 +707,10 @@ function jobEditInit(){
 		$(".job-show").show();
 		//reset all fields
 		$("#edit-job-name").val($("#job-name").text());
-		//how to extract street, city, state, zip from the location?
-		//$("#edit-job-street").val($("#job-location").text());
-		//$("#edit-job-city").val($("#job-location").text());
-		//$("#edit-job-state").val($("#job-location").text());
-		//$("#edit-job-zip").val($("#job-location").text());
-		//end of the questionable area
+		$("#edit-job-street").val($("#location-street-address").text());
+		$("#edit-job-city").val($("#location-city").text());
+		$("#edit-job-state").val($("#location-state").text());
+		$("#edit-job-zip").val($("#location-zip").text());
 		$("#edit-job-customer").val($("#job-customer").text());
 		$("#edit-job-supervisor").val($("#job-supervisor").text());
 		$("#edit-job-manager").val($("#job-manager").text());
@@ -740,49 +738,70 @@ function updateJobInfo () {
     descriptionId = "#edit-job-desc";
     phaseId = "#edit-job-phase";
 	
-	postData = {}
-	postData.job_id = $("#jobId").text()
-	postData.name = $(jobNameId).val()
-	postData.street_address = $(streetId).val()
-	postData.city = $(cityId).val()
-	postData.state = $(stateId).val()
-	postData.zip = $(zipId).val()
-	postData.customer_name = $(customerId).val()
-	postData.supervisor_name = $(supervisorId).val()
-	postData.manager_name = $(managerId).val()
-	postData.budget_available = $(budgetAvailableId).val()
-	postData.budget_allocated = $(budgetAllocatedId).val()
-	postData.description = $(descriptionId).val()
-	postData.phase = $(phaseId).val()
+	//verify that the above are not empty (location ones and name)
+	if ($(jobNameId).val() != "" && $(streetId).val() != "select" && $(cityId).val() != "" && $(stateId).val() != "" && $(zipId).val() != "") {
+		postData = {}
+		postData.job_id = $("#jobId").text()
+		postData.name = $(jobNameId).val()
+		postData.street_address = $(streetId).val()
+		postData.city = $(cityId).val()
+		postData.state = $(stateId).val()
+		postData.zip = $(zipId).val()
+		postData.customer_name = $(customerId).val()
+		postData.supervisor_name = $(supervisorId).val()
+		postData.manager_name = $(managerId).val()
+		postData.budget_available = $(budgetAvailableId).val()
+		postData.budget_allocated = $(budgetAllocatedId).val()
+		postData.description = $(descriptionId).val()
+		postData.phase = $(phaseId).val()
 
-	$.ajax({
-		url : "/forward/job",
-		dataType:"text",
-		method:"POST",
-		data: JSON.stringify(postData),
-		success:function(response){
-		  if (apiResponseIsGood(response)) {
-			console.log("Successful add")
-			console.log(JSON.stringify(postData))
-			console.log(response)
-			showUpdatedJobInfo(response);
-		  } else{
-			console.log("Unsuccessful add")
-			console.log(JSON.stringify(postData))
-			console.log(response)
-			$("#apiResponse").html(response+" updateJobInfo")
-		  };
-		  
-		}
-	}); 
+		$.ajax({
+			url : "/forward/job",
+			dataType:"text",
+			method:"POST",
+			data: JSON.stringify(postData),
+			success:function(response){
+			  if (apiResponseIsGood(response)) {
+				console.log("Successful add")
+				console.log(JSON.stringify(postData))
+				console.log(response)
+				showUpdatedJobInfo();
+			  } else{
+				console.log("Unsuccessful add")
+				console.log(JSON.stringify(postData))
+				console.log(response)
+				$("#apiResponse").html(response+" updateJobInfo")
+			  };
+			  
+			}
+		}); 
+	}; else {
+		//didn't validate. Tell user where they goofed
+        if ($(jobNameId).val() == "") {
+            flashRedBackground($(jobNameId));
+        };
+        if ($(streetId).val() == "") {
+            flashRedBackground($(streetId));
+        };
+        if ($(cityId).val() == "") {
+            flashRedBackground($(cityId));
+        };
+		if ($(stateId).val() == "") {
+            flashRedBackground($(stateId));
+        };
+		if ($(zipId).val() == "") {
+            flashRedBackground($(zipId));
+        };
+	};
+	
 }
 
 //display the updated job information
 //but wouldn't the refresh page just get us the updated values?
-function showUpdatedJobInfo(jobId) {
+function showUpdatedJobInfo() {
 	//move new values into display cols
 	$("#job-name").text($("#edit-job-name").val());  
-	$("#job-location").text(($("#edit-job-street").val()).concat($("#edit-job-city").val()));
+	$("#job-location").text(($("#edit-job-street").val()+ " ").concat($("#edit-job-city").val()));
 	$("#job-customer").text($("#edit-job-customer").val());
 	$("#job-supervisor").text($("#edit-job-supervisor").val());
 	$("#job-manager").text($("#edit-job-manager").val());
@@ -790,7 +809,16 @@ function showUpdatedJobInfo(jobId) {
 	$("#job-budgetAllocated").text($("#edit-job-budgetAllocated").val());
 	$("#job-desc").text($("#edit-job-desc").val());
 	$("#job-phase").text($("#edit-job-phase").val());
-    
+   
+	//update the location link
+	$("#job-location").attr("href", $("#edit-job-street").val(), $("#edit-job-city").val(), $("#edit-job-city").val(), $("#edit-job-zip").val());
+	
+	//update the metadata keys
+	$("#location-street-address").text($("#edit-job-street").val());
+	$("#location-city").text($("#edit-job-city").val());
+	$("#location-state").text($("#location-state").val());
+	$("#location-zip").text($("#location-zip").val());
+	
     //hide the edit cols
     $(".job-edit").hide()
     
