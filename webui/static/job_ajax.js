@@ -691,7 +691,7 @@ function createNewNote(noteId, note){
     $('.note-card').width($('.add-note-card').width())
     prepNotes();
 }
-//dynamic text area for the job name and job description
+
 //hides all the fields with the job-edit id
 function jobEditInit(){
 	$(".job-edit").hide();
@@ -739,7 +739,7 @@ function updateJobInfo () {
     phaseId = "#edit-job-phase";
 	
 	//verify that the above are not empty (location ones and name)
-	if ($(jobNameId).val() != "" && $(streetId).val() != "select" && $(cityId).val() != "" && $(stateId).val() != "" && $(zipId).val() != "") {
+	if ($(jobNameId).val() != "" && $(streetId).val() != "" && $(cityId).val() != "" && $(stateId).val() != "" && $(zipId).val() != "") {
 		postData = {}
 		postData.job_id = $("#jobId").text()
 		postData.name = $(jobNameId).val()
