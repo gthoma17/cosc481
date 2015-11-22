@@ -387,22 +387,36 @@ class job:
 			theJob = dict(db.where('jobs', id=job)[0])
 		except IndexError:
 			return "404 Not Found"
-		if 'name' in passedData:
-			db.update('jobs', where="id = "+str(job), name=passedData['name'])
-		if 'location' in passedData:
-			db.update('jobs', where="id = "+str(job), location=passedData['location'])
+		if 'manager_id' in passedData:
+			db.update('jobs', where="id = "+str(job), manager_id=passedData['manager_id'])
+		if 'supervisor_id' in passedData:
+			db.update('jobs', where="id = "+str(job), supervisor_id=passedData['supervisor_id'])
+		if 'customer_id' in passedData:
+			db.update('jobs', where="id = "+str(job), customer_id=passedData['customer_id'])
+		if 'street_address' in passedData:
+			db.update('jobs', where="id = "+str(job), street_address=passedData['street_address'])
+		if 'city' in passedData:
+			db.update('jobs', where="id = "+str(job), city=passedData['city'])
+		if 'state' in passedData:
+			db.update('jobs', where="id = "+str(job), state=passedData['state'])
+		if 'zip' in passedData:
+			db.update('jobs', where="id = "+str(job), zip=passedData['zip'])
+		if 'phase' in passedData:
+			db.update('jobs', where="id = "+str(job), phase=passedData['phase'])
+		if 'budget_available' in passedData:
+			db.update('jobs', where="id = "+str(job), budget_available=passedData['budget_available'])
+		if 'budget_already_allocated' in passedData:
+			db.update('jobs', where="id = "+str(job), budget_already_allocated=passedData['budget_already_allocated'])
 		if 'date_started' in passedData:
 			db.update('jobs', where="id = "+str(job), date_started=passedData['date_started'])
 		if 'date_completed' in passedData:
 			db.update('jobs', where="id = "+str(job), date_completed=passedData['date_completed'])
 		if 'date_billed' in passedData:
 			db.update('jobs', where="id = "+str(job), date_billed=passedData['date_billed'])
-		if 'bill_to' in passedData:
-			db.update('jobs', where="id = "+str(job), bill_to=passedData['bill_to'])
+		if 'date_closed' in passedData:
+			db.update('jobs', where="id = "+str(job), date_closed=passedData['date_closed'])
 		if 'description' in passedData:
 			db.update('jobs', where="id = "+str(job), description=passedData['description'])
-		if 'isInProgress' in passedData:
-			db.update('jobs', where="id = "+str(job), isInProgress=passedData['isInProgress'])
 		return "202 Item Updated"	
 
 #Begin Equipment Section
