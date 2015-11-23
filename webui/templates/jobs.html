@@ -67,7 +67,7 @@ $def with (title, jobs)
   <div class="card-group">
         $for job in jobs:
           $ job['location'] = job['street_address']+" "+job['city']+" "+job['state']+" "+job['zip']
-          $if job['phase'] == "Open":
+          $if job['phase'].lower() == "open":
             $ cardType = "card-success"
           $else:
             $ cardType = "card-danger"
