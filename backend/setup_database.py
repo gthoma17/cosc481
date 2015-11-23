@@ -162,6 +162,7 @@ def createJobsTbl(cursor):
 	  PRIMARY KEY(id)
 	)
 	""")
+	cursor.execute("ALTER TABLE jobs AUTO_INCREMENT=10000")
 def createBudgetItemsTbl(cursor):
 	print "Creating table: budgetItems"
 	cursor.execute("""
