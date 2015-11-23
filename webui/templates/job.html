@@ -71,7 +71,7 @@ $def with (job, user, apiUrl)
 <!-- end navigation bar -->
 
 <!-- Begin Job Information -->
-	$if job['phase'] == "open":
+	$if job['phase'].lower() == "open":
 		$ color = "card-success"
 	$else:
 		$ color = "card-danger"
@@ -81,8 +81,8 @@ $def with (job, user, apiUrl)
 			<div class="col-sm-12">
 				<div class="card $color job-info" style="border-width:.15rem;">
 					<div class="card-header">
-						<h1 class="job-show text-center" id="job-name">$job['name']<small><a id="edit-job" href="#"> (edit)</a></small></h1>
-						<h1 class="job-edit text-center"><input type="text" id="edit-job-name" name="jobName" size="10" value="$job['name']"/><small><a id="edit-job-save" href="#"> (save)</a><a id="edit-job-cancel" href="#"> (cancel)</a></small></h1>
+						<div  class="job-show text-center"><h1 id="job-name">$job['name']</h1><a id="edit-job" href="#">&emsp;(edit)</a></h1></div>
+						<h1 class="job-edit text-center"><input type="text" id="edit-job-name" name="jobName" size="10" value="$job['name']"/><a id="edit-job-save" href="#">&emsp;(save)</a><a id="edit-job-cancel" href="#">&nbsp;(cancel)</a></h1>
 					</div>
 					<div class="card-block" style="background-color: #f5f5f5;border-bottom: .0625rem solid #e5e5e5;padding:0.5rem;">
 						<div class="row" style="border-bottom: .0625rem solid #e5e5e5;padding-bottom:0.5rem;">
@@ -98,33 +98,33 @@ $def with (job, user, apiUrl)
 									State: <input id="edit-job-state" name="job-state" value="$job['state']" type="text" /><br>
 									Zip: <input id="edit-job-zip" name="job-zip" value="$job['zip']" type="text" /><br>
 							</div>
-							<div class="col-sm-6 job-show" id="job-customer"><p style="margin-bottom: 0px;">Customer:</p></div>
+							<div class="col-sm-6 job-show"><p style="margin-bottom: 0px;">Customer: <span id="job-customer">$job['customer']</span></p></div>
 							<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Customer: <input id="edit-job-customer" type="text" name="customer" size="20" /></p></div>
 						</div>
 	    				<div class="row" style="border-bottom: .0625rem solid #e5e5e5;padding-bottom:0.5rem;">
-	    					<div class="col-sm-6 job-display job-show" id="job-supervisor"><p style="margin-bottom: 0px;">Supervisor: </p></div>
+	    					<div class="col-sm-6 job-display job-show"><p style="margin-bottom: 0px;">Supervisor: <span id="job-supervisor"> </span></p></div>
 							<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Supervisor: <input id="edit-job-supervisor" type="text" name="supervisor" size="20" /></p></div>
-	    					<div class="col-sm-6 job-show" id="job-manager"><p style="margin-bottom: 0px;">Manager: </p></div>
+	    					<div class="col-sm-6 job-show"><p style="margin-bottom: 0px;">Manager: <span id="job-manager"> </span></p></div>
 							<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Manager: <input id="edit-job-manager" type="text" name="manager" size="20" /></p></div>
 	    				</div>
 	    				$if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper() == "MANAGER":
 	    					<div class="row">
-	    						<div class="col-sm-6 job-show" id="job-budgetAvailable"><p style="margin-bottom: 0px;">Budget availiable: </p></div>
+	    						<div class="col-sm-6 job-show"><p style="margin-bottom: 0px;">Budget availiable: <span id="job-budgetAvailable"> </span></p></div>
 								<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Budget availiable: <input id="edit-job-budgetAvailable" type="text" name="budget_available" size="10" /></p></div>
-	    						<div class="col-sm-6 job-show" id="job-budgetAllocated"><p style="margin-bottom: 0px;">Budget allocated: </p></div>
+	    						<div class="col-sm-6 job-show"><p style="margin-bottom: 0px;">Budget allocated: <span id="job-budgetAllocated"> </span></p></div>
 								<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Budget allocated: <input id="edit-job-budgetAllocated" type="text" name="budget_allocated" size="10" /></p></div>
 	    					</div>
 					</div>
-					<div class="card-block job-show" id="job-desc" style="background-color: #f5f5f5;">
-						<p style="margin-bottom: 0px;">$job['description']</p>
+					<div class="card-block job-show" style="background-color: #f5f5f5;">
+						<p style="margin-bottom: 0px;"  id="job-desc">$job['description']</p>
 					</div>
 					<div class="card-block job-edit" style="background-color: #f5f5f5;">
-						<p style="margin-bottom: 0px;"><textarea id="edit-job-desc" name="job_description" style="width: 280px; height: 50px;"></textarea></p>
+						<p style="margin-bottom: 0px;"><textarea id="edit-job-desc" name="job_description" style="width: 280px; height: 50px;">$job['description']</textarea></p>
 					</div>
 					<div class="card-footer text-muted small">
 						<div class="container">
-							<div class="col-sm-3 job-show" id="job-phase"><p style="margin-bottom: 0px;">Phase: $job['phase']</p></div>
-							<div class="col-sm-3 job-edit"><p style="margin-bottom: 0px;">Phase: $job['phase'] <select id="edit-job-phase"><option value="Open" selected>Open</option><option value="Billed">Billed</option><option value="Closed">Closed</option></select></p></div>
+							<div class="col-sm-3 job-show"><p style="margin-bottom: 0px;">Phase: <span id="job-phase">$job['phase']</span></p></div>
+							<div class="col-sm-3 job-edit"><p style="margin-bottom: 0px;">Phase: <select id="edit-job-phase"><option value="Open" selected>Open</option><option value="Billed">Billed</option><option value="Closed">Closed</option></select></p></div>
 							<div class="col-sm-3 job-show"><p style="margin-bottom: 0px;">Opened: $job['date_started']</p></div>
 							$if job['date_closed']:
 								<div class="col-sm-3 job-show"><p style="margin-bottom: 0px;">Closed: $job['date_closed']</p></div>
@@ -368,6 +368,10 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 	<div class="hidden" id="user-name">$user['name']</div>
 	<div class="hidden" id="apiKey">$user['apiKey']</div>
 	<div class="hidden" id="jobId">$job['id']</div>
+	<div class="hidden" id="location-street-address">$job['street_address']</div>
+	<div class="hidden" id="location-city">$job['city']</div>
+	<div class="hidden" id="location-state">$job['state']</div>
+	<div class="hidden" id="location-zip">$job['zip']</div>
 <!-- End metadata -->
 
 <!-- Begin ajax templates -->
