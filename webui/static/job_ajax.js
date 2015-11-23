@@ -844,6 +844,15 @@ function showUpdatedJobInfo() {
     
     //show the display cols
     $(".job-show").show()
+
+    //update card color
+    $(".job-info").removeClass("card-danger card-warning card-success")
+    if ($("#edit-job-phase").val() == "Open"){
+        $(".job-info").addClass("card-success")
+    }
+    else{
+        $(".job-info").addClass("card-danger")
+    };
     
 }
 
