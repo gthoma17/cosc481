@@ -71,7 +71,7 @@ $def with (job, user, apiUrl)
 <!-- end navigation bar -->
 
 <!-- Begin Job Information -->
-	$if job['phase'] == "Open":
+	$if job['phase'].lower() == "open":
 		$ color = "card-success"
 	$else:
 		$ color = "card-danger"
