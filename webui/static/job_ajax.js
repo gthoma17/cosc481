@@ -736,27 +736,27 @@ function updateJobInfo () {
     budgetAvailableId = "#edit-job-budgetAvailable";
     budgetAllocatedId = "#edit-job-budgetAllocated";
     descriptionId = "#edit-job-desc";
-    phaseId = "#edit-job-phase";
+    phaseId = $("#edit-job-phase");
 	
 	//verify that the above are not empty (location ones and name)
 	if ($(jobNameId).val() != "" && $(streetId).val() != "" && $(cityId).val() != "" && $(stateId).val() != "" && $(zipId).val() != "") {
 		postData = {}
-		postData.job_id = $("#jobId").text()
+		postData.id = $("#jobId").text()
 		postData.name = $(jobNameId).val()
 		postData.street_address = $(streetId).val()
 		postData.city = $(cityId).val()
 		postData.state = $(stateId).val()
 		postData.zip = $(zipId).val()
 		postData.customer_name = $(customerId).val()
-		postData.supervisor_name = $(supervisorId).val()
-		postData.manager_name = $(managerId).val()
-		postData.budget_available = $(budgetAvailableId).val()
-		postData.budget_allocated = $(budgetAllocatedId).val()
+		//postData.supervisor_name = $(supervisorId).val()
+		//postData.manager_name = $(managerId).val()
+		//postData.budget_available = $(budgetAvailableId).val()
+		//postData.budget_allocated = $(budgetAllocatedId).val()
 		postData.description = $(descriptionId).val()
 		postData.phase = $(phaseId).val()
 
 		$.ajax({
-			url : "/forward/job",
+			url : "/forward/job/" + postData.id,
 			dataType:"text",
 			method:"POST",
 			data: JSON.stringify(postData),
@@ -775,7 +775,7 @@ function updateJobInfo () {
 			  
 			}
 		}); 
-	}; else {
+	} else {
 		//didn't validate. Tell user where they goofed
         if ($(jobNameId).val() == "") {
             flashRedBackground($(jobNameId));
