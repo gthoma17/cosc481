@@ -86,11 +86,15 @@ function createNewPhoto(photo){
 
 //**************************End Photos stuff********************************************************************************************
 
-
-
-function prepNotes() {
+function notesInit() {
+    $(".add-note-card").removeClass("card-warning card-danger").addClass("card-info");
+    makeUsersDropdown("all", "#note-assignee-select")
     $(".daily-report-field").hide()
     $(".action-item-field").hide()
+    prepNotes();
+}
+
+function prepNotes() {
     $(".date-time-error").hide();
     $(".note-assignee-edit").hide()
     $("#show-notes").hide();
@@ -104,7 +108,6 @@ function prepNotes() {
         $("#show-notes").show();
         $("#notes-container").slideUp("slow");   
     });
-    $(".add-note-card").removeClass("card-warning card-danger").addClass("card-info");
     $('.note-card').width($('#add-note-card').width())
     $('.note-add-assignee').click(function(){
         buttonId = $(this).attr('id').split("-")
@@ -181,7 +184,6 @@ function prepNotes() {
         completeAjax(noteId, noteTbl);
     });
     $('.note-complete-edit').hide();
-    makeUsersDropdown("all", "#note-assignee-select")
 }
 function completeAjax(id, tbl){
     var id = id
@@ -214,18 +216,23 @@ function completeAjax(id, tbl){
         }
     })
 }
-function resetNote(noteId, noteTbl){
+function resetNote(id, tbl){
     llq = "-"+tbl+"-"+id;
     $('#note-edit-contents'+llq).val($('#note-contents'+llq).text())
     $('#note-edit-people'+llq).val($('#note-people'+llq).text())
     $("#note-select-assignee"+llq).html("")
 }
-function assigneeAjax(noteId, noteTbl){
+function assigneeAjax(noteId, noteTbl, assigneeId){
     var noteId = noteId
     if ($("#note-select-assignee-"+noteTbl+"-"+noteId).val() >= 0){
         postData = {}
         postData.id = noteId
-        postData.assigned_user = $("#note-select-assignee-"+noteTbl+"-"+noteId).val() 
+        if (assigneeId != null){
+            postData.assigned_user = assigneeId
+        }
+        else{
+            postData.assigned_user = $("#note-select-assignee-"+noteTbl+"-"+noteId).val() 
+        }
         $.ajax({
             url : "/forward/actionItem",
             dataType:"text",
@@ -236,14 +243,7 @@ function assigneeAjax(noteId, noteTbl){
                     console.log("Successful update")
                     console.log(postData)
                     console.log(response)
-                    assignee = jQuery.parseJSON(response);
-                    newAssignee = $("#assigned-user-template").html()
-                    newAssignee = replaceAllSubsting(newAssignee, "!email!", assignee.email);
-                    newAssignee = replaceAllSubsting(newAssignee, "!phone!", assignee.phone);
-                    newAssignee = replaceAllSubsting(newAssignee, "!name!", assignee.name);
-                    newAssignee = replaceAllSubsting(newAssignee, "!id!", noteId);
-                    $("#note-assignee-actionItems-"+noteId).html(newAssignee)
-                    prepNotes();
+                    updateNoteAssignee(response,noteId) 
                 } else {
                     $("#apiResponse").html(response+" assigneeAjax")
                 };
@@ -253,6 +253,16 @@ function assigneeAjax(noteId, noteTbl){
     else{
         flashRedBackground($("#note-select-assignee-"+noteTbl+"-"+noteId))
     };
+}
+function updateNoteAssignee(response, noteId){
+    assignee = jQuery.parseJSON(response);
+    newAssignee = $("#assigned-user-template").html()
+    newAssignee = replaceAllSubsting(newAssignee, "!email!", assignee.email);
+    newAssignee = replaceAllSubsting(newAssignee, "!phone!", assignee.phone);
+    newAssignee = replaceAllSubsting(newAssignee, "!name!", assignee.name);
+    newAssignee = replaceAllSubsting(newAssignee, "!id!", noteId);
+    $("#note-assignee-actionItems-"+noteId).html(newAssignee)
+    prepNotes();
 }
 function budgetInit(){
     //budget things that have to be run once at page load
@@ -468,7 +478,7 @@ function makeUsersDropdown(type, selectId){
             option = "<option value=\""+obj.id+"\">"+obj.name+"</option>";
             $(selectId).append(option);
         });
-        option = "<option value=\"-1\">Select</option>";
+        option = "<option value=\"-1\">Nobody</option>";
         $(selectId).prepend(option);
     });
 }
@@ -538,7 +548,7 @@ function notesAjax(llq){
         postData.id = llq.split('-')[2];
     } else{
         messageDivId = "#note-message";
-        assigneeDivId = "#note-assignee";
+        assigneeDivId = "#note-assignee-select";
         arrivalDivId = "#note-arrivalTime";
         departureDivId = "#note-departureTime";
         peopleOnsiteDivId = "#note-PeopleOnSite";
@@ -575,8 +585,12 @@ function notesAjax(llq){
             postData.arrival_time = $(arrivalDivId).val()
             postData.departure_time = $(departureDivId).val()
             postData.people_on_site = $(peopleOnsiteDivId).val()
-        } else if (postData.tbl == 'actionItems' && $(assigneeDivId).val() > 0){
-            postData.assigned_user = $(assigneeDivId).val()
+        } else if (postData.tbl == 'actionItems'){
+            console.log("in action item")
+            if ($(assigneeDivId).val() > 0){
+                console.log("has assignee")
+                postData.assigned_user = $(assigneeDivId).val()
+            }
         };
         $.ajax({
             url : "/forward/note",
@@ -625,8 +639,10 @@ function updateNote(llq, note){
     $('#note-contents'+llq).text($('#note-edit-contents'+llq).val())
     $('#note-people'+llq).text($('#note-edit-people'+llq).val())
     $('#note-select-assignee'+llq).html($('#note-select-assignee'+llq+' option:selected').text())
-    $('#note-arrival'+llq).text($('#note-edit-arrival'+llq).val())
-    $('#note-departure'+llq).text($('#note-edit-departure'+llq).val())
+    d = new Date()
+    date = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()
+    $('#note-arrival'+llq).text(date+" "+$('#note-edit-arrival'+llq).val())
+    $('#note-departure'+llq).text(date+" "+$('#note-edit-departure'+llq).val())
     if(note.tbl == "actionItems" && note.assigned_user != ""){
         console.log("/forward/user/"+note.assigned_user)
         $.get( "/forward/user/"+note.assigned_user)
@@ -666,20 +682,21 @@ function createNewNote(noteId, note){
     $('#note-card-group > div:first-child').before(newNote);
 
     $("#note-contents".concat(noteSuffix)).text(note.contents)
+    $("#note-edit-contents".concat(noteSuffix)).val(note.contents)
     $("#note-user-name".concat(noteSuffix)).text($("#user-name").text())
     $("#note-entry-time".concat(noteSuffix)).text(getCurrentDateTime())
 
-    if (note.tbl == "actionItems") {
-        if (note.assigned_user != "") {
-            $("#note-assigned-name".concat(noteSuffix)).text(note.assigned_user)
-            $("#note-add-assignee".concat(noteSuffix)).hide()
-        } else{
-            $("#note-assigned-name".concat(noteSuffix)).hide()
-        };
+    if (note.tbl == "actionItems" && note.assigned_user != "") {
+        assigneeAjax(noteId, note.tbl, note.assigned_user)
     }else if (note.tbl == "dailyReports") {
+        d = new Date()
+        date = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()
         $("#note-arrival".concat(noteSuffix)).text(date+" "+note.arrival_time)
+        $("#note-edit-arrival".concat(noteSuffix)).val(note.arrival_time)
         $("#note-departure".concat(noteSuffix)).text(date+" "+note.departure_time)
+        $("#note-edit-departure".concat(noteSuffix)).val(note.departure_time)
         $("#note-people".concat(noteSuffix)).text(note.people_on_site)
+        $("#note-edit-people".concat(noteSuffix)).val(note.people_on_site)
     };
     //empty the form
     $("#note-message").val("")
@@ -689,6 +706,9 @@ function createNewNote(noteId, note){
     $("#note-PeopleOnSite").val("")
     //make all notes the same size
     $('.note-card').width($('.add-note-card').width())
+    //kluge
+    $("note-add-assignee".concat(noteSuffix)).show()
+    makeUsersDropdown("all", "#note-assignee-select")
     prepNotes();
 }
 //dynamic text area for the job name and job description
@@ -801,7 +821,7 @@ function showUpdatedJobInfo(jobId) {
 
 $(document).ready(function(){
     photosInit()
-    prepNotes()
+    notesInit()
     budgetInit()
 	jobEditInit()
 });

@@ -294,13 +294,13 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 						$if note['tbl'] == 'notes':
 							$ type = "Note"
 							$ cardType = "card-info"
-						<div class="col-xs-12 col-md-12" id="a-note-card-group">
+						<div class="col-xs-12 col-md-12 a-note-card-group">
 						<div class="card $cardType note-card text-center" id="note-$note['tbl']-$note['id']">
 							<div class="card-header">
 								<h5 class="card-title">
 									$type
 									<button class="note-edit-button note-display" id="note-edit-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-edit"></span></button>
-									<button class="note-delete-button note-display" id="node-delete-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-remove"></span></button>	
+									<button class="note-delete-button note-display" id="node-delete-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-trash"></span></button>	
 									<button class="note-save-button note-edit" id="note-save-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-ok"></span></button>
 									<button class="note-cancel-button note-edit" id="note-cancel-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-remove"></span></button>
 								</h5>
@@ -350,7 +350,6 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 												<p class="note-complete-edit">Are You Sure?</p>
 												<button class="note-complete-edit note-complete-confirm" id="note-complete-confirm-button-$note['tbl']-$note['id']">Yes</button>
 												<button class="note-complete-edit note-complete-cancel" id="note-complete-cancel-button-$note['tbl']-$note['id']">No</button>
-												(not implemented)
 											</p>
 										</div>
 							<div class="card-footer text-muted small">
@@ -409,69 +408,93 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 		</div>
 	</div>
 	<div class="hidden" id="dailyReports-template">
-		<div class="col-xs-12 col-md-12">
-			<div class="card card-warning note-card text-center">
-				<div class="card-header">
-					<h5 class="card-title">Daily Report</h5>
-				</div>
-				<div class="card-block">
-					<p style="display:inline;" class="card-text" id="note-contents-!tbl!-!id!"></p>
-				</div>
-				<div class="card-block">
-					<hr>
-					<p class="card-text"><b>Arrival Time:</b> <div style="display:inline;" id="note-arrival-!tbl!-!id!"></div></p>
-					<p class="card-text"><b>Departure Time:</b> <div style="display:inline;" id="note-departure-!tbl!-!id!"></div></p>
-					<hr>
-					<p class="card-text"><b>People on Site:</b></p>
-					<p class="card-text"><div style="display:inline;" id="note-people-!tbl!-!id!"></div></p>
-				</div>
-				<div class="card-footer text-muted small">
-					Created by <div style="display:inline;" id="note-user-name-!tbl!-!id!"></div> at <div style="display:inline;" id="note-entry-time-!tbl!-!id!"></div>
-				</div>
+		<div class="col-xs-12 col-md-12 a-note-card-group">
+			<div class="card card-warning note-card text-center" id="note-!tbl!-!id!" style="width: 350px;">
+    			<div class="card-header">
+    			    <h5 class="card-title">
+    			        Daily Report
+    			        <button class="note-edit-button note-display" id="note-edit-button-!tbl!-!id!"><span class="glyphicon glyphicon-edit"></span></button>
+    			        <button class="note-save-button note-edit" id="note-save-button-!tbl!-!id!"><span class="glyphicon glyphicon-ok"></span></button>
+    			        <button class="note-cancel-button note-edit" id="note-cancel-button-!tbl!-!id!"><span class="glyphicon glyphicon-remove"></span></button>
+    			    </h5>
+    			</div>
+    			<div class="card-block">
+    			    <p style="display:inline;" class="card-text note-display" id="note-contents-!tbl!-!id!"></p>
+    			    <textarea class="note-edit" id="note-edit-contents-!tbl!-!id!"></textarea>
+    			</div>
+    			<div class="card-block">
+    			    <hr>
+    			    <p class="card-text"><b>Arrival Time:</b> </p><div class="note-display" style="display:inline;" id="note-arrival-!tbl!-!id!"></div><input class="note-edit" id="note-edit-arrival-!tbl!-!id!" type="time">
+    			    <p class="card-text"><b>Departure Time:</b> </p><div class="note-display" style="display:inline;" id="note-departure-!tbl!-!id!"></div><input class="note-edit" id="note-edit-departure-!tbl!-!id!" type="time">
+    			    <hr>
+    			    <p class="card-text"><b>People on Site:</b></p>
+    			    <p class="card-text"><div class="note-display" style="display:inline;" id="note-people-!tbl!-!id!"></div></p>
+    			    <textarea class="note-edit" id="note-edit-people-!tbl!-!id!"></textarea>
+    			</div>
+    			<div class="card-footer text-muted small">
+    			    Created by <div style="display:inline;" id="note-user-name-!tbl!-!id!"></div> at <div style="display:inline;" id="note-entry-time-!tbl!-!id!"></div>
+    			</div>
 			</div>
 		</div>
-		<br>
 	</div>
 	<div class="hidden" id="actionItems-template">
-		<div class="col-xs-12 col-md-12">
-			<div class="card card-danger note-card text-center">
-				<div class="card-header">
-					<h5 class="card-title">Action Item</h5>
-				</div>
-				<div class="card-block">
-					<p style="display:inline;" class="card-text" id="note-contents-!tbl!-!id!"></p>
-				</div>
-				<div class="card-block">
-					<hr>
-					<p class="card-text">Assigned User: 
-					<div style="display:inline;" id="note-assigned-name-!tbl!-!id!"></div>
-					<button style="display:inline;" id="note-add-assignee-!tbl!-!id!">Add one</button>
-					</p>
-					<hr>
-					<p class="card-text"><button id="note-complete-button-!tbl!-!id!">Complete</button><br>(not implemented)</p>
-				</div>
-				<div class="card-footer text-muted small">
-					Created by <div style="display:inline;" id="note-user-name-!tbl!-!id!"></div> at <div style="display:inline;" id="note-entry-time-!tbl!-!id!"></div>
-				</div>
+		<div class="col-xs-12 col-md-12 a-note-card-group">
+			<div class="card card-danger note-card text-center" id="note-!tbl!-!id!" style="width: 350px;">
+    			<div class="card-header">
+        			<h5 class="card-title">
+        			    Action Item
+        			    <button class="note-edit-button note-display" id="note-edit-button--!tbl!-!id!"><span class="glyphicon glyphicon-edit"></span></button>
+        			    <button class="note-save-button note-edit" id="note-save-button--!tbl!-!id!"><span class="glyphicon glyphicon-ok"></span></button>
+        			    <button class="note-cancel-button note-edit" id="note-cancel-button--!tbl!-!id!"><span class="glyphicon glyphicon-remove"></span></button>
+        			</h5>
+    			</div>
+    			<div class="card-block">
+        			<p style="display:inline;" class="card-text note-display" id="note-contents-!tbl!-!id!"></p>
+        			<textarea class="note-edit" id="note-edit-contents-!tbl!-!id!"></textarea>
+    			</div>
+   				<div class="card-block" id="note-completer-!tbl!-!id!">
+        			<hr>
+        			<p class="card-text">Assigned User:</p>
+        			<div style="display:inline;" id="note-assignee-!tbl!-!id!">
+        			    <select class="note-edit note-assignee-edit note-select-assignee" id="note-select-assignee-!tbl!-!id!"></select>
+        			    <button class="note-add-assignee note-display" style="display:inline;" id="note-add-assignee-!tbl!-!id!">Add One</button>
+        			    <button class="note-assignee-edit note-save-assignee" id="note-save-assignee-!tbl!-!id!"><span class="glyphicon glyphicon-ok"></span></button>
+        			    <button class="note-assignee-edit note-cancel-assignee" id="note-cancel-assignee-!tbl!-!id!"><span class="glyphicon glyphicon-remove"></span></button>    
+        			</div>
+        			<hr>
+        			<div class="card-text">
+        			    <button class="note-complete" id="note-complete-button-!tbl!-!id!">Complete</button>
+        			    <p class="note-complete-edit">Are You Sure?</p>
+        			    <button class="note-complete-edit note-complete-confirm" id="note-complete-confirm-button-!tbl!-!id!">Yes</button>
+        			    <button class="note-complete-edit note-complete-cancel" id="note-complete-cancel-button-!tbl!-!id!">No</button>
+        			</div>
+    			</div>
+    			<div class="card-footer text-muted small">
+        			Created by <div style="display:inline;" id="note-user-name-!tbl!-!id!"></div> at <div style="display:inline;" id="note-entry-time-!tbl!-!id!"></div>
+    			</div>
 			</div>
 		</div>
-		<br>
 	</div>
 	<div class="hidden" id="notes-template">
-		<div class="col-xs-12 col-md-12">
-			<div class="card card-info note-card text-center">
-				<div class="card-header">
-					<h5 class="card-title">Note</h5>
-				</div>
-				<div class="card-block">
-					<p style="display:inline;" class="card-text" id="note-contents-!tbl!-!id!"></p>
-				</div>
-				<div class="card-footer text-muted small">
-					Created by <div style="display:inline;" id="note-user-name-!tbl!-!id!"></div> at <div style="display:inline;" id="note-entry-time-!tbl!-!id!"></div>
-				</div>
-			</div>
+		<div class="col-xs-12 col-md-12 a-note-card-group">
+    		<div class="card card-info note-card text-center" id="note-!tbl!-!id!" style="width: 350px;">
+        		<div class="card-header">
+            		<h5 class="card-title">
+                		Note
+                		<button class="note-edit-button note-display" id="note-edit-button-!tbl!-!id!"><span class="glyphicon glyphicon-edit"></span></button>
+                		<button class="note-save-button note-edit" id="note-save-button-!tbl!-!id!"><span class="glyphicon glyphicon-ok"></span></button>
+                		<button class="note-cancel-button note-edit" id="note-cancel-button-!tbl!-!id!"><span class="glyphicon glyphicon-remove"></span></button>
+            		</h5>
+        		</div>
+        		<div class="card-block">
+            		<p style="display:inline;" class="card-text note-display" id="note-contents-!tbl!-!id!"></p>
+            		<textarea class="note-edit" id="note-edit-contents-!tbl!-!id!"></textarea>
+        		</div>
+        		<div class="card-footer text-muted small">
+            		Created by <div style="display:inline;" id="note-user-name-!tbl!-!id!"></div> at <div style="display:inline;" id="note-entry-time-!tbl!-!id!"></div>
+        		</div>
+   			</div>
 		</div>
-		<br>
 	</div>
 	<div class="hidden" id="image-template" style="display:none;">
     	<div class="col-sm-2">
@@ -485,9 +508,9 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 			<a href="mailto:!email!"><span class="glyphicon glyphicon-envelope"></span></a>)
 		</div>
 	    <button class="note-add-assignee" style="display:inline;" id="note-add-assignee-actionItems-!id!">Edit</button>
-		<select class="note-edit note-select-assignee" style="display: none;" id="note-select-assignee-actionItems-!id!"></select>
-		<button class="note-edit note-save-assignee" style="display: none;" id="note-save-assignee-actionItems-!id!">Save</button>
-		<button class="note-edit note-cancel-assignee" style="display: none;" id="note-cancel-assignee-actionItems-!id!">Cancel</button>
+		<select class="note-edit note-select-assignee" id="note-select-assignee-actionItems-!id!"></select>
+		<button class="note-edit note-save-assignee" id="note-save-assignee-actionItems-!id!">Save</button>
+		<button class="note-edit note-cancel-assignee" id="note-cancel-assignee-actionItems-!id!">Cancel</button>
     </div>
 <!-- End ajax templates -->
 
