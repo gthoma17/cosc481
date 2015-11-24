@@ -268,6 +268,7 @@ function budgetInit(){
     //budget things that have to be run once at page load
     $(".addItemForm").hide();
     $(".edit_row").hide();
+    $(".cost-error").hide()
     $("#show-budget").hide();
     $("#show-budget").click(function(){
         $("#show-budget").hide();
@@ -312,6 +313,7 @@ function prepBudget(){
         $("#type_".concat(itemId)).hide()
         $("#cost_".concat(itemId)).hide()
         $("#buttons_".concat(itemId)).hide()
+        //hide cost input error message
         //set the select properly
         $("#type_edit_".concat(itemId)).val($("#type_".concat(itemId)).text())
     });
@@ -371,6 +373,26 @@ function flashRedBackground (div) {
     }, 2000);
 }
 
+/*Validate Budget Item Cost input*/
+function validateCost(){
+   //if(llq != null){
+     //   cost = $("cost_edit_$item['id']" + llq).val()
+    //}
+    cost = $("#cost").val();
+    
+
+    var costTest = new RegExp("^(([1-9][0-9]{0,2}(,[0-9]{3})*)|0)?(.[0-9]{1,2})?$");
+
+    if(costTest.test(cost)){
+        return true;
+    }
+    else{
+        return false;
+    }
+    
+}
+
+
 /*Daily Reports time validation*/
 function validateTime(llq) {
 
@@ -419,7 +441,7 @@ function budgetItemAjax(itemId){
         costDivId = costDivId.concat("_edit_"+itemId);
     };
     //validate the form
-    if ($(nameDivId).val() != "" && $(typeDivId).val() != "select" && $(typeDivId).val() != "" && $(costDivId).val() != "") {
+    if ($(nameDivId).val() != "" && $(typeDivId).val() != "select" && $(typeDivId).val() != "" && $(costDivId).val() != "" && validateCost()) {
         postData = {}
         if (itemId != null){
             postData.id = itemId
@@ -467,6 +489,10 @@ function budgetItemAjax(itemId){
         };
         if ($(costDivId).val() == "") {
             flashRedBackground($(costDivId));
+        };
+         if(!validateCost()){
+            flashRedBackground($(costDivId));
+            $(".cost-error").show()
         };
     };        
 }

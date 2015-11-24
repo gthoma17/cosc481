@@ -226,7 +226,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 			<td colspan="4" id="showBudgetAdd"><button>Add a budget item</button></td>
 			<td class="addItemForm"><input type="text" id="name" name="name" size="30" placeholder="Name"/></td>
 			<td class="addItemForm"><select  id="type"><option value="select" selected>Type</option><option value="Labor">Labor</option><option value="Material">Material</option><option value="Misc">Misc</option></select></td>
-			<td class="addItemForm"><input type="text" id="cost" name="cost" size="30" placeholder="Cost"/></td>
+			<td class="addItemForm"><span class="cost-error" color="red">(Example: 140.30)<br></span><input type="text" id="cost" name="cost" size="30" placeholder="Cost"/></td>
 			<td class="addItemForm"><button  id="budgetAdd">Add</button><button id="cancelBudgetAdd">Cancel</button></td>
 		</tr>
   		</tbody>
