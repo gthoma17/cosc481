@@ -858,7 +858,7 @@ function showUpdatedJobInfo() {
 	$("#job-phase").text($("#edit-job-phase").val());
    
 	//update the location link
-	$("#job-location").attr("href", $("#edit-job-street").val(), $("#edit-job-city").val(), $("#edit-job-city").val(), $("#edit-job-zip").val());
+	$("#job-location").attr("href", "http://maps.apple.com/?q=" + $("#edit-job-street").val() + $("#edit-job-city").val() + $("#edit-job-city").val() + $("#edit-job-zip").val());
 	
 	//update the metadata keys
 	$("#location-street-address").text($("#edit-job-street").val());
