@@ -374,12 +374,13 @@ function flashRedBackground (div) {
 }
 
 /*Validate Budget Item Cost input*/
-function validateCost(){
-   //if(llq != null){
-     //   cost = $("cost_edit_$item['id']" + llq).val()
-    //}
-    cost = $("#cost").val();
-    
+function validateCost(itemId){
+   if(itemId != null){
+        cost = $("#cost_edit_"+itemId).val()
+    }
+    else{
+        cost = $("#cost").val();
+    };
 
     var costTest = new RegExp("^(([1-9][0-9]{0,2}(,[0-9]{3})*)|0)?(.[0-9]{1,2})?$");
 
@@ -441,7 +442,7 @@ function budgetItemAjax(itemId){
         costDivId = costDivId.concat("_edit_"+itemId);
     };
     //validate the form
-    if ($(nameDivId).val() != "" && $(typeDivId).val() != "select" && $(typeDivId).val() != "" && $(costDivId).val() != "" && validateCost()) {
+    if ($(nameDivId).val() != "" && $(typeDivId).val() != "select" && $(typeDivId).val() != "" && $(costDivId).val() != "" && validateCost(itemId)) {
         postData = {}
         if (itemId != null){
             postData.id = itemId
@@ -490,7 +491,7 @@ function budgetItemAjax(itemId){
         if ($(costDivId).val() == "") {
             flashRedBackground($(costDivId));
         };
-         if(!validateCost()){
+         if(!validateCost(itemId)){
             flashRedBackground($(costDivId));
             $(".cost-error").show()
         };
