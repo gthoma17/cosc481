@@ -746,7 +746,9 @@ function jobEditInit(){
 	//function to show hidden stuff when ' (edit)' clicked
 	$("#edit-job").click(function(){
         $(".job-show").hide();
-		$(".job-edit").show();  
+		$(".job-edit").show(); 
+		//fix the phase issue
+		$("#edit-job-phase").val($("#job-phase").text());
     });
 	
 	$("#edit-job-cancel").click(function() {
@@ -801,7 +803,7 @@ function updateJobInfo () {
 		//postData.budget_allocated = $(budgetAllocatedId).val()
 		postData.description = $(descriptionId).val()
 		postData.phase = $(phaseId).val()
-
+		
 		$.ajax({
 			url : "/forward/job/" + postData.id,
 			dataType:"text",
