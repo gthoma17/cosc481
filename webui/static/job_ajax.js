@@ -805,7 +805,7 @@ function updateJobInfo () {
 		postData.city = $(cityId).val()
 		postData.state = $(stateId).val()
 		postData.zip = $(zipId).val()
-		postData.customer_name = $(customerId).val()
+		//postData.customer_name = $(customerId).val()
 		//postData.supervisor_name = $(supervisorId).val()
 		//postData.manager_name = $(managerId).val()
 		//postData.budget_available = $(budgetAvailableId).val()
