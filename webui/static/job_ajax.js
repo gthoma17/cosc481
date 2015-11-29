@@ -393,7 +393,6 @@ function validateCost(itemId){
     
 }
 
-
 /*Daily Reports time validation*/
 function validateTime(llq) {
 
@@ -706,6 +705,7 @@ function createNewNote(noteId, note){
     newNote = replaceAllSubsting(newNote, "!tbl!", note.tbl);
     newNote = replaceAllSubsting(newNote, "!id!", noteId);
 
+
     $('#note-card-group > div:first-child').before(newNote);
 
     $("#note-contents".concat(noteSuffix)).text(note.contents)
@@ -725,6 +725,15 @@ function createNewNote(noteId, note){
         $("#note-people".concat(noteSuffix)).text(note.people_on_site)
         $("#note-edit-people".concat(noteSuffix)).val(note.people_on_site)
     };
+
+    //start delete/edit timer - 3600000 milliseconds
+    setTimeout(function(){
+        noteEdit = "#note-edit-button" + noteSuffix
+        noteDelete = "#note-delete-button" + noteSuffix
+        $(noteEdit).hide();
+        $(noteDelete).hide();
+        }, 3600000);
+
     //empty the form
     $("#note-message").val("")
     $("#note-assignee").val("")
