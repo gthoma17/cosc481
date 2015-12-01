@@ -23,7 +23,10 @@ $def with (job, user, apiUrl)
     }
   );
 </script>
-<title>Jobn - $job['name']</title>
+$if 'isNewJob' in job:
+	<title>Jobn - New Job</title>
+$else:
+	<title>Jobn - $job['name']</title>
 <script src="/static/job_ajax.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/style.css">
 <link rel="icon" type="image/png" href="/static/favicon.png">
@@ -146,6 +149,26 @@ $def with (job, user, apiUrl)
 	</div>
 
 <!-- End Job Information -->
+
+
+<!-- Begin metadata -->
+	<div class="hidden" id="user-name">$user['name']</div>
+	<div class="hidden" id="apiKey">$user['apiKey']</div>
+	<div class="hidden" id="jobId">$job['id']</div>
+	<div class="hidden" id="location-street-address">$job['street_address']</div>
+	<div class="hidden" id="location-city">$job['city']</div>
+	<div class="hidden" id="location-state">$job['state']</div>
+	<div class="hidden" id="location-zip">$job['zip']</div>
+
+
+
+	$if 'isNewJob' in job:
+		<div class="hidden" id="isNewJob">true</div>
+		$return self
+	$else:
+		<div class="hidden" id="isNewJob">false</div>
+<!-- End metadata -->
+
 
 <!-- Begin Photo Stuff -->
 	<hr>
@@ -370,17 +393,6 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 	</div>
 	</div>
 <!-- End Note Stuff -->
-
-
-<!-- Begin metadata -->
-	<div class="hidden" id="user-name">$user['name']</div>
-	<div class="hidden" id="apiKey">$user['apiKey']</div>
-	<div class="hidden" id="jobId">$job['id']</div>
-	<div class="hidden" id="location-street-address">$job['street_address']</div>
-	<div class="hidden" id="location-city">$job['city']</div>
-	<div class="hidden" id="location-state">$job['state']</div>
-	<div class="hidden" id="location-zip">$job['zip']</div>
-<!-- End metadata -->
 
 <!-- Begin ajax templates -->
 	

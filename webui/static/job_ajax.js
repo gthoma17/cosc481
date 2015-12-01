@@ -750,7 +750,14 @@ function createNewNote(noteId, note){
 
 //hides all the fields with the job-edit id
 function jobEditInit(){
-	$(".job-edit").hide();
+    if ($("#isNewJob").text() == "true") {
+        $(".job-show").hide();
+        $("#edit-job-cancel").hide();
+    }
+    else{
+        $(".job-edit").hide();
+    }
+	
 	
 	//function to show hidden stuff when ' (edit)' clicked
 	$("#edit-job").click(function(){
@@ -816,9 +823,15 @@ function updateJobInfo () {
 		//postData.budget_allocated = $(budgetAllocatedId).val()
 		postData.description = $(descriptionId).val()
 		postData.phase = $(phaseId).val()
+        if ($("#isNewJob").text() == "true") {
+            postUrl = "/forward/job"
+        }
+        else{
+            postUrl = "/forward/job/" + postData.id
+        };
 		
 		$.ajax({
-			url : "/forward/job/" + postData.id,
+			url : postUrl,
 			dataType:"text",
 			method:"POST",
 			data: JSON.stringify(postData),
@@ -827,8 +840,15 @@ function updateJobInfo () {
 				console.log("Successful add")
 				console.log(JSON.stringify(postData))
 				console.log(response)
-				showUpdatedJobInfo();
-			  } else{
+                if ($("#isNewJob").text() == "true") { //this is a new job
+                    //redirect them to their new job
+                    window.location.replace("/job/"+response);
+                }
+                else{ //we're editing
+                    showUpdatedJobInfo();
+                }
+			  } 
+              else{
 				console.log("Unsuccessful add")
 				console.log(JSON.stringify(postData))
 				console.log(response)
@@ -901,8 +921,15 @@ function showUpdatedJobInfo() {
 }
 
 $(document).ready(function(){
-    photosInit()
-    notesInit()
-    budgetInit()
-	jobEditInit()
+    //if we're in a new job, we only care about the job card
+    if ($("#isNewJob").text() == "true") {
+        jobEditInit()
+    }
+    else{
+        photosInit()
+        notesInit()
+        budgetInit()
+        jobEditInit()
+    }
+    
 });

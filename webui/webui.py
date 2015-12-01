@@ -167,7 +167,7 @@ class newJob:
 			response = ""
         #newStuuf!
 		newJobVals = {}
-		newJobVals['name'] = "New Job"
+		newJobVals['name'] = ""
 		newJobVals['street_address'] = ""
 		newJobVals['city'] = ""
 		newJobVals['state'] = ""
@@ -180,6 +180,9 @@ class newJob:
 		newJobVals['date_billed'] = ""
 		newJobVals['photos'] = ""
 		newJobVals['notes'] = ""
+		newJobVals['supervisor'] = None
+		newJobVals['manager'] = None
+		newJobVals['isNewJob'] = True
 		return render.job(newJobVals, session.user, apiUrl)
 class login:
 	def GET(self):
