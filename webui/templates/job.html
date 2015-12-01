@@ -101,10 +101,19 @@ $def with (job, user, apiUrl)
 							<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Customer: <input id="edit-job-customer" type="text" name="customer" size="20" /></p></div>
 						</div>
 	    				<div class="row" style="border-bottom: .0625rem solid #e5e5e5;padding-bottom:0.5rem;">
-	    					<div class="col-sm-6 job-display job-show"><p style="margin-bottom: 0px;">Supervisor: <span id="job-supervisor"> </span></p></div>
-							<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Supervisor: <input id="edit-job-supervisor" type="text" name="supervisor" size="20" /></p></div>
-	    					<div class="col-sm-6 job-show"><p style="margin-bottom: 0px;">Manager: <span id="job-manager"> </span></p></div>
-							<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Manager: <input id="edit-job-manager" type="text" name="manager" size="20" /></p></div>
+							$if job['supervisor'] != None:
+								<div class="col-sm-6 job-display job-show"><p style="margin-bottom: 0px;">Supervisor: <span id="job-supervisor">
+									$job['supervisor']['name']
+								</span></p></div>
+							$else:
+								<div class="col-sm-6 job-display job-show"><p style="margin-bottom: 0px;">Supervisor: <span id="job-supervisor"> </span></p></div>
+							<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Supervisor: <select id="edit-job-supervisor"></select></p></div>
+	    					
+							$if job['manager'] != None:
+								<div class="col-sm-6 job-show"><p style="margin-bottom: 0px;">Manager: <span id="job-manager">$job['manager']['name']</span></p></div>
+							$else:
+								<div class="col-sm-6 job-show"><p style="margin-bottom: 0px;">Manager: <span id="job-manager"> </span></p></div>
+							<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Manager: <select id="edit-job-manager"></select></p></div>
 	    				</div>
 	    				$if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper() == "MANAGER":
 	    					<div class="row">

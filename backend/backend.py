@@ -29,7 +29,9 @@ urls = (
 	"/actionItem", "actionItem",
 	"/delete/budgetItem", "deleteBudgetItem",
 	"/delete/user", "deleteUser",
-	"/photo", "photo"
+	"/photo", "photo",
+	"/userActionItems", "userActionItems",
+	"/userJobs","userJobs"
 	)
 
 app = web.application(urls, globals())
@@ -42,6 +44,29 @@ def set_headers():
 
 app.add_processor(web.loadhook(set_headers))
 
+class userJobs:
+	def GET(self):
+		passedData = dict(web.input())
+		try:
+			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
+		except IndexError:
+			return "403 Forbidden"
+		jobs = list(db.where('jobs', manager_id=reqUser['id']))
+		jobs.extend(list(db.where('jobs', supervisor_id=reqUser['id'])))
+		return json.dumps(makeDumpable(jobs))
+		
+class userActionItems:
+	def GET(self):
+		passedData = dict(web.input())
+		try:
+			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
+		except IndexError:
+			return "403 Forbidden"
+		actionItems = list(db.where('actionItems', assigned_user=reqUser['id']))
+		return json.dumps(makeDumpable(actionItems))
+
+
+		
 class userType:
 	def GET(self, reqTypes):
 		#try:
@@ -612,8 +637,16 @@ def buildJob(jobId, isPriveleged):
 	job['notes'] = sorted(job['notes'], key=lambda k: k['entry_time'], reverse=True) 
 	job = makeDumpable(job)
 	return json.dumps(job)
-def makeDumpable(inDict):
-	for item in inDict:
+def makeDumpable(inThing):
+	if isinstance(inThing, list):
+		outThing = []
+		for thing in inThing:
+			outThing.append(dumpDict(thing))
+		return outThing
+	else:
+		return dumpDict(inThing)
+def dumpDict(inDict):
+	for item in dict(inDict):
 		if type(inDict[item]) is datetime.date or \
 			type(inDict[item]) is datetime.datetime:
 			inDict[item] = str(inDict[item])

@@ -504,7 +504,7 @@ function makeUsersDropdown(type, selectId){
             option = "<option value=\""+obj.id+"\">"+obj.name+"</option>";
             $(selectId).append(option);
         });
-        option = "<option value=\"-1\">Nobody</option>";
+        option = "<option value=\"0\">Nobody</option>";
         $(selectId).prepend(option);
     });
 }
@@ -779,6 +779,8 @@ function jobEditInit(){
 	})
 	
 	$("#edit-job-save").click(function(){updateJobInfo()});
+    makeUsersDropdown("all", "#edit-job-supervisor")
+    makeUsersDropdown("all", "#edit-job-manager")
 }
 
 //update the job information
@@ -805,7 +807,9 @@ function updateJobInfo () {
 		postData.city = $(cityId).val()
 		postData.state = $(stateId).val()
 		postData.zip = $(zipId).val()
-		//postData.customer_name = $(customerId).val()
+		postData.customer_name = $(customerId).val()
+        postData.supervisor_id = $(supervisorId).val();
+        postData.manager_id = $(managerId).val();
 		//postData.supervisor_name = $(supervisorId).val()
 		//postData.manager_name = $(managerId).val()
 		//postData.budget_available = $(budgetAvailableId).val()
@@ -861,8 +865,10 @@ function showUpdatedJobInfo() {
 	$("#job-name").text($("#edit-job-name").val());  
 	$("#job-location").text(($("#edit-job-street").val()+ " ").concat($("#edit-job-city").val()));
 	$("#job-customer").text($("#edit-job-customer").val());
-	$("#job-supervisor").text($("#edit-job-supervisor").val());
-	$("#job-manager").text($("#edit-job-manager").val());
+	//$("#job-supervisor").text($("#edit-job-supervisor").val());
+    $("#job-supervisor").text($("#edit-job-supervisor option[value='"+$("#edit-job-supervisor").val()+"']").text())
+	//$("#job-manager").text($("#edit-job-manager").val());
+    $("#job-manager").text($("#edit-job-manager option[value='"+$("#edit-job-manager").val()+"']").text());
 	$("#job-budgetAvailable").text($("#edit-job-budgetAvailable").val());
 	$("#job-budgetAllocated").text($("#edit-job-budgetAllocated").val());
 	$("#job-desc").text($("#edit-job-desc").val());
