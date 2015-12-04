@@ -275,21 +275,22 @@ class newJob:
 			return "403 Forbidden"
 		#are there any people that shouldn't be allowed to create jobs?
 		#if so put a check here
+		current_date = datetime.datetime.now().strftime("%Y-%m-%d")
 		job = db.insert('jobs', 
 					name=passedData['name']
 				)
-		if passedData['isInProgress'] == u'True':
-			passedData['isInProgress'] = 1
-		else:
-			passedData['isInProgress'] = 0
 		
 		#Get job info from form and insert into database
 		if 'manager_id' in passedData:
 			db.update('jobs', where="id = "+str(job), manager_id=passedData['manager_id'])
 		if 'supervisor_id' in passedData:
 			db.update('jobs', where="id = "+str(job), supervisor_id=passedData['supervisor_id'])
-		if 'customer_id' in passedData:
-			db.update('jobs', where="id = "+str(job), customer_id=passedData['customer_id'])
+		if 'customer_name' in passedData:
+			db.update('jobs', where="id = "+str(job), customer_name=passedData['customer_name'])
+		if 'customer_email' in passedData:
+			db.update('jobs', where="id = "+str(job), customer_phone=passedData['customer_phone'])
+		if 'customer_name' in passedData:
+			db.update('jobs', where="id = "+str(job), customer_email=passedData['customer_email'])
 		if 'street_address' in passedData:
 			db.update('jobs', where="id = "+str(job), street_address=passedData['street_address'])
 		if 'city' in passedData:
@@ -305,16 +306,10 @@ class newJob:
 		if 'budget_already_allocated' in passedData:
 			db.update('jobs', where="id = "+str(job), budget_already_allocated=passedData['budget_already_allocated'])
 		if 'date_started' in passedData:
-			db.update('jobs', where="id = "+str(job), date_started=passedData['date_started'])
-		if 'date_completed' in passedData:
-			db.update('jobs', where="id = "+str(job), date_completed=passedData['date_completed'])
-		if 'date_billed' in passedData:
-			db.update('jobs', where="id = "+str(job), date_billed=passedData['date_billed'])
-		if 'date_closed' in passedData:
-			db.update('jobs', where="id = "+str(job), date_closed=passedData['date_closed'])
+			db.update('jobs', where="id = "+str(job), date_started=current_date)
 		if 'description' in passedData:
 			db.update('jobs', where="id = "+str(job), description=passedData['description'])
-		return "201 Job Created"
+		return json.dumps(job)
 class newUser:
 	def GET(self): 
 		return "Shhhh... the database is sleeping."
@@ -416,8 +411,12 @@ class job:
 			db.update('jobs', where="id = "+str(job), manager_id=passedData['manager_id'])
 		if 'supervisor_id' in passedData:
 			db.update('jobs', where="id = "+str(job), supervisor_id=passedData['supervisor_id'])
-		if 'customer_id' in passedData:
-			db.update('jobs', where="id = "+str(job), customer_id=passedData['customer_id'])
+		if 'customer_name' in passedData:
+			db.update('jobs', where="id = "+str(job), customer_name=passedData['customer_name'])
+		if 'customer_email' in passedData:
+			db.update('jobs', where="id = "+str(job), customer_phone=passedData['customer_phone'])
+		if 'customer_name' in passedData:
+			db.update('jobs', where="id = "+str(job), customer_email=passedData['customer_email'])
 		if 'street_address' in passedData:
 			db.update('jobs', where="id = "+str(job), street_address=passedData['street_address'])
 		if 'city' in passedData:
@@ -627,7 +626,6 @@ def buildJob(jobId, isPriveleged):
 	idThings = [
 		['jobAppUsers','manager',job['manager_id'], "name,permissionLevel,email,phone"],
   		['jobAppUsers','supervisor',job['supervisor_id'], "name,permissionLevel,email,phone"],
-  		['contacts','customer',job['customer_id'], "*"]
 	]
 	for thing in referanceThings:
 		theJob = addThingByJobReference(job, jobId, thing[0], thing[1])

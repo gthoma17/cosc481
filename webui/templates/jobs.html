@@ -70,6 +70,7 @@ $def with (title, jobs)
           <th class="text-center">Location</th>
           <th class="text-center">Phase</th>
           <th class="text-center">Customer</th>
+          <th class="text-center">Date Opened</th>
         </tr>
       </thead>
       <tbody>
@@ -80,11 +81,9 @@ $def with (title, jobs)
             <td><a href="http://maps.apple.com/?q=$job['location']">$job['street_address'] $job['city']</a></td>
             <td>$job['phase']</td>
             <td>
-              $if 'customer' in job.keys():
-                $job['customer']
-              $else:
-                &nbsp;
+              $job['customer_name']&nbsp;<a class="button" href="tel:$job['customer_phone']"><span class="glyphicon glyphicon-earphone"></span></a>&nbsp;<a class="button" href="mailto:$job['customer_email']"><span class="glyphicon glyphicon-envelope"></span></a>
             </td>
+            <td>$job['date_started']</td>
           </tr>
       <tbody>
     </table>

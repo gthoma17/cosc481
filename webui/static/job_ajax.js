@@ -797,7 +797,9 @@ function updateJobInfo () {
     cityId = "#edit-job-city";
     stateId = "#edit-job-state";
     zipId = "#edit-job-zip";
-    customerId = "#edit-job-customer";
+    customerName = "#edit-job-customer-name";
+    customerPhone = "#edit-job-customer-phone";
+    customerEmail = "#edit-job-customer-email"
     supervisorId = "#edit-job-supervisor";
     managerId = "#edit-job-manager";
     budgetAvailableId = "#edit-job-budgetAvailable";
@@ -814,11 +816,11 @@ function updateJobInfo () {
 		postData.city = $(cityId).val()
 		postData.state = $(stateId).val()
 		postData.zip = $(zipId).val()
-		postData.customer_name = $(customerId).val()
+		postData.customer_name = $(customerName).val()
+        postData.customer_phone = $(customerPhone).val()
+        postData.customer_email = $(customerEmail).val()
         postData.supervisor_id = $(supervisorId).val();
         postData.manager_id = $(managerId).val();
-		//postData.supervisor_name = $(supervisorId).val()
-		//postData.manager_name = $(managerId).val()
 		//postData.budget_available = $(budgetAvailableId).val()
 		//postData.budget_allocated = $(budgetAllocatedId).val()
 		postData.description = $(descriptionId).val()

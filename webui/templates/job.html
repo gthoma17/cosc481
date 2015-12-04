@@ -100,8 +100,16 @@ $else:
 									State: <input id="edit-job-state" name="job-state" value="$job['state']" type="text" /><br>
 									Zip: <input id="edit-job-zip" name="job-zip" value="$job['zip']" type="text" /><br>
 							</div>
-							<div class="col-sm-6 job-show"><p style="margin-bottom: 0px;">Customer: <span id="job-customer"> </span></p></div>
-							<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Customer: <input id="edit-job-customer" type="text" name="customer" size="20" /></p></div>
+							<div class="col-sm-6 job-show" style="display:inline;" id="job-customer">
+								Customer: <span id="job-customer-name">$job['customer_name']</span>
+								<a class="button" href="tel:$job['customer_phone']"><span class="glyphicon glyphicon-earphone"></span></a>&nbsp;
+								<a class="button" href="mailto:$job['customer_email']"><span class="glyphicon glyphicon-envelope"></span></a>
+							</div>
+							<div class="col-sm-6 job-edit">
+								Customer: <input id="edit-job-customer-name" value="$job['customer_name']" type="text" /><br>
+								<span class="glyphicon glyphicon-earphone">: <input id="edit-job-customer-phone" value="$job['customer_phone']" type="text" /><br>
+								<span class="glyphicon glyphicon-envelope">: </span><input id="edit-job-customer-email" value="$job['customer_email']" type="text" />
+							</div>
 						</div>
 	    				<div class="row" style="border-bottom: .0625rem solid #e5e5e5;padding-bottom:0.5rem;">
 							$if job['supervisor'] != None:
