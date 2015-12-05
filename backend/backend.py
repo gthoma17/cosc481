@@ -281,6 +281,7 @@ class newJob:
 				)
 		
 		#Get job info from form and insert into database
+		db.update('jobs', where="id = "+str(job), date_started=current_date)
 		if 'manager_id' in passedData:
 			db.update('jobs', where="id = "+str(job), manager_id=passedData['manager_id'])
 		if 'supervisor_id' in passedData:
@@ -305,8 +306,6 @@ class newJob:
 			db.update('jobs', where="id = "+str(job), budget_available=passedData['budget_available'])
 		if 'budget_already_allocated' in passedData:
 			db.update('jobs', where="id = "+str(job), budget_already_allocated=passedData['budget_already_allocated'])
-		if 'date_started' in passedData:
-			db.update('jobs', where="id = "+str(job), date_started=current_date)
 		if 'description' in passedData:
 			db.update('jobs', where="id = "+str(job), description=passedData['description'])
 		return json.dumps(job)
