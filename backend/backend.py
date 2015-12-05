@@ -30,6 +30,7 @@ urls = (
 	"/delete/budgetItem", "deleteBudgetItem",
 	"/delete/user", "deleteUser",
 	"/photo", "photo",
+	"/photoFolder", "photoFolder",
 	"/userActionItems", "userActionItems",
 	"/userJobs","userJobs"
 	)

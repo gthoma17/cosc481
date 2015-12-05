@@ -14,6 +14,25 @@ function photosInit() {
         'cyclic'        :   true,
         'showNavArrows' :   true
     });
+    $('#cancelImageFolder').click(function() {
+    	$("#folder-name").val("");
+    });
+    $('#submitImageFolder').click(function() {
+        var folderData = {};
+        if ($("#folder-name").val() != ""){
+        	folderData.name = $("#folder-name").val();
+        	folderData.job_id = $('#jobId').text();
+        	$.post("/forward/photoFolder", JSON.stringify(folderData))
+            	.done(
+                	function(response) {
+                    	console.log("response: " + response)
+                    	if (apiResponseIsGood(response)) {
+                        	createNewPhotoFolder(folderData, response);
+                    	};
+                	}
+            	);
+        }
+    });
     $("#show-photos").hide();
     $("#show-photos").click(function(){
         $("#show-photos").hide();
@@ -26,6 +45,16 @@ function photosInit() {
         $("#photos-container").slideUp("slow");   
     });
 }
+function createNewPhotoFolder(folderData, folderID) {
+	console.log("new folder")
+    newFolder = $("#imageFolder-template").html()
+    newFolder = replaceAllSubsting(newFolder, "!name!", folderData.name);
+    newFolder = replaceAllSubsting(newFolder, "!id!", folderID);
+    //once we've implemented opening and closing folders, this will have to be updated
+    $('#gallery > div:first-child').before(newFolder);
+	$("#folder-name").val("");
+}
+
 function prepPhotos() {
     //things that have to happen every time a new photo is added
     document.getElementById('img-file').onchange = function (e) {loadFileFromInput(e.target);};

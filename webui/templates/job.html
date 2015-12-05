@@ -220,11 +220,13 @@ $else:
 	    <div class="col-sm-9">
 	        <div class="container">
 	            <div class="card-group" id="gallery">    
+	        		$job['photoFolders'].append({'id':-1,'name':'the_root','parent_id':-1})
 	        		$for photoFolder in job['photoFolders']:
 	        			<div id="photoFolder_$photoFolder['id']">
+	        				<p><span style="font-size:5em;" class="glyphicon glyphicon-folder-open"></span></p> 
 	        				<h1>$photoFolder['name']</h1>
 	        		    </div>
-	        		    $for photo in [photo for photo in job['photos'] if photo['parentId'] == photoFolder['id']]:
+	        		    $for photo in [photo for photo in job['photos'] if photo['folder_id'] == photoFolder['id']]:
 	        		    	<div class="col-sm-2">
 	       		        		<a class="gallery" rel="gallery01" href="$photo['link']"><div style="height: 100px"><img src="$photo['link']" class="card-img-top" style="max-height: 100%; max-width: 100%" alt=""/></div></a>
 	        		    	</div>
@@ -551,6 +553,12 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
     	<div class="col-sm-2">
     		<a class="gallery" rel="!gallery!" href="!url!"><div style="height: 100px"><img src="!url!" class="card-img-top" style="max-height: 100%; max-width: 100%" alt=""/></div></a>
     	</div>
+	</div>
+	<div class="hidden" id="imageFolder-template" style="display:none;">
+    	<div id="photoFolder_!id!">
+	        <p><span style="font-size:5em;" class="glyphicon glyphicon-folder-open"></span></p> 
+	        <h1>!name!</h1>
+	    </div>
 	</div>
 	<div class="hidden" id="assigned-user-template" style="display:none;">
 		<div style="display:inline;" id="note-assigned-name-actionItems-!id!">
