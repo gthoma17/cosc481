@@ -504,7 +504,7 @@ function makeUsersDropdown(type, selectId){
             option = "<option value=\""+obj.id+"\">"+obj.name+"</option>";
             $(selectId).append(option);
         });
-        option = "<option value=\"-1\">Nobody</option>";
+        option = "<option value=\"0\">Nobody</option>";
         $(selectId).prepend(option);
     });
 }
@@ -750,7 +750,14 @@ function createNewNote(noteId, note){
 
 //hides all the fields with the job-edit id
 function jobEditInit(){
-	$(".job-edit").hide();
+    if ($("#isNewJob").text() == "true") {
+        $(".job-show").hide();
+        $("#edit-job-cancel").hide();
+    }
+    else{
+        $(".job-edit").hide();
+    }
+	
 	
 	//function to show hidden stuff when ' (edit)' clicked
 	$("#edit-job").click(function(){
@@ -779,6 +786,8 @@ function jobEditInit(){
 	})
 	
 	$("#edit-job-save").click(function(){updateJobInfo()});
+    makeUsersDropdown("all", "#edit-job-supervisor")
+    makeUsersDropdown("all", "#edit-job-manager")
 }
 
 //update the job information
@@ -788,7 +797,9 @@ function updateJobInfo () {
     cityId = "#edit-job-city";
     stateId = "#edit-job-state";
     zipId = "#edit-job-zip";
-    customerId = "#edit-job-customer";
+    customerName = "#edit-job-customer-name";
+    customerPhone = "#edit-job-customer-phone";
+    customerEmail = "#edit-job-customer-email"
     supervisorId = "#edit-job-supervisor";
     managerId = "#edit-job-manager";
     budgetAvailableId = "#edit-job-budgetAvailable";
@@ -805,16 +816,24 @@ function updateJobInfo () {
 		postData.city = $(cityId).val()
 		postData.state = $(stateId).val()
 		postData.zip = $(zipId).val()
-		//postData.customer_name = $(customerId).val()
-		//postData.supervisor_name = $(supervisorId).val()
-		//postData.manager_name = $(managerId).val()
+		postData.customer_name = $(customerName).val()
+        postData.customer_phone = $(customerPhone).val()
+        postData.customer_email = $(customerEmail).val()
+        postData.supervisor_id = $(supervisorId).val();
+        postData.manager_id = $(managerId).val();
 		//postData.budget_available = $(budgetAvailableId).val()
 		//postData.budget_allocated = $(budgetAllocatedId).val()
 		postData.description = $(descriptionId).val()
 		postData.phase = $(phaseId).val()
+        if ($("#isNewJob").text() == "true") {
+            postUrl = "/forward/job"
+        }
+        else{
+            postUrl = "/forward/job/" + postData.id
+        };
 		
 		$.ajax({
-			url : "/forward/job/" + postData.id,
+			url : postUrl,
 			dataType:"text",
 			method:"POST",
 			data: JSON.stringify(postData),
@@ -823,8 +842,15 @@ function updateJobInfo () {
 				console.log("Successful add")
 				console.log(JSON.stringify(postData))
 				console.log(response)
-				showUpdatedJobInfo();
-			  } else{
+                if ($("#isNewJob").text() == "true") { //this is a new job
+                    //redirect them to their new job
+                    window.location.replace("/job/"+response);
+                }
+                else{ //we're editing
+                    showUpdatedJobInfo();
+                }
+			  } 
+              else{
 				console.log("Unsuccessful add")
 				console.log(JSON.stringify(postData))
 				console.log(response)
@@ -861,8 +887,10 @@ function showUpdatedJobInfo() {
 	$("#job-name").text($("#edit-job-name").val());  
 	$("#job-location").text(($("#edit-job-street").val()+ " ").concat($("#edit-job-city").val()));
 	$("#job-customer").text($("#edit-job-customer").val());
-	$("#job-supervisor").text($("#edit-job-supervisor").val());
-	$("#job-manager").text($("#edit-job-manager").val());
+	//$("#job-supervisor").text($("#edit-job-supervisor").val());
+    $("#job-supervisor").text($("#edit-job-supervisor option[value='"+$("#edit-job-supervisor").val()+"']").text())
+	//$("#job-manager").text($("#edit-job-manager").val());
+    $("#job-manager").text($("#edit-job-manager option[value='"+$("#edit-job-manager").val()+"']").text());
 	$("#job-budgetAvailable").text($("#edit-job-budgetAvailable").val());
 	$("#job-budgetAllocated").text($("#edit-job-budgetAllocated").val());
 	$("#job-desc").text($("#edit-job-desc").val());
@@ -895,8 +923,15 @@ function showUpdatedJobInfo() {
 }
 
 $(document).ready(function(){
-    photosInit()
-    notesInit()
-    budgetInit()
-	jobEditInit()
+    //if we're in a new job, we only care about the job card
+    if ($("#isNewJob").text() == "true") {
+        jobEditInit()
+    }
+    else{
+        photosInit()
+        notesInit()
+        budgetInit()
+        jobEditInit()
+    }
+    
 });

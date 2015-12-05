@@ -180,6 +180,9 @@ class newJob:
 		newJobVals['date_billed'] = ""
 		newJobVals['photos'] = ""
 		newJobVals['notes'] = ""
+		newJobVals['customer_name'] = ""
+		newJobVals['customer_phone'] = ""
+		newJobVals['customer_email'] = ""
 		newJobVals['supervisor'] = None
 		newJobVals['manager'] = None
 		newJobVals['isNewJob'] = True

@@ -23,7 +23,10 @@ $def with (job, user, apiUrl)
     }
   );
 </script>
-<title>Jobn - $job['name']</title>
+$if 'isNewJob' in job:
+	<title>Jobn - New Job</title>
+$else:
+	<title>Jobn - $job['name']</title>
 <script src="/static/job_ajax.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/style.css">
 <link rel="icon" type="image/png" href="/static/favicon.png">
@@ -97,14 +100,31 @@ $def with (job, user, apiUrl)
 									State: <input id="edit-job-state" name="job-state" value="$job['state']" type="text" /><br>
 									Zip: <input id="edit-job-zip" name="job-zip" value="$job['zip']" type="text" /><br>
 							</div>
-							<div class="col-sm-6 job-show"><p style="margin-bottom: 0px;">Customer: <span id="job-customer"> </span></p></div>
-							<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Customer: <input id="edit-job-customer" type="text" name="customer" size="20" /></p></div>
+							<div class="col-sm-6 job-show" style="display:inline;" id="job-customer">
+								Customer: <span id="job-customer-name">$job['customer_name']</span>
+								<a class="button" href="tel:$job['customer_phone']"><span class="glyphicon glyphicon-earphone"></span></a>&nbsp;
+								<a class="button" href="mailto:$job['customer_email']"><span class="glyphicon glyphicon-envelope"></span></a>
+							</div>
+							<div class="col-sm-6 job-edit">
+								Customer: <input id="edit-job-customer-name" value="$job['customer_name']" type="text" /><br>
+								<span class="glyphicon glyphicon-earphone">: <input id="edit-job-customer-phone" value="$job['customer_phone']" type="text" /><br>
+								<span class="glyphicon glyphicon-envelope">: </span><input id="edit-job-customer-email" value="$job['customer_email']" type="text" />
+							</div>
 						</div>
 	    				<div class="row" style="border-bottom: .0625rem solid #e5e5e5;padding-bottom:0.5rem;">
-	    					<div class="col-sm-6 job-display job-show"><p style="margin-bottom: 0px;">Supervisor: <span id="job-supervisor"> </span></p></div>
-							<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Supervisor: <input id="edit-job-supervisor" type="text" name="supervisor" size="20" /></p></div>
-	    					<div class="col-sm-6 job-show"><p style="margin-bottom: 0px;">Manager: <span id="job-manager"> </span></p></div>
-							<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Manager: <input id="edit-job-manager" type="text" name="manager" size="20" /></p></div>
+							$if job['supervisor'] != None:
+								<div class="col-sm-6 job-display job-show"><p style="margin-bottom: 0px;">Supervisor: <span id="job-supervisor">
+									$job['supervisor']['name']
+								</span></p></div>
+							$else:
+								<div class="col-sm-6 job-display job-show"><p style="margin-bottom: 0px;">Supervisor: <span id="job-supervisor"> </span></p></div>
+							<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Supervisor: <select id="edit-job-supervisor"></select></p></div>
+	    					
+							$if job['manager'] != None:
+								<div class="col-sm-6 job-show"><p style="margin-bottom: 0px;">Manager: <span id="job-manager">$job['manager']['name']</span></p></div>
+							$else:
+								<div class="col-sm-6 job-show"><p style="margin-bottom: 0px;">Manager: <span id="job-manager"> </span></p></div>
+							<div class="col-sm-6 job-edit"><p style="margin-bottom: 0px;">Manager: <select id="edit-job-manager"></select></p></div>
 	    				</div>
 	    				$if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper() == "MANAGER":
 	    					<div class="row">
@@ -137,6 +157,26 @@ $def with (job, user, apiUrl)
 	</div>
 
 <!-- End Job Information -->
+
+
+<!-- Begin metadata -->
+	<div class="hidden" id="user-name">$user['name']</div>
+	<div class="hidden" id="apiKey">$user['apiKey']</div>
+	<div class="hidden" id="jobId">$job['id']</div>
+	<div class="hidden" id="location-street-address">$job['street_address']</div>
+	<div class="hidden" id="location-city">$job['city']</div>
+	<div class="hidden" id="location-state">$job['state']</div>
+	<div class="hidden" id="location-zip">$job['zip']</div>
+
+
+
+	$if 'isNewJob' in job:
+		<div class="hidden" id="isNewJob">true</div>
+		$return self
+	$else:
+		<div class="hidden" id="isNewJob">false</div>
+<!-- End metadata -->
+
 
 <!-- Begin Photo Stuff -->
 	<hr>
@@ -361,17 +401,6 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 	</div>
 	</div>
 <!-- End Note Stuff -->
-
-
-<!-- Begin metadata -->
-	<div class="hidden" id="user-name">$user['name']</div>
-	<div class="hidden" id="apiKey">$user['apiKey']</div>
-	<div class="hidden" id="jobId">$job['id']</div>
-	<div class="hidden" id="location-street-address">$job['street_address']</div>
-	<div class="hidden" id="location-city">$job['city']</div>
-	<div class="hidden" id="location-state">$job['state']</div>
-	<div class="hidden" id="location-zip">$job['zip']</div>
-<!-- End metadata -->
 
 <!-- Begin ajax templates -->
 	

@@ -145,7 +145,9 @@ def createJobsTbl(cursor):
 	  id INTEGER  NOT NULL AUTO_INCREMENT,
 	  manager_id INTEGER,
 	  supervisor_id INTEGER,
-	  customer_id INTEGER,
+	  customer_name TEXT(65535),
+	  customer_phone TEXT(65535),
+	  customer_email TEXT(65535),
 	  name TEXT(65535),
 	  street_address TEXT(65535),
 	  city TEXT(65535),
@@ -525,18 +527,18 @@ def createJobs(cursor):
 
 	addJob = """
 	INSERT INTO jobs
-		(id, name, street_address, city, state, zip, phase, date_started, description)
+		(id, name, street_address, city, state, zip, phase, date_started, description, customer_name, customer_email, customer_phone)
 	VALUES
-		(NULL, {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})
+		(NULL, {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10})
 	"""
 	jobsToMake = [
-		{"name":"Find missing droids", "street_address":"Outskirts", "city":"Mos Eisley", "state":"Tatooine", "zip":"90210", "phase":"open", "date_started":"2015-10-07", "description":"We really need to find these droids"},
-		{"name":"Keep an eye on Luke", "street_address":"Moisture Farm", "city":"Desert", "state":"Tatooine", "zip":"90210", "phase":"open", "date_started":"2015-10-06", "description":"What else are you going to do?"},
-		{"name":"Shoot First", "street_address":"Chalmun's Cantina", "city":"Mos Eisley", "state":"Tatooine", "zip":"90210", "phase":"open", "date_started":"2015-10-05", "description":"You really weren't looking for any trouble, huh?"},
-		{"name":"Collect Jabba's debt", "street_address":"Chalmun's Cantina", "city":"Mos Eisley", "state":"Tatooine", "zip":"90210", "phase":"open", "date_started":"2015-10-04", "description":"Good luck"},
+		{"name":"Find missing droids", "street_address":"Outskirts", "city":"Mos Eisley", "state":"Tatooine", "zip":"90210", "phase":"open", "date_started":"2015-10-07", "description":"We really need to find these droids","customer_name":"Bob Ross","customer_email":"Bob@ross.ninja","customer_phone":"1800-BOB-ROSS"},
+		{"name":"Keep an eye on Luke", "street_address":"Moisture Farm", "city":"Desert", "state":"Tatooine", "zip":"90210", "phase":"open", "date_started":"2015-10-06", "description":"What else are you going to do?","customer_name":"Bob Ross","customer_email":"Bob@ross.ninja","customer_phone":"1800-BOB-ROSS"},
+		{"name":"Shoot First", "street_address":"Chalmun's Cantina", "city":"Mos Eisley", "state":"Tatooine", "zip":"90210", "phase":"open", "date_started":"2015-10-05", "description":"You really weren't looking for any trouble, huh?","customer_name":"Bob Ross","customer_email":"Bob@ross.ninja","customer_phone":"1800-BOB-ROSS"},
+		{"name":"Collect Jabba's debt", "street_address":"Chalmun's Cantina", "city":"Mos Eisley", "state":"Tatoine", "zip":"90210", "phase":"open", "date_started":"2015-10-04", "description":"Good luck","customer_name":"Bob Ross","customer_email":"Bob@ross.ninja","customer_phone":"1800-BOB-ROSS"},
 	]
 	for job in jobsToMake:
-		thisJobAdd = addJob.format(sanitize(job['name']), sanitize(job['street_address']), sanitize(job['city']), sanitize(job['state']), sanitize(job['zip']), sanitize(job['phase']), sanitize(job['date_started']), sanitize(job['description']))
+		thisJobAdd = addJob.format(sanitize(job['name']), sanitize(job['street_address']), sanitize(job['city']), sanitize(job['state']), sanitize(job['zip']), sanitize(job['phase']), sanitize(job['date_started']), sanitize(job['description']), sanitize(job['customer_name']), sanitize(job['customer_email']), sanitize(job['customer_phone']))
 		cursor.execute(thisJobAdd)
 def createBudgetItems(cursor, allJobs):
 	print "creating data for table: budgetItems"
