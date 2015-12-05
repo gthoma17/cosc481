@@ -338,12 +338,12 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 							<div class="card-header">
 								<h5 class="card-title">
 									$type
-									<button class="note-edit-button note-display" id="note-edit-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-edit"></span></button>
-									<button class="note-delete-button note-display" id="node-delete-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-trash"></span></button>	
-									<button class="note-save-button note-edit" id="note-save-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-ok"></span></button>
-									<button class="note-cancel-button note-edit" id="note-cancel-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-remove"></span></button>
-								</h5>
-								
+									$if note['author']['id'] == user['id']:
+										<button class="note-edit-button note-display" id="note-edit-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-edit"></span></button>
+										<button class="note-delete-button note-display" id="node-delete-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-trash"></span></button>	
+										<button class="note-save-button note-edit" id="note-save-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-ok"></span></button>
+										<button class="note-cancel-button note-edit" id="note-cancel-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-remove"></span></button>
+								</h5>	
 							</div>
 							<div class="card-block">
 								<p style="display:inline;" class="card-text note-display" id="note-contents-$note['tbl']-$note['id']">$note['contents']</p>
