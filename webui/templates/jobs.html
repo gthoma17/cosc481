@@ -11,6 +11,7 @@ $def with (title, jobs)
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="//www.gstatic.com/authtoolkit/js/gitkit.js"></script>
+<script type="text/javascript" src="/static/jquery.tablesorter.js"></script> 
 <script type=text/javascript>
   window.google.identitytoolkit.signInButton(
     '#navbar', // accepts any CSS selector
@@ -19,6 +20,11 @@ $def with (title, jobs)
       signOutUrl: "/logout",
     }
   );
+  $$(document).ready(function() 
+    { 
+        $$("#job-table").tablesorter(); 
+    } 
+  ); 
 </script>
 <title>Jobn - Job Listing</title>
 <script src="/static/user_ajax.js"></script>
@@ -63,14 +69,14 @@ $def with (title, jobs)
 </nav>
 <!-- Begin Job Table -->
   <div id="job-table-container" class="container">
-    <table id="job-table" class="table table-striped table-condensed table-bordered text-center">
+    <table id="job-table" class="table table-striped table-condensed table-bordered text-center tablesorter">
       <thead>
-        <tr>
-          <th class="text-center">Name</th>
-          <th class="text-center">Location</th>
-          <th class="text-center">Phase</th>
-          <th class="text-center">Customer</th>
-          <th class="text-center">Date Opened</th>
+        <tr style="border-bottom:3px solid #f2592a;">
+          <th class="text-center">Name&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+          <th class="text-center">Location&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+          <th class="text-center">Phase&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+          <th class="text-center">Customer&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+          <th class="text-center">Date Opened&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
         </tr>
       </thead>
       <tbody>
