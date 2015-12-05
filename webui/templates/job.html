@@ -203,19 +203,38 @@ $else:
     	    	</div>
 	        </div>
 	    </div>
+	    <div class="col-sm-3" id="add-imageFolder-card">
+	        <div class="card text-center card-info" id="add-a-imageFolder-card">
+	        	<div class="card-header">
+						<h5 class="card-title">Add a Folder</h5>
+				</div>
+	        	<div class="card-block">
+	            	<input id="folder-name" type="text">
+            	</div>
+            	<div class="card-block">
+            	    <button id="submitImageFolder">Submit</button>
+            	    <button id="cancelImageFolder">Cancel</button>
+       	    	</div>
+	        </div>
+	    </div>
 	    <div class="col-sm-9">
 	        <div class="container">
 	            <div class="card-group" id="gallery">    
-	        		$for photo in job['photos']:
-	        		    <div class="col-sm-2">
-	       		        	<a class="gallery" rel="gallery01" href="$photo['link']"><div style="height: 100px"><img src="$photo['link']" class="card-img-top" style="max-height: 100%; max-width: 100%" alt=""/></div></a>
+	        		$for photoFolder in job['photoFolders']:
+	        			<div id="photoFolder_$photoFolder['id']">
+	        				<h1>$photoFolder['name']</h1>
 	        		    </div>
+	        		    $for photo in [photo for photo in job['photos'] if photo['parentId'] == photoFolder['id']]:
+	        		    	<div class="col-sm-2">
+	       		        		<a class="gallery" rel="gallery01" href="$photo['link']"><div style="height: 100px"><img src="$photo['link']" class="card-img-top" style="max-height: 100%; max-width: 100%" alt=""/></div></a>
+	        		    	</div>
 	    		</div>
 	   		</div>
 		</div>
 	</div>
 
 <!-- End Photo Stuff -->
+
 
 
 $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper() == "MANAGER":
