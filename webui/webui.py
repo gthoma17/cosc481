@@ -209,7 +209,11 @@ class dashboard:
 			text += "..... here is your session info: " + str(session.user)
 		text += "."
 		title = "Welcome back, " + session.user['name'] + "!" 
-		return render.dashboard(title, text, adminLink, session.user)
+		userJobs = urllib.urlopen(apiUrl+"/userJobs?apiKey="+session.user['apiKey']).read()
+		userJobs= json.loads(userJobs)
+		userActionItems = urllib.urlopen(apiUrl+"/userActionItems?apiKey="+session.user['apiKey']).read()
+		userActionItems= json.loads(userActionItems)
+		return render.dashboard(title, text, adminLink, session.user, userJobs, userActionItems)
 class admin:
 	form = web.form.Form(
 		web.form.Textbox('email',
