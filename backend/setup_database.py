@@ -156,10 +156,10 @@ def createJobsTbl(cursor):
 	  phase TEXT(65535),
 	  budget_availiable INTEGER,
 	  budget_already_allocated INTEGER,
-	  date_started DATE,
-	  date_completed DATE,
-	  date_billed DATE,
-	  date_closed DATE,
+	  date_started TIMESTAMP,
+	  date_completed TIMESTAMP,
+	  date_billed TIMESTAMP,
+	  date_closed TIMESTAMP,
 	  description TEXT(65535),
 	  PRIMARY KEY(id)
 	)

@@ -52,8 +52,8 @@ class userJobs:
 			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
 		except IndexError:
 			return "403 Forbidden"
-		jobs = list(db.where('jobs', manager_id=reqUser['id']))
-		jobs.extend(list(db.where('jobs', supervisor_id=reqUser['id'])))
+		jobs = list(db.where('jobs', manager_id=reqUser['id'], date_completed=0))
+		jobs.extend(list(db.where('jobs', supervisor_id=reqUser['id'], date_completed=0)))
 		return json.dumps(makeDumpable(jobs))
 		
 class userActionItems:
@@ -63,7 +63,8 @@ class userActionItems:
 			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
 		except IndexError:
 			return "403 Forbidden"
-		actionItems = list(db.where('actionItems', assigned_user=reqUser['id']))
+		# completion_time=0 means that the actionItem does not have a completion time
+		actionItems = list(db.where('actionItems', assigned_user=reqUser['id'], completion_time=0))
 		return json.dumps(makeDumpable(actionItems))
 
 
@@ -301,7 +302,7 @@ class newJob:
 			return "403 Forbidden"
 		#are there any people that shouldn't be allowed to create jobs?
 		#if so put a check here
-		current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+		current_date = datetime.datetime.now().isoformat()
 		job = db.insert('jobs', 
 					name=passedData['name']
 				)
@@ -326,14 +327,21 @@ class newJob:
 			db.update('jobs', where="id = "+str(job), state=passedData['state'])
 		if 'zip' in passedData:
 			db.update('jobs', where="id = "+str(job), zip=passedData['zip'])
-		if 'phase' in passedData:
-			db.update('jobs', where="id = "+str(job), phase=passedData['phase'])
 		if 'budget_available' in passedData:
 			db.update('jobs', where="id = "+str(job), budget_available=passedData['budget_available'])
 		if 'budget_already_allocated' in passedData:
 			db.update('jobs', where="id = "+str(job), budget_already_allocated=passedData['budget_already_allocated'])
 		if 'description' in passedData:
 			db.update('jobs', where="id = "+str(job), description=passedData['description'])
+		if 'phase' in passedData:
+			if passedData['phase'].upper() == "BILLED":
+				db.update('jobs', where="id = "+str(job), date_billed=current_date)
+			elif passedData['phase'].upper() == "OPEN":
+				db.update('jobs', where="id = "+str(job), date_completed=0)
+				db.update('jobs', where="id = "+str(job), date_billed=0)
+			elif passedData['phase'].upper() == "CLOSED":
+				db.update('jobs', where="id = "+str(job), date_completed=current_date)
+			db.update('jobs', where="id = "+str(job), phase=passedData['phase'])
 		return json.dumps(job)
 class newUser:
 	def GET(self): 
@@ -408,9 +416,7 @@ class job:
 			allJobs = list(db.select('jobs'))
 			#make sure the list can be serialized
 			for job in allJobs:
-				for item in job:
-					if type(job[item]) is datetime.date:
-						job[item] = str(job[item])
+				makeDumpable(job)
 			#then return
 			return json.dumps(allJobs)
 		else:
@@ -450,8 +456,6 @@ class job:
 			db.update('jobs', where="id = "+str(job), state=passedData['state'])
 		if 'zip' in passedData:
 			db.update('jobs', where="id = "+str(job), zip=passedData['zip'])
-		if 'phase' in passedData:
-			db.update('jobs', where="id = "+str(job), phase=passedData['phase'])
 		if 'budget_available' in passedData:
 			db.update('jobs', where="id = "+str(job), budget_available=passedData['budget_available'])
 		if 'budget_already_allocated' in passedData:
@@ -466,6 +470,15 @@ class job:
 			db.update('jobs', where="id = "+str(job), date_closed=passedData['date_closed'])
 		if 'description' in passedData:
 			db.update('jobs', where="id = "+str(job), description=passedData['description'])
+		if 'phase' in passedData:
+			if passedData['phase'].upper() == "BILLED":
+				db.update('jobs', where="id = "+str(job), date_billed=current_date)
+			elif passedData['phase'].upper() == "OPEN":
+				db.update('jobs', where="id = "+str(job), date_completed=0)
+				db.update('jobs', where="id = "+str(job), date_billed=0)
+			elif passedData['phase'].upper() == "CLOSED":
+				db.update('jobs', where="id = "+str(job), date_completed=current_date)
+			db.update('jobs', where="id = "+str(job), phase=passedData['phase'])
 		return "202 Item Updated"	
 
 #Begin Equipment Section

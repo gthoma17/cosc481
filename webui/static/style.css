@@ -155,7 +155,7 @@
 }
 #accountSwitcherLI {
     padding-top:0px;
-    margin-top:0px;
+    margin-top:-1px;
     margin-right: -15px;
 }
 @media (max-width: 800px) {
@@ -322,13 +322,14 @@ body {
 }
 
 .card-success {
-  background-color: #5cb85c;
-  border-color: #5cb85c;
+  background-color: #F2592A;
+  border-color: #F2592A;
 }
+/*#5cb85c;*/
 
 .jobs-card {
-  background-color: #5cb85c;
-  border-color: #5cb85c;
+  background-color: #F2592A;
+  border-color: #F2592A;
   border-radius:5%;
 }
 
@@ -374,12 +375,13 @@ body {
 }
 
 .card-danger {
-  background-color: #d9534f;
-  border-color: #d9534f;
-  border-top: 1px solid #D9534F;
-  border-left: 1px solid #D9534F;
-  border-right: 1px solid #D9534F;
+  background-color: grey;
+  border-color: grey;
+  border-top: 1px solid grey;
+  border-left: 1px solid grey;
+  border-right: 1px solid grey;
 }
+/*#d9534f*/
 
 .card-inverse .card-header,
 .card-inverse .card-footer {
@@ -604,8 +606,23 @@ body {
 	
 }
 
+<<<<<<< HEAD
 /*Glyph Icons*/
 /*.span.glyphicon.glyphicon-folder-open {
 	font-size: 5em;
 }*/
 
+=======
+
+.actionItemCards {
+	background-color:#F2592A;
+}
+
+.glyphicon-sort:hover {
+	color: grey;
+}
+
+#allDashContainer {
+	margin-bottom: 5%;
+}
+>>>>>>> master
