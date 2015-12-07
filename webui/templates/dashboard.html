@@ -87,16 +87,20 @@ $def with (title, text, adminLink, user, userJobs, userActionItems)
 	<!--Assigned tasks-->
 	<h3>My Tasks</h3>
 	<!--if no actionItems display message-->
+	
 	<div id="job-cards" class="container" style="margin-top:2em;">
-    <div class="card-group">
+		<div class="card-group">
           $for actionItems in userActionItems:
-            <div class="col-sm-12">
-              <div class="card card-inverse actionItemCards jobs-card text-center"  style="width:30em;">
-                <div class="card-block" onclick="window.location.href='job/$actionItems['job_id']';">
-                  <h4 class="card-title">$actionItems['contents']</h4>
-                </div>
-              </div>
-            </div>
+			$if actionItems == None:
+				<div class="col-sm-12"><p>No tasks assigned to you at this point.</p></div>
+			$else:
+				<div class="col-sm-12">
+				  <div class="card card-inverse actionItemCards jobs-card text-center"  style="width:30em;">
+					<div class="card-block" onclick="window.location.href='job/$actionItems['job_id']';">
+					  <h4 class="card-title">$actionItems['contents']</h4>
+					</div>
+				  </div>
+				</div>
           </div>
 	</div>
 		
@@ -115,36 +119,26 @@ $def with (title, text, adminLink, user, userJobs, userActionItems)
 	<!--Jobs user is associated with-->
 	<h3>My Jobs</h3>
 	<!--if no jobs display message-->
-	
 	<div id="job-cards" class="container" style="margin-top:2em;">
-    <div class="card-group">
-          $for jobs in userJobs:
-            $if jobs['phase'].lower() == "open":
-              $ cardType = "card-success"
-            $else:
-              $ cardType = "card-danger"
-            <div class="col-sm-12">
-              <div class="card card-inverse $cardType jobs-card text-center"  style="width:30em;">
-                <div class="card-block" onclick="window.location.href='job/$jobs['id']';">
-                  <h4 class="card-title">$jobs['name']</h4>
-                </div>
-              </div>
-            </div>
-          </div>
-  </div>
-	
-	
-	
-	<!--
-		<div class="row" style="border:1px solid #7F7F7F;">
-				
-			<div class="col-sm-12">
-				<div class="col-sm-9"><h3>$jobs['name']</h3></div>
-				<div class="col-sm-3" style="padding-top:1.2%;"><button class="view_job" id=""><a href="job/$jobs['id']">View Job</a></button></div>
-			</div>
-				
+		<div class="card-group">
+			$for jobs in userJobs:
+				$if jobs == None:
+					<div class="col-sm-12"><p>Not associated with any jobs at this point.</p></div>
+				$else:
+					$if jobs['phase'].lower() == "open":
+						$ cardType = "card-success"
+					$else:
+						$ cardType = "card-danger"
+					<div class="col-sm-12">
+					  <div class="card card-inverse $cardType jobs-card text-center"  style="width:30em;">
+						<div class="card-block" onclick="window.location.href='job/$jobs['id']';">
+						  <h4 class="card-title">$jobs['name']</h4>
+						</div>
+					  </div>
+					</div>
 		</div>
-		<div></div>-->
+	</div>
+	
 </div> 
 
 </body>
