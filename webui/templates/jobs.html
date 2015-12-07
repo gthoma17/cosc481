@@ -79,12 +79,12 @@ $def with (title, jobs)
           <th class="text-center">Date Opened&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
         </tr>
       </thead>
-      <tbody>
+      </tbody>
         $for job in jobs:
           $ job['location'] = job['street_address']+" "+job['city']+" "+job['state']+" "+job['zip']
           <tr>
             <td><a href="job/$job['id']">$job['name']</a></td>
-            <td><a href="http://maps.apple.com/?q=$job['location']">$job['street_address'] $job['city']</a></td>
+            <td><a href="http://maps.apple.com/?q=$job['location']" target="blank">$job['street_address'] $job['city']</a></td>
             <td>$job['phase']</td>
             <td>
               $job['customer_name']&nbsp;<a class="button" href="tel:$job['customer_phone']"><span class="glyphicon glyphicon-earphone"></span></a>&nbsp;<a class="button" href="mailto:$job['customer_email']"><span class="glyphicon glyphicon-envelope"></span></a>
