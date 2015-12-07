@@ -155,7 +155,7 @@
 }
 #accountSwitcherLI {
     padding-top:0px;
-    margin-top:0px;
+    margin-top:-1px;
     margin-right: -15px;
 }
 @media (max-width: 800px) {
@@ -613,4 +613,8 @@ body {
 
 .glyphicon-sort:hover {
 	color: grey;
+}
+
+#allDashContainer {
+	margin-bottom: 5%;
 }
