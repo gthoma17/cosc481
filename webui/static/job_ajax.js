@@ -688,6 +688,20 @@ function updateNote(llq, note){
     $("#note"+llq+" .note-edit").hide()
 
 }
+/*NOT WORKING*/
+function noteEntryTimeCheck(note, note-entry-time){
+    hourToMins = note-entry-time.getHours()*60;
+    minute = note-entry-time.getMinutes() + hourToMins;
+    curHourToMin = getHours()*60;
+    curMinute = getMinutes() + curHourToMin;
+    timeDifference = curMinute - minute;
+    if(timeDifference >= 60){
+        return false;
+    }
+    else{
+        return true;
+    }
+}
 function getCurrentDateTime(){
     d = new Date()
     date = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()
