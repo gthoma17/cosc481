@@ -321,6 +321,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 			<div class="container">
 				<div class="card-group note-card-group" id="note-card-group"> 
 					$for note in job['notes']:
+						$if note
 						$if note['tbl'] == 'dailyReports':
 							$ type = "Daily Report"
 							$ cardType = "card-warning"
@@ -333,14 +334,17 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 						$if note['tbl'] == 'notes':
 							$ type = "Note"
 							$ cardType = "card-info"
+
 						<div class="col-xs-12 col-md-12 a-note-card-group">
-						<div class="card $cardType note-card text-center" id="note-$note['tbl']-$note['id']">
+						<div class="card $cardType note-card text-center get-note" id="note-$note['tbl']-$note['id']">
 							<div class="card-header">
-								<h5 class="card-title">
+								<h5 class="card-title" >
 									$type
 									$if note['author']['id'] == user['id'] or user['permissionLevel'].upper() == "ADMIN":
-										<button class="note-edit-button note-display" id="note-edit-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-edit"></span></button>
-										<button class="note-delete-button note-display" id="note-delete-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-trash"></span></button>
+										<button class="note-edit-button note-display note-button" id="note-edit-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-edit"></span>
+										</button>
+										<button class="note-delete-button note-display note-button" id="note-delete-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-trash"></span>
+										</button>
 										<button class="note-save-button note-edit" id="note-save-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-ok"></span></button>
 										<button class="note-cancel-button note-edit" id="note-cancel-button-$note['tbl']-$note['id']"><span class="glyphicon glyphicon-remove"></span></button>
 								</h5>	
@@ -446,6 +450,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
     			    <h5 class="card-title">
     			        Daily Report
     			        <button class="note-edit-button note-display" id="note-edit-button-!tbl!-!id!"><span class="glyphicon glyphicon-edit"></span></button>
+    			        <button class="note-delete-button note-display" id="note-delete-button-!tbl!-!id!"><span class="glyphicon glyphicon-trash"></span></button>
     			        <button class="note-save-button note-edit" id="note-save-button-!tbl!-!id!"><span class="glyphicon glyphicon-ok"></span></button>
     			        <button class="note-cancel-button note-edit" id="note-cancel-button-!tbl!-!id!"><span class="glyphicon glyphicon-remove"></span></button>
     			    </h5>
@@ -476,6 +481,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
         			<h5 class="card-title">
         			    Action Item
         			    <button class="note-edit-button note-display" id="note-edit-button--!tbl!-!id!"><span class="glyphicon glyphicon-edit"></span></button>
+        			    <button class="note-delete-button note-display" id="note-delete-button--!tbl!-!id!"><span class="glyphicon glyphicon-trash"></span></button>
         			    <button class="note-save-button note-edit" id="note-save-button--!tbl!-!id!"><span class="glyphicon glyphicon-ok"></span></button>
         			    <button class="note-cancel-button note-edit" id="note-cancel-button--!tbl!-!id!"><span class="glyphicon glyphicon-remove"></span></button>
         			</h5>
@@ -514,6 +520,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
             		<h5 class="card-title">
                 		Note
                 		<button class="note-edit-button note-display" id="note-edit-button-!tbl!-!id!"><span class="glyphicon glyphicon-edit"></span></button>
+                		<button class="note-delete-button note-display" id="note-delete-button-!tbl!-!id!"><span class="glyphicon glyphicon-trash"></span></button>
                 		<button class="note-save-button note-edit" id="note-save-button-!tbl!-!id!"><span class="glyphicon glyphicon-ok"></span></button>
                 		<button class="note-cancel-button note-edit" id="note-cancel-button-!tbl!-!id!"><span class="glyphicon glyphicon-remove"></span></button>
             		</h5>
