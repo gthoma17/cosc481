@@ -572,22 +572,18 @@ class user:
 			return "403 Forbidden"
 		if userIsAdmin(reqUser):
 			#first check if user exists.
-			if user.isdigit(): #if all digits, lookup by ID
-				existingUser = db.where('jobAppUsers', id=user)
-			else:
-				existingUser = db.where('jobAppUsers', email=user)
+			existingUser = db.where('jobAppUsers', id=user)
 			if existingUser: #user exists
 				existingUser = existingUser[0]
-				print "*"*50
 				print passedData
-				print "*"*50
-				db.update('jobAppUsers', 
-							where="id = "+str(existingUser.id), 
-							name=passedData['name'],
-							email=passedData['email'],
-							permissionLevel=passedData['permissionLevel'],
-							phone=passedData['phone']
-						)
+				if 'name' in passedData:
+					db.update('jobAppUsers', where="id = "+str(user), name=passedData['name'])
+				if 'email' in passedData:
+					db.update('jobAppUsers', where="id = "+str(user), email=passedData['email'])
+				if 'permissionLevel' in passedData:
+					db.update('jobAppUsers', where="id = "+str(user), permissionLevel=passedData['permissionLevel'])
+				if 'phone' in passedData:
+					db.update('jobAppUsers', where="id = "+str(user), phone=passedData['phone'])
 				return "202 User Updated"
 			else: 
 				return "404 Not Found"
