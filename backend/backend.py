@@ -29,6 +29,7 @@ urls = (
 	"/actionItem", "actionItem",
 	"/delete/budgetItem", "deleteBudgetItem",
 	"/delete/user", "deleteUser",
+	"/delete/note", "deleteNote",
 	"/photo", "photo",
 	"/userActionItems", "userActionItems",
 	"/userJobs","userJobs"
@@ -537,6 +538,26 @@ class deleteEquipment:
 			return "403 Forbidden"
 
 #End Equipment Section		
+
+class deleteNote:
+	def GET(self): 
+		return "Shhhh... the database is sleeping."
+	def POST(self):
+		passedData = dict(web.input())
+		try:
+			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
+		except IndexError:
+			return "403 Forbidden"
+		try:
+			theNote = db.where(passedData['tbl'], id=passedData['id'])[0]
+		except:
+			return "404 Not Found"
+		if reqUser['permissionLevel'].upper() == "ADMIN" or reqUser['id'] == theNote['author_id']:
+			#user can do this
+			db.delete(passedData['tbl'], where="id="+passedData['id'])
+			return "200 OK"
+		else:
+			return "403 Forbidden"
 
 
 class user:
