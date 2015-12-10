@@ -446,6 +446,7 @@ class job:
 		if 'description' in passedData:
 			db.update('jobs', where="id = "+str(job), description=passedData['description'])
 		if 'phase' in passedData:
+			current_date = datetime.datetime.now().isoformat()
 			if passedData['phase'].upper() == "BILLED":
 				db.update('jobs', where="id = "+str(job), date_billed=current_date)
 			elif passedData['phase'].upper() == "OPEN":
