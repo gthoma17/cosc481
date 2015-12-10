@@ -390,7 +390,14 @@ class job:
 		if job == "all":
 			allJobs = list(db.select('jobs'))
 			#make sure the list can be serialized
+			
 			for job in allJobs:
+				idThings = [
+					['jobAppUsers','manager',job['manager_id'], "name,permissionLevel,email,phone"],
+  					['jobAppUsers','supervisor',job['supervisor_id'], "name,permissionLevel,email,phone"],
+				]
+				for thing in idThings:
+					job = addThingById(job, thing[0], thing[1], thing[2], thing[3])
 				makeDumpable(job)
 			#then return
 			return json.dumps(allJobs)
@@ -677,7 +684,7 @@ def dumpDict(inDict):
 	for item in dict(inDict):
 		if type(inDict[item]) is datetime.date or \
 			type(inDict[item]) is datetime.datetime:
-			inDict[item] = str(inDict[item])
+			inDict[item] = inDict[item].strftime("%Y-%m-%d")
 	return inDict
 def addThingByJobReference(job, jobId, table, dictName):
 	if dictName not in job:
