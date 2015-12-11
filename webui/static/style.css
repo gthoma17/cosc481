@@ -582,6 +582,34 @@ body {
 	border: 1px solid #5bc0de;
 }
 
+.addImageAddFolder {
+	text-align: center;
+}
+
+.photoFolderButton {
+	margin: 1em;
+}
+
+.upAFolderIconAndText {
+	display: inline-block;
+	margin: 10px;
+}
+
+.photoFolderAndFolderName {
+	display: inline-block;
+	margin: 10px;
+	//*loat: left;*/
+}
+
+.individualPhoto {
+	display: inline-block;
+	/*float: left;*/
+}
+
+.photoFolderSection {
+	text-align: center;
+}
+
 /*sign in page*/
 #welcome_msg {
 	position: absolute;

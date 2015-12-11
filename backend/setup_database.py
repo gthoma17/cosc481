@@ -717,7 +717,7 @@ def createPhotos(cursor, allJobs):
 	"""
 	for job in allJobs:
 		thingsToMake = [
-			[str(job),"0","http://www.iana.org/_img/2013.1/icann-logo.svg"]
+			[str(job),"-1","http://www.iana.org/_img/2013.1/icann-logo.svg"]
 		]
 		for thing in thingsToMake:
 			thisThingAdd = addThing.format(sanitize(thing[0]), sanitize(thing[1]), sanitize(thing[2]))

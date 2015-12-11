@@ -144,6 +144,7 @@ class photo:
 
 		photo = db.insert('photos', 
 					job_id=passedData['job_id'],
+					folder_id=passedData['folder_id'],
 					link=newFileLink
 				)
 		return json.dumps(photo)

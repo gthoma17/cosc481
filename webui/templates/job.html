@@ -182,54 +182,68 @@ $else:
 	<hr>
 	<div class="text-center"><h3>Photos <small><button id="hide-photos">[-]</button><button id="show-photos">[+]</button></div></small></h3>
 	<div id="photos-container" class="container">
-	    <div class="col-sm-3" id="add-image-card">
-	        <div class="card text-center card-info" id="add-a-image-card">
-	        	<div class="card-header">
-						<h5 class="card-title">Add a Photo</h5>
+	    <div class="addImageAddFolder">
+			<div class="col-sm-3" id="add-image-card">
+				<div class="card text-center card-info addImageAddFolder" id="add-a-image-card">
+					<div class="card-header">
+							<h5 class="card-title">Add a Photo</h5>
+					</div>
+					<div class="card-block">
+						<input id="img-file" type="file" accept="image/*">
+					</div>
+					<div id="img-preview-container">
+						<div class="card-block" style="max-height: 200px">
+							<img id="img-preview" style="max-height: 200px; max-width: 100%">
+							<br>
+							<img id="img-loader" src="http://i.imgur.com/Bcv89it.gif">
+						</div>
+						<div class="card-block">
+							<button id="submitImage">Submit</button>
+							<button id="cancelImage">Cancel</button>
+						</div>
+					</div>
 				</div>
-	        	<div class="card-block">
-	            	<input id="img-file" type="file" accept="image/*">
-            	</div>
-            	<div id="img-preview-container">
-	            	<div class="card-block" style="max-height: 200px">
-	            		<img id="img-preview" style="max-height: 200px; max-width: 100%">
-	            		<br>
-	            		<img id="img-loader" src="http://i.imgur.com/Bcv89it.gif">
-	            	</div>
-	            	<div class="card-block">
-	            	    <button id="submitImage">Submit</button>
-	            	    <button id="cancelImage">Cancel</button>
-        	    	</div>
-    	    	</div>
-	        </div>
-	    </div>
-	    <div class="col-sm-3" id="add-imageFolder-card">
-	        <div class="card text-center card-info" id="add-a-imageFolder-card">
-	        	<div class="card-header">
-						<h5 class="card-title">Add a Folder</h5>
+			</div>
+			<div class="col-sm-3" id="add-imageFolder-card">
+				<div class="card text-center card-info addImageAddFolder" id="add-a-imageFolder-card">
+					<div class="card-header">
+							<h5 class="card-title">Add a Folder</h5>
+					</div>
+					<div class="card-block">
+						<input id="folder-name" type="text">
+					</div>
+					<div class="card-block">
+						<button id="submitImageFolder">Submit</button>
+						<button id="cancelImageFolder">Cancel</button>
+					</div>
 				</div>
-	        	<div class="card-block">
-	            	<input id="folder-name" type="text">
-            	</div>
-            	<div class="card-block">
-            	    <button id="submitImageFolder">Submit</button>
-            	    <button id="cancelImageFolder">Cancel</button>
-       	    	</div>
-	        </div>
-	    </div>
+			</div>
+		</div>
 	    <div class="col-sm-9">
 	        <div class="container">
 	            <div class="card-group" id="gallery">    
-	        		$job['photoFolders'].append({'id':-1,'name':'the_root','parent_id':-1})
-	        		$for photoFolder in job['photoFolders']:
-	        			<div id="photoFolder_$photoFolder['id']">
-	        				<p><span style="font-size:5em;" class="glyphicon glyphicon-folder-open"></span></p> 
-	        				<h1>$photoFolder['name']</h1>
-	        		    </div>
-	        		    $for photo in [photo for photo in job['photos'] if photo['folder_id'] == photoFolder['id']]:
-	        		    	<div class="col-sm-2">
-	       		        		<a class="gallery" rel="gallery01" href="$photo['link']"><div style="height: 100px"><img src="$photo['link']" class="card-img-top" style="max-height: 100%; max-width: 100%" alt=""/></div></a>
-	        		    	</div>
+	        		$job['photoFolders'].append({'id':-1,'name':'the_root','parent_id':0})
+	        		$for photoFolder in job['photoFolders']:	        			
+	        			<div class="photoFolder" id="photoFolder_$photoFolder['id']">
+							<div class="text-center photoFolderSection">
+								<h3>$photoFolder['name']</h3>
+								<!--Brianna: Choose glyphicon for going up a folder in the next line of code-->
+								$if photoFolder['id'] != -1:
+									<div class="upAFolderIconAndText">
+										<a class="button show-photoFolder$photoFolder['parent_id'] photoFolderButton" id="goToParentFolder_$photoFolder['parent_id']"><span style="font-size:5em;" class="glyphicon glyphicon-circle-arrow-up"></span></a>
+										<h4>Go up a Folder</h4>
+									</div>
+								$for childFolder in [childFolder for childFolder in job['photoFolders'] if childFolder['parent_id'] == photoFolder['id']]:
+									<div class="photoFolderAndFolderName">
+										<a class="button show-photoFolder$childFolder['id'] photoFolderButton" id="show-photoFolder_$childFolder['id']"><span style="font-size:5em;" class="glyphicon glyphicon-folder-open"></span></a>
+										<h4>$childFolder['name']</h4>
+									</div>
+								$for photo in [photo for photo in job['photos'] if photo['folder_id'] == photoFolder['id']]:
+									<div class="individualPhoto">
+										<a class="gallery" rel="gallery_$photo['folder_id']" href="$photo['link']"><div style="height: 100px"><img src="$photo['link']" class="card-img-top" style="max-height: 100%; max-width: 100%" alt=""/></div></a>
+									</div>
+							</div>
+						</div>
 	    		</div>
 	   		</div>
 		</div>
@@ -554,6 +568,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
     		<a class="gallery" rel="!gallery!" href="!url!"><div style="height: 100px"><img src="!url!" class="card-img-top" style="max-height: 100%; max-width: 100%" alt=""/></div></a>
     	</div>
 	</div>
+	<!--Brianna the below div needs to match the folder div up there -->
 	<div class="hidden" id="imageFolder-template" style="display:none;">
     	<div id="photoFolder_!id!">
 	        <p><span style="font-size:5em;" class="glyphicon glyphicon-folder-open"></span></p> 

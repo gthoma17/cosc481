@@ -1,4 +1,5 @@
 var imgData;
+var currentPhotoFolder = "-1";
 
 //**************************Start Photos stuff********************************************************************************************
 function photosInit() {
@@ -21,6 +22,7 @@ function photosInit() {
         var folderData = {};
         if ($("#folder-name").val() != ""){
         	folderData.name = $("#folder-name").val();
+        	folderData.parent_id = currentPhotoFolder;
         	folderData.job_id = $('#jobId').text();
         	$.post("/forward/photoFolder", JSON.stringify(folderData))
             	.done(
@@ -44,6 +46,8 @@ function photosInit() {
         $("#show-photos").show();
         $("#photos-container").slideUp("slow");   
     });
+    $('.photoFolder').hide()
+    $('#photoFolder_-1').show()
 }
 function createNewPhotoFolder(folderData, folderID) {
 	console.log("new folder")
@@ -80,6 +84,13 @@ function prepPhotos() {
             );
     });
     $('#img-preview-container').hide()
+    $('.photoFolderButton').click(function(){
+    	buttonId = $(this).attr('id').split("_")
+        itemId = buttonId[buttonId.length -1]
+        $('.photoFolder').hide()
+        $('#photoFolder_' + itemId).show()
+        currentPhotoFolder = itemId;
+    });
 }
 function loadFileFromInput(input) {
     var reader; 
@@ -91,6 +102,7 @@ function loadFileFromInput(input) {
         // need to wait for it to finish it's work before we continue
         reader.onload = function (e) {
             imgData = {}
+            imgData.folder_id = currentPhotoFolder
             imgData.name = file.name
             imgData.lastModified = file.lastModified
             imgData.type = file.type
@@ -718,7 +730,7 @@ function updateNote(llq, note){
 
 }
 /*NOT WORKING*/
-function noteEntryTimeCheck(note, note-entry-time){
+/*function noteEntryTimeCheck(note, note-entry-time){
     hourToMins = note-entry-time.getHours()*60;
     minute = note-entry-time.getMinutes() + hourToMins;
     curHourToMin = getHours()*60;
@@ -730,7 +742,7 @@ function noteEntryTimeCheck(note, note-entry-time){
     else{
         return true;
     }
-}
+}*/
 function getCurrentDateTime(){
     d = new Date()
     date = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()
