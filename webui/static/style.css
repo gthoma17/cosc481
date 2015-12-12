@@ -582,6 +582,34 @@ body {
 	border: 1px solid #5bc0de;
 }
 
+.addImageAddFolder {
+	text-align: center;
+}
+
+.photoFolderButton {
+	margin: 1em;
+}
+
+.upAFolderIconAndText {
+	display: inline-block;
+	margin: 10px;
+}
+
+.photoFolderAndFolderName {
+	display: inline-block;
+	margin: 10px;
+	//*loat: left;*/
+}
+
+.individualPhoto {
+	display: inline-block;
+	/*float: left;*/
+}
+
+.photoFolderSection {
+	text-align: center;
+}
+
 /*sign in page*/
 #welcome_msg {
 	position: absolute;
@@ -606,6 +634,13 @@ body {
 	
 }
 
+<<<<<<< HEAD
+/*Glyph Icons*/
+/*.span.glyphicon.glyphicon-folder-open {
+	font-size: 5em;
+}*/
+
+=======
 
 .actionItemCards {
 	background-color:#F2592A;
@@ -618,3 +653,4 @@ body {
 #allDashContainer {
 	margin-bottom: 5%;
 }
+>>>>>>> master

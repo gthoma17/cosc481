@@ -31,6 +31,7 @@ urls = (
 	"/delete/user", "deleteUser",
 	"/delete/note", "deleteNote",
 	"/photo", "photo",
+	"/photoFolder", "photoFolder",
 	"/userActionItems", "userActionItems",
 	"/userJobs","userJobs"
 	)
@@ -86,6 +87,31 @@ class userType:
 	def POST(self):
 		return "Shhhh... the database is sleeping."
 
+class photoFolder:
+	def GET(self):
+		return "Shhhh... the database is sleeping."
+	def POST(self):
+		passedData = dict(web.input())
+		try:
+			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
+		except IndexError:
+			return "403 Forbidden"
+		#use selected job, and current timestamp to ensure uniquness
+		# it shouldn't be possible to add two photos to the same job
+		# in one millisecond
+		# ... I hope. 
+		
+		if 'parent_id' not in passedData.keys():
+			passedData['parent_id'] = -1
+
+		photoFolder = db.insert('photoFolders', 
+					job_id=passedData['job_id'],
+					parent_id=passedData['parent_id'],
+					name=passedData['name']
+				)
+		return json.dumps(photoFolder)
+
+
 class photo:
 	def GET(self):
 		return "Shhhh... the database is sleeping."
@@ -119,6 +145,7 @@ class photo:
 
 		photo = db.insert('photos', 
 					job_id=passedData['job_id'],
+					folder_id=passedData['folder_id'],
 					link=newFileLink
 				)
 		return json.dumps(photo)

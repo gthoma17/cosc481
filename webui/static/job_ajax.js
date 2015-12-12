@@ -1,4 +1,5 @@
 var imgData;
+var currentPhotoFolder = "-1";
 
 //**************************Start Photos stuff********************************************************************************************
 function photosInit() {
@@ -14,6 +15,26 @@ function photosInit() {
         'cyclic'        :   true,
         'showNavArrows' :   true
     });
+    $('#cancelImageFolder').click(function() {
+    	$("#folder-name").val("");
+    });
+    $('#submitImageFolder').click(function() {
+        var folderData = {};
+        if ($("#folder-name").val() != ""){
+        	folderData.name = $("#folder-name").val();
+        	folderData.parent_id = currentPhotoFolder;
+        	folderData.job_id = $('#jobId').text();
+        	$.post("/forward/photoFolder", JSON.stringify(folderData))
+            	.done(
+                	function(response) {
+                    	console.log("response: " + response)
+                    	if (apiResponseIsGood(response)) {
+                        	createNewPhotoFolder(folderData, response);
+                    	};
+                	}
+            	);
+        }
+    });
     $("#show-photos").hide();
     $("#show-photos").click(function(){
         $("#show-photos").hide();
@@ -25,7 +46,19 @@ function photosInit() {
         $("#show-photos").show();
         $("#photos-container").slideUp("slow");   
     });
+    $('.photoFolder').hide()
+    $('#photoFolder_-1').show()
 }
+function createNewPhotoFolder(folderData, folderID) {
+	console.log("new folder")
+    newFolder = $("#imageFolder-template").html()
+    newFolder = replaceAllSubsting(newFolder, "!name!", folderData.name);
+    newFolder = replaceAllSubsting(newFolder, "!id!", folderID);
+    //once we've implemented opening and closing folders, this will have to be updated
+    $('#gallery > div:first-child').before(newFolder);
+	$("#folder-name").val("");
+}
+
 function prepPhotos() {
     //things that have to happen every time a new photo is added
     document.getElementById('img-file').onchange = function (e) {loadFileFromInput(e.target);};
@@ -51,6 +84,13 @@ function prepPhotos() {
             );
     });
     $('#img-preview-container').hide()
+    $('.photoFolderButton').click(function(){
+    	buttonId = $(this).attr('id').split("_")
+        itemId = buttonId[buttonId.length -1]
+        $('.photoFolder').hide()
+        $('#photoFolder_' + itemId).show()
+        currentPhotoFolder = itemId;
+    });
 }
 function loadFileFromInput(input) {
     var reader; 
@@ -62,6 +102,7 @@ function loadFileFromInput(input) {
         // need to wait for it to finish it's work before we continue
         reader.onload = function (e) {
             imgData = {}
+            imgData.folder_id = currentPhotoFolder
             imgData.name = file.name
             imgData.lastModified = file.lastModified
             imgData.type = file.type
