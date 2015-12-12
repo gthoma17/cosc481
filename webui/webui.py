@@ -43,7 +43,8 @@ urls = (
 	"/job/(.*)", "job",
 	"/newJob", "newJob",
 	"/forward/(.*)", "forward",
-	"/test","test"
+	"/test","test",
+	"/reports","reports"
 	)
 render = web.template.render(path.join(root,'templates/'))
 app = web.application(urls, globals())
@@ -214,6 +215,23 @@ class dashboard:
 		userActionItems = urllib.urlopen(apiUrl+"/userActionItems?apiKey="+session.user['apiKey']).read()
 		userActionItems= json.loads(userActionItems)
 		return render.dashboard(title, text, adminLink, session.user, userJobs, userActionItems)
+class reports:
+	def GET(self):
+		if not userAuthed(session.user):
+			session.user['redirect'] = web.ctx.path
+			raise web.seeother('/')
+		text = "You are a registered user "
+		adminLink = " "
+		if userIsAdmin(session.user):
+			text += "and an admin"
+			adminLink += "<a href=\"admin\" class=\"adminButton\">Admin Panel</a>"
+		if debug:
+			text += "..... here is your session info: " + str(session.user)
+		text += "."
+		title = "Welcome back, " + session.user['name'] + "!" 
+		userJobs = urllib.urlopen(apiUrl+"/job/all?apiKey="+session.user['apiKey']).read()
+		userJobs= json.loads(userJobs)
+		return render.reports(title, text, adminLink, session.user, userJobs)
 class admin:
 	form = web.form.Form(
 		web.form.Textbox('email',
