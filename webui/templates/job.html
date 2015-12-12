@@ -322,7 +322,6 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 			<div class="container">
 				<div class="card-group note-card-group" id="note-card-group"> 
 					$for note in job['notes']:
-						$if note
 						$if note['tbl'] == 'dailyReports':
 							$ type = "Daily Report"
 							$ cardType = "card-warning"
@@ -367,6 +366,7 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 							$if note['tbl'] == 'actionItems':
 									$if note['completion_time']:
 										<div class="card-footer text-muted small" id="note-completer-$note['tbl']-$note['id']">
+
 											<p class="card-text">Completed by $note['completion_user']['name'] at $note['completion_time']</p>
 										</div>
 									$else:
@@ -396,8 +396,8 @@ $if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper(
 												<button class="note-complete-edit note-complete-cancel" id="note-complete-cancel-button-$note['tbl']-$note['id']">No</button>
 											</p>
 										</div>
-							<div class="card-footer text-muted small">
-								Created by $note['author']['name'] at $note['entry_time']
+							<div class="card-footer text-muted small" id="card-footer">
+								Created by $note['author']['name'] at <span class="get-note-entry-time" id="note-entry-time-$note['tbl']-$note['id']">$note['entry_time']</span>
 							</div>
 						</div>				
 						</div>

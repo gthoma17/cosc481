@@ -712,9 +712,66 @@ function updateNote(llq, note){
     }
     $("#note"+llq+" .note-display").show()
     $("#note"+llq+" .note-edit").hide()
-
 }
+/*NOT WORKING*/
+function noteTimeCheck(){
 
+    console.log("timeCheck entered");
+   
+    $('.get-note').each(function(){
+        var getNote = $(this).attr('id').split("-");
+        da = new Date();
+        //mins = parseInt(da.getHours())*60+da.getMinutes();
+        noteId = getNote[getNote.length-1];
+        noteTbl = getNote[getNote.length-2];
+        noteSuff = "#note-entry-time-" + noteTbl + "-" + noteId;
+        noteET =  $(noteSuff).text();
+
+        noteTime = noteET.split(" ")[1]
+        noteDate = noteET.split(" ")[0]
+        noteYear = noteDate.split("-")[0]
+        noteMonth = noteDate.split("-")[1]
+        noteDay = noteDate.split("-")[2]
+        noteHour = noteTime.split(":")[0]
+        noteMinute = noteTime.split(":")[1]
+        noteDate = new Date(noteYear, noteMonth, noteDay, noteHour, noteMinute)
+        //console.log(noteYear+noteMonth+noteDay)
+
+        noteS = "#note-delete-button-" + noteTbl + "-" + noteId;
+
+        now = new Date();
+        //noteAllottedTime.setMinutes(noteAllottedTime.getMinutes()-60);
+        //console.log(noteAllottedTime)
+        //console.log(noteAllottedTime)
+        //noteH = parseInt(noteET[noteET.length-2])*60;
+        //console.log(noteH);
+        //noteM = parseInt(noteET[noteET.length-1]);
+        //noteTime = noteM+noteH;
+        //console.log(mins);
+        //console.log(noteM);
+        //console.log(mins - noteM);
+        //noteETMins = (noteET.getHours()*60)+ noteET.getMinutes();
+        //console.log(noteDate)
+        //console.log(noteAllottedTime)
+        timeDiff = now.getTime() - noteDate.getTime()
+        //console.log(timeDiff/60000)
+        console.log(now.getTime()+"-"+noteDate.getTime()+"="+timeDiff)
+        //console.log(timeDiff)
+        if (timeDiff < 60000){
+            console.log("true");
+            //console.log(noteDate+" < "+now)
+            setTimeout(function() {
+              $(noteS).hide();
+            }, timeDiff);
+        }
+        else{
+            //console.log(noteDate+" > "+now)
+            //console.log("false")
+            $(noteS).hide();
+        }
+    
+    });
+}
 function getCurrentDateTime(){
     d = new Date()
     date = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()
@@ -740,9 +797,6 @@ function createNewNote(noteId, note){
     $("#note-user-name".concat(noteSuffix)).text($("#user-name").text())
     $("#note-entry-time".concat(noteSuffix)).text(getCurrentDateTime())
 
-
-
-    console.log($("#note-entry-time").getHours());
     if (note.tbl == "actionItems" && note.assigned_user != "") {
         assigneeAjax(noteId, note.tbl, note.assigned_user)
     }else if (note.tbl == "dailyReports") {
@@ -962,6 +1016,7 @@ $(document).ready(function(){
         notesInit()
         budgetInit()
         jobEditInit()
+        noteTimeCheck()
     }
     
 });
