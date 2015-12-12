@@ -35,7 +35,7 @@ $def with (response, form, users)
     <!--brand and toggle grouped for better mobile display-->
     <a href="http://gat.im/dashboard" class="pull-left"><img class="logo" alt="Jobn" src="/static/logo_small.png"  /></a>
     
-    <div class="navbar-brand">Admin Options</div>
+    <div class="navbar-brand">Admin Panel</div>
     
 
     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -66,82 +66,94 @@ $def with (response, form, users)
   </div>
 </nav>
 <!-- admin info -->
-<div class="container">
-  <div class="row">
-    <div class="col-sm-12"><p style="padding:5px;">$:response</p></div>
-  </div>
-</div>
-<div class="container">
-  <div class="row">
-    <div class="col-sm-12" id="apiResponse"></div>
-  </div>
-    <div class="row">
-      <div class="col-sm-2"><strong>Name</strong></div>
-      <div class="col-sm-2"><strong>Type</strong></div>
-      <div class="col-sm-2"><strong>Email</strong></div>
-      <div class="col-sm-2"><strong>Phone</strong></div>
-      <div class="col-sm-2">&nbsp;</div>
-    </div>
-    $for user in users:
-      <div class="row" id="user$user['id']">
-        <div class="col-sm-2">
-          <div id="name_$user['id']">$user['name']</div>
-          <input type="text" class="edit_row" id="name_edit_$user['id']" name="name" size="15" value="$user['name']"/>
-        </div>
-        <div class="col-sm-2">
-          <div id="permissionLevel_$user['id']">$user['permissionLevel']</div>
-          <select id="permissionLevel_edit_$user['id']" class="edit_row"><option value="select" selected>select</option><option value="admin">Admin</option><option value="manager">Manager</option><option value="Supervisor">Supervisor</option></select>
-        </div>
-        <div class="col-sm-2">
-          <div id="email_$user['id']">$user['email']</div>
-          <input type="text" id="email_edit_$user['id']" class="edit_row" name="email" size="15" value="$user['email']"/>
-        </div>
-        <div class="col-sm-2">
-          <div id="phone_$user['id']">$user['phone']</div>
-          <input type="text" id="phone_edit_$user['id']" class="edit_row" name="phone" size="15" value="$user['phone']"/>
-        </div>
-        <div class="col-sm-2">
-          <div id="buttons_$user['id']"><button class="edit_button" id="edit_$user['id']">Edit</button><button class="delete_button" id="delete_$user['id']">Delete</button></div>
-          <div id="buttons_edit_$user['id']" class="edit_row"><button class="save_button" id="save_$user['id']">Save</button><button class="cancel_button" id="cancel_$user['id']">Cancel</button></div>
-        </div>
-      </div>
-    <div id="addUserForm">
-        <div id="row">
-            <div class="col-sm-2"><input type="text" id="name" name="name" size="15" placeholder="Name"/></div>
-            <div class="col-sm-2"><select id="permissionLevel"><option value="select" selected>select</option><option value="admin">Admin</option><option value="manager">Manager</option><option value="Supervisor">Supervisor</option></select></div>
-            <div class="col-sm-2"><input type="text" id="email" name="email" size="15" placeholder="Email"/></div>
-            <div class="col-sm-2"><input type="text" id="phone" name="phone" size="15" placeholder="Phone Number"/></div>
-            <div class="col-sm-2"><button id="userAdd">Add</button><button id="cancelUserAdd">Cancel</button></div>
-        </div>
-    </div>
-    <div id="row">
-        <button id="showUserAdd">Add A User</button>
-    </div>
-</div>
-<div class="hidden" id="userRowTemplate">
-<div class="row" id="user!template!">
-  <div class="col-sm-2">
-    <div id="name_!template!"></div>
-    <input type="text" class="edit_row" id="name_edit_!template!" name="name" size="15"/>
-  </div>
-  <div class="col-sm-2">
-    <div id="permissionLevel_!template!"></div>
-    <select id="permissionLevel_edit_!template!" class="edit_row"><option value="select" selected>select</option><option value="admin">Admin</option><option value="manager">Manager</option><option value="Supervisor">Supervisor</option></select>
-  </div>
-  <div class="col-sm-2">
-    <div id="email_!template!"></div>
-    <input type="text" id="email_edit_!template!" class="edit_row" name="email" size="15" value="$user['email']"/>
-  </div>
-  <div class="col-sm-2">
-    <div id="phone_!template!"></div>
-    <input type="checkbox" id="phone_edit_!template!" class="edit_row" name="phone" size="15" value="$user['phone']"/>
-  </div>
-  <div class="col-sm-2">
-    <div id="buttons_!template!"><button class="edit_button" id="edit_!template!">Edit</button><button class="delete_button" id="delete_!template!">Delete</button></div>
-    <div id="buttons_edit_!template!" class="edit_row"><button class="save_button" id="save_!template!">Save</button><button class="cancel_button" id="cancel_!template!">Cancel</button></div>
-  </div>
-</div>
-</div>
+	<div class="container">
+	  <tr>
+		<td style="padding:5px;">$:response</p></td>
+	  </tr>
+	</div>
+	<div class="container">
+	  <tr>
+		<td id="apiResponse"></td>
+	 </tr>
+	</div>
+	<div class ="container" id="admin-table-container">
+		<table id="admin-table" class="table table-striped table-condensed table-bordered text-center tablesorter">
+			<thead>
+				<tr style="border-bottom:3px solid #f2592a;">
+				  <th class="text-center"><strong>Name</strong></th>
+				  <th class="text-center"><strong>Type</strong></th>
+				  <th class="text-center"><strong>Email</strong></th>
+				  <th class="text-center"><strong>Phone</strong></th>
+				  <th class="text-center"><strong>&nbsp;</strong></th>
+				</tr>
+			</thead>
+			<tbody id="adminTbody">
+			  $for user in users:
+				<tr id="user$user['id']">
+					<td>
+						<div id="name_$user['id']">$user['name']</div>
+						<input type="text" class="edit_row" id="name_edit_$user['id']" name="name" size="15" value="$user['name']"/>
+					</td>
+					<td>
+						<div id="permissionLevel_$user['id']">$user['permissionLevel']</div>
+						<select id="permissionLevel_edit_$user['id']" class="edit_row"><option value="select" selected>select</option><option value="Admin">Admin</option><option value="Manager">Manager</option><option value="Supervisor">Supervisor</option></select>
+					</td>
+					<td>
+						<div id="email_$user['id']">$user['email']</div>
+						<input type="text" id="email_edit_$user['id']" class="edit_row" name="email" size="15" value="$user['email']"/>
+					</td>
+					<td>
+						<div id="phone_$user['id']">$user['phone']</div>
+						<input type="text" id="phone_edit_$user['id']" class="edit_row" name="phone" size="15" value="$user['phone']"/>
+					</td>
+					<td>
+						<div id="buttons_$user['id']"><button class="edit_button" id="edit_$user['id']">Edit</button><button class="delete_button" id="delete_$user['id']">Delete</button></div>
+						<div id="buttons_edit_$user['id']" class="edit_row"><button class="save_button" id="save_$user['id']">Save</button><button class="cancel_button" id="cancel_$user['id']">Cancel</button></div>
+					</td>
+				</tr>
+			
+			</tbody>
+			<tr>
+				<td colspan="5"><button id="showUserAdd">Add A User</button></td>
+			</tr>
+			<tr id="addUserForm">
+				<td><input type="text" id="name" name="name" size="15" placeholder="Name"/></td>
+				<td><select id="permissionLevel"><option value="select" selected>select</option><option value="Admin">Admin</option><option value="Manager">Manager</option><option value="Supervisor">Supervisor</option></select></td>
+				<td><input type="text" id="email" name="email" size="15" placeholder="Email"/></td>
+				<td><input type="text" id="phone" name="phone" size="15" placeholder="Phone Number"/></td>
+				<td><button id="userAdd">Add</button><button id="cancelUserAdd">Cancel</button></td>
+			</tr>
+		</table>
+		
+	</div>
+	
+	<!--<table class="hidden" id="userRowTemplate">-->
+	<table class="hidden" id="userRowTemplate">
+		<!--<tr class="userRowTemplate" id="user!template!">-->
+		<tr id="user!template!">
+			<td>
+				<div id="name_!template!"></div>
+				<input type="text" class="edit_row" id="name_edit_!template!" name="name" size="15"/>
+			</td>
+			<td>
+				<div id="permissionLevel_!template!"></div>
+				<select id="permissionLevel_edit_!template!" class="edit_row"><option value="select" selected>select</option><option value="Admin">Admin</option><option value="Manager">Manager</option><option value="Supervisor">Supervisor</option></select>
+			</td>
+			<td>
+				<div id="email_!template!"></div>
+				<input type="text" id="email_edit_!template!" class="edit_row" name="email" size="15" value="$user['email']"/>
+			</td>
+			<td>
+				<div id="phone_!template!"></div>
+				<input type="text" id="phone_edit_!template!" class="edit_row" name="phone" size="15" value="$user['phone']"/>
+			</td>
+			<td>
+				<div id="buttons_!template!"><button class="edit_button" id="edit_!template!">Edit</button><button class="delete_button" id="delete_!template!">Delete</button></div>
+				<div id="buttons_edit_!template!" class="edit_row"><button class="save_button" id="save_!template!">Save</button><button class="cancel_button" id="cancel_!template!">Cancel</button></div>
+			</td>
+		</tr>
+	</table>
+  
 </body>
 </html>
 

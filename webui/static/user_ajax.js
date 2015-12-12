@@ -97,7 +97,7 @@ function userAjax(divLLQ){
                         newUserRow(response);
                     };
                 } else{
-                    console.log("Unsuccessful add")
+                    console.log("Unsuccessful add" + response)
                     //console.log(response)
                     //response contained non numerics. Something bad happened
                     $("#apiResponse").html(response)
@@ -130,8 +130,9 @@ function userAjax(divLLQ){
 }
 function newUserRow(userId){
     rowTemplate = $("#userRowTemplate").html();
-    newRow = replaceAllSubsting(rowTemplate, "!template!", userId);
-    $(newRow).insertBefore("#addUserForm");
+    newRow = replaceAllSubstring(rowTemplate, "!template!", userId);
+	$("#adminTbody").append(newRow);
+    //$(newRow).insertBefore("#addUserForm");
      //add new values to the row
     $("#name_".concat(userId)).text($("#name").val());
     $("#perm_".concat(userId)).text($("#permissionLevel").val());
@@ -149,7 +150,7 @@ function updateUserRow(userId){
 function newBudgetItemRow(itemId){
     //create new row from template
     rowTemplate = $("#budgetRowTemplate").html()
-    newRow = replaceAllSubsting(rowTemplate, "!template!", itemId);
+    newRow = replaceAllSubstring(rowTemplate, "!template!", itemId);
     $(newRow).insertBefore("#addItemForm");
     //add new values to the row
     $("#name_".concat(itemId)).text($("#name").val());
@@ -215,7 +216,7 @@ function clearAddForm(){
     $("#email").val("");
     $("#phone").val("");
 }
-function replaceAllSubsting (str, oldSubStr, newSubStr) {
+function replaceAllSubstring (str, oldSubStr, newSubStr) {
     return str.split(oldSubStr).join(newSubStr);
 }
 function initializeButtonListeners(){
@@ -237,5 +238,28 @@ function initializeButtonListeners(){
         buttonId = $(this).attr('id').split("_")
         userId = buttonId[buttonId.length -1]
         userAjax(userId)
-    })
+    });
+	$("[id^=delete_]").click(function(){
+        buttonId = $(this).attr('id').split("_")
+        userId = buttonId[buttonId.length -1]
+        postData = {}
+        postData.id = userId
+        $.ajax({
+            url : "/forward/delete/user",
+            dataType:"text",
+            method:"POST",
+            data: JSON.stringify(postData),
+            success:function(response){
+                if (apiResponseIsGood(response)) {
+                    console.log("Successful delete")
+                    console.log(postData)
+                    console.log(response)
+                    $("#user".concat(userId)).remove()
+                } else {
+                    console.log("Unsuccessful delete")
+                    $("#apiResponse").html(response)
+                };
+            }
+        });
+    });
 }

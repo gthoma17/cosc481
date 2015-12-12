@@ -29,6 +29,7 @@ urls = (
 	"/actionItem", "actionItem",
 	"/delete/budgetItem", "deleteBudgetItem",
 	"/delete/user", "deleteUser",
+	"/delete/note", "deleteNote",
 	"/photo", "photo",
 	"/photoFolder", "photoFolder",
 	"/userActionItems", "userActionItems",
@@ -416,7 +417,14 @@ class job:
 		if job == "all":
 			allJobs = list(db.select('jobs'))
 			#make sure the list can be serialized
+			
 			for job in allJobs:
+				idThings = [
+					['jobAppUsers','manager',job['manager_id'], "name,permissionLevel,email,phone"],
+  					['jobAppUsers','supervisor',job['supervisor_id'], "name,permissionLevel,email,phone"],
+				]
+				for thing in idThings:
+					job = addThingById(job, thing[0], thing[1], thing[2], thing[3])
 				makeDumpable(job)
 			#then return
 			return json.dumps(allJobs)
@@ -472,6 +480,7 @@ class job:
 		if 'description' in passedData:
 			db.update('jobs', where="id = "+str(job), description=passedData['description'])
 		if 'phase' in passedData:
+			current_date = datetime.datetime.now().isoformat()
 			if passedData['phase'].upper() == "BILLED":
 				db.update('jobs', where="id = "+str(job), date_billed=current_date)
 			elif passedData['phase'].upper() == "OPEN":
@@ -565,6 +574,26 @@ class deleteEquipment:
 
 #End Equipment Section		
 
+class deleteNote:
+	def GET(self): 
+		return "Shhhh... the database is sleeping."
+	def POST(self):
+		passedData = dict(web.input())
+		try:
+			reqUser = db.where('jobAppUsers', apiKey=passedData['apiKey'])[0]
+		except IndexError:
+			return "403 Forbidden"
+		try:
+			theNote = db.where(passedData['tbl'], id=passedData['id'])[0]
+		except:
+			return "404 Not Found"
+		if reqUser['permissionLevel'].upper() == "ADMIN" or reqUser['id'] == theNote['author_id']:
+			#user can do this
+			db.delete(passedData['tbl'], where="id="+passedData['id'])
+			return "200 OK"
+		else:
+			return "403 Forbidden"
+
 
 class user:
 	def GET(self, user):
@@ -599,22 +628,18 @@ class user:
 			return "403 Forbidden"
 		if userIsAdmin(reqUser):
 			#first check if user exists.
-			if user.isdigit(): #if all digits, lookup by ID
-				existingUser = db.where('jobAppUsers', id=user)
-			else:
-				existingUser = db.where('jobAppUsers', email=user)
+			existingUser = db.where('jobAppUsers', id=user)
 			if existingUser: #user exists
 				existingUser = existingUser[0]
-				print "*"*50
 				print passedData
-				print "*"*50
-				db.update('jobAppUsers', 
-							where="id = "+str(existingUser.id), 
-							name=passedData['name'],
-							email=passedData['email'],
-							permissionLevel=passedData['permissionLevel'],
-							phone=passedData['phone']
-						)
+				if 'name' in passedData:
+					db.update('jobAppUsers', where="id = "+str(user), name=passedData['name'])
+				if 'email' in passedData:
+					db.update('jobAppUsers', where="id = "+str(user), email=passedData['email'])
+				if 'permissionLevel' in passedData:
+					db.update('jobAppUsers', where="id = "+str(user), permissionLevel=passedData['permissionLevel'])
+				if 'phone' in passedData:
+					db.update('jobAppUsers', where="id = "+str(user), phone=passedData['phone'])
 				return "202 User Updated"
 			else: 
 				return "404 Not Found"
@@ -686,7 +711,7 @@ def dumpDict(inDict):
 	for item in dict(inDict):
 		if type(inDict[item]) is datetime.date or \
 			type(inDict[item]) is datetime.datetime:
-			inDict[item] = str(inDict[item])
+			inDict[item] = inDict[item].strftime("%Y-%m-%d")
 	return inDict
 def addThingByJobReference(job, jobId, table, dictName):
 	if dictName not in job:
