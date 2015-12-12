@@ -1,0 +1,167 @@
+$def with (title, text, adminLink, user, userJobs)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" />
+<link type=text/css rel=stylesheet href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="//www.gstatic.com/authtoolkit/js/gitkit.js"></script>
+<script type="text/javascript" src="/static/jquery.tablesorter.js"></script> 
+<script type=text/javascript>
+  window.google.identitytoolkit.signInButton(
+    '#navbar', // accepts any CSS selector
+    {
+      widgetUrl: "/login",
+      signOutUrl: "/logout",
+    }
+  );
+  $$(document).ready(function() 
+    { 
+        $$("#job-table").tablesorter(); 
+    } 
+  ); 
+</script>
+<title>Jobn - Reports</title>
+<link rel="stylesheet" type="text/css" href="/static/style.css">
+<link rel="icon" type="image/png" href="/static/favicon.png">
+</head>
+
+<body> 
+
+<!-- navigation bar -->
+<nav role="navigation" class="navbar navbar-default navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+		<!--brand and toggle grouped for better mobile display-->
+		<a href="http://gat.im/dashboard" class="pull-left"><img class="logo" alt="Jobn" src="/static/logo_small.png"  /></a>
+		
+		<div class="navbar-brand">Dashboard</div>
+		
+
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+			
+			<span class="sr-only">Toggle navigation</span>
+			
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			
+		</button>
+		
+    </div>
+	<!--content for toggling-->
+    <div class="collapse navbar-collapse">
+	
+		<ul class="nav navbar-nav">
+			
+			$if user['permissionLevel'].upper() == "ADMIN" or user['permissionLevel'].upper() == "MANAGER":
+				<li style="z-index:512;" class="pages"><a href="/admin">Admin Panel</a></li>
+			<li style="z-index:512;" class="pages"><a href="/jobs">Jobs</a></li>
+			<li style="z-index:512;" class="pages"><a href="/dashboard">Dashboard</a></li>
+			<li id="accountSwitcherLI"><div id="accountSwitcher"><div id="navbar" style="vertical-align:middle;width:100%;" class="center-block"></div></div></li>
+			
+		</ul>
+		
+	</div>
+  </div>
+</nav>
+
+<!-- Open Jobs -->
+<div class="container">
+<h3>Active Jobs</h3>
+$if not any([x for x in userJobs if x['phase'] == "Open" or x['phase'] == "Billed"]):
+	<p style="margin-left:2%;">No active jobs.</p>
+$else:
+	<div id="job-table-container" class="container" style="margin-top:20px;">
+		<table id="job-table" class="table table-striped table-condensed table-bordered text-center tablesorter">
+		  <thead>
+			<tr style="border-bottom:3px solid #f2592a;">
+			  <th class="text-center">#&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+			  <th class="text-center">Name&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+			  <th class="text-center">Location&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+			  <th class="text-center">Phase&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+			  <th class="text-center">Customer&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+			  <th class="text-center">Manager&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+			  <th class="text-center">Supervisor&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+			  <th class="text-center">Date Opened&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+			</tr>
+		  </thead>
+		  <tbody>
+			$for jobs in userJobs:
+				$ jobs['location'] = jobs['street_address']+" "+jobs['city']+" "+jobs['state']+" "+jobs['zip']
+					<tr>
+						<td><a href="job/$jobs['id']">$jobs['id']</a></td>
+						<td><a href="job/$jobs['id']">$jobs['name']</a></td>
+						<td><a href="http://maps.apple.com/?q=$jobs['location']" target="blank">$jobs['street_address'] $jobs['city']</a></td>
+						<td>$jobs['phase']</td>
+						<td>$jobs['customer_name']</td>
+						<td>
+						  $if jobs['manager'] != None:
+							$jobs['manager']['name']
+						</td>
+						<td>
+						  $if jobs['supervisor'] != None:
+							$jobs['supervisor']['name']
+						</td>
+						<td>$jobs['date_started']</td>
+					</tr>
+		  </tbody>
+		</table>
+	  </div>
+</div>
+  
+<!-- Closed Jobs -->
+<div class="container">
+<h3>Closed Jobs</h3>
+$if not any([x for x in userJobs if x['phase'] == "Closed"]):
+	<p style="margin-left:2%;">No closed jobs.</p>
+$else:
+	<div id="job-table-container" class="container"  style="margin-top:20px;">
+		<table id="job-table" class="table table-striped table-condensed table-bordered text-center tablesorter">
+		  <thead>
+			<tr style="border-bottom:3px solid #f2592a;">
+			  <th class="text-center">#&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+			  <th class="text-center">Name&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+			  <th class="text-center">Location&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+			  <th class="text-center">Customer&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+			  <th class="text-center">Manager&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+			  <th class="text-center">Supervisor&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+			  <th class="text-center">Date Opened&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+			  <th class="text-center">Date Billed&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+			  <th class="text-center">Date Closed&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-sort"></span></th>
+			</tr>
+		  </thead>
+		  <tbody>
+			$for jobs in userJobs:
+				$if jobs['phase'] == "Closed":
+					$ jobs['location'] = jobs['street_address']+" "+jobs['city']+" "+jobs['state']+" "+jobs['zip']
+						<tr>
+							<td><a href="job/$jobs['id']">$jobs['id']</a></td>
+							<td><a href="job/$jobs['id']">$jobs['name']</a></td>
+							<td><a href="http://maps.apple.com/?q=$jobs['location']" target="blank">$jobs['street_address'] $jobs['city']</a></td>
+							<td>$jobs['customer_name']</td>
+							<td>
+								$if jobs['manager'] != None:
+								$jobs['manager']['name']
+							</td>
+							<td>
+								$if jobs['supervisor'] != None:
+								$jobs['supervisor']['name']
+							</td>
+							<td>$jobs['date_started']</td>
+							<td>$jobs['date_billed']</td>
+							<td>$jobs['date_closed']</td>
+						</tr>
+		  </tbody>
+		</table>
+	  </div>
+</div>
+
+</body>
+</html>

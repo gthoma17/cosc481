@@ -204,6 +204,32 @@ function prepNotes() {
         $("#note-"+noteTbl+"-"+noteId+" .note-edit").hide()
         resetNote(noteTbl, noteId);
     });
+   $('.note-delete-button').click(function(){
+            buttonId = $(this).attr('id').split("-")
+            noteId = buttonId[buttonId.length -1]
+            noteTbl = buttonId[buttonId.length -2]
+            noteS = noteTbl + "-" + noteId;
+            postData = {}
+            postData.id = noteId;
+            $.ajax({
+                url : "/forward/delete/note",
+                dataType:"text",
+                method:"POST",
+                data: JSON.stringify(postData),
+                success:function(response){
+                    if (apiResponseIsGood(response)) {
+                        console.log("Successful delete")
+                        console.log(postData)
+                        console.log(response)
+                        $("#note-".concat(noteS)).remove()
+                    } else {
+                        console.log("Unsuccessful delete")
+                        $("#apiResponse").html(response+"note-".concat(noteS));
+                    };
+                }
+            });
+        });
+
     $('.note-complete').click(function(){
         buttonId = $(this).attr('id').split("-")
         noteId = buttonId[buttonId.length -1]
@@ -727,22 +753,66 @@ function updateNote(llq, note){
     }
     $("#note"+llq+" .note-display").show()
     $("#note"+llq+" .note-edit").hide()
-
 }
 /*NOT WORKING*/
-/*function noteEntryTimeCheck(note, note-entry-time){
-    hourToMins = note-entry-time.getHours()*60;
-    minute = note-entry-time.getMinutes() + hourToMins;
-    curHourToMin = getHours()*60;
-    curMinute = getMinutes() + curHourToMin;
-    timeDifference = curMinute - minute;
-    if(timeDifference >= 60){
-        return false;
-    }
-    else{
-        return true;
-    }
-}*/
+function noteTimeCheck(){
+
+    console.log("timeCheck entered");
+   
+    $('.get-note').each(function(){
+        var getNote = $(this).attr('id').split("-");
+        da = new Date();
+        //mins = parseInt(da.getHours())*60+da.getMinutes();
+        noteId = getNote[getNote.length-1];
+        noteTbl = getNote[getNote.length-2];
+        noteSuff = "#note-entry-time-" + noteTbl + "-" + noteId;
+        noteET =  $(noteSuff).text();
+
+        noteTime = noteET.split(" ")[1]
+        noteDate = noteET.split(" ")[0]
+        noteYear = noteDate.split("-")[0]
+        noteMonth = noteDate.split("-")[1]
+        noteDay = noteDate.split("-")[2]
+        noteHour = noteTime.split(":")[0]
+        noteMinute = noteTime.split(":")[1]
+        noteDate = new Date(noteYear, noteMonth, noteDay, noteHour, noteMinute)
+        //console.log(noteYear+noteMonth+noteDay)
+
+        noteS = "#note-delete-button-" + noteTbl + "-" + noteId;
+
+        now = new Date();
+        //noteAllottedTime.setMinutes(noteAllottedTime.getMinutes()-60);
+        //console.log(noteAllottedTime)
+        //console.log(noteAllottedTime)
+        //noteH = parseInt(noteET[noteET.length-2])*60;
+        //console.log(noteH);
+        //noteM = parseInt(noteET[noteET.length-1]);
+        //noteTime = noteM+noteH;
+        //console.log(mins);
+        //console.log(noteM);
+        //console.log(mins - noteM);
+        //noteETMins = (noteET.getHours()*60)+ noteET.getMinutes();
+        //console.log(noteDate)
+        //console.log(noteAllottedTime)
+        timeDiff = now.getTime() - noteDate.getTime()
+        //console.log(timeDiff/60000)
+        console.log(now.getTime()+"-"+noteDate.getTime()+"="+timeDiff)
+        //console.log(timeDiff)
+        if (timeDiff < 60000){
+            console.log("true");
+            //console.log(noteDate+" < "+now)
+            setTimeout(function() {
+              $(noteS).hide();
+            }, timeDiff);
+        }
+        else{
+            //console.log(noteDate+" > "+now)
+            //console.log("false")
+            $(noteS).hide();
+        }
+    
+    });
+}
 function getCurrentDateTime(){
     d = new Date()
     date = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()
@@ -987,6 +1057,7 @@ $(document).ready(function(){
         notesInit()
         budgetInit()
         jobEditInit()
+        noteTimeCheck()
     }
     
 });
