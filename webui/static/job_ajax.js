@@ -163,6 +163,32 @@ function prepNotes() {
         $("#note-"+noteTbl+"-"+noteId+" .note-edit").hide()
         resetNote(noteTbl, noteId);
     });
+   $('.note-delete-button').click(function(){
+            buttonId = $(this).attr('id').split("-")
+            noteId = buttonId[buttonId.length -1]
+            noteTbl = buttonId[buttonId.length -2]
+            noteS = noteTbl + "-" + noteId;
+            postData = {}
+            postData.id = noteId;
+            $.ajax({
+                url : "/forward/delete/note",
+                dataType:"text",
+                method:"POST",
+                data: JSON.stringify(postData),
+                success:function(response){
+                    if (apiResponseIsGood(response)) {
+                        console.log("Successful delete")
+                        console.log(postData)
+                        console.log(response)
+                        $("#note-".concat(noteS)).remove()
+                    } else {
+                        console.log("Unsuccessful delete")
+                        $("#apiResponse").html(response+"note-".concat(noteS));
+                    };
+                }
+            });
+        });
+
     $('.note-complete').click(function(){
         buttonId = $(this).attr('id').split("-")
         noteId = buttonId[buttonId.length -1]
@@ -688,20 +714,7 @@ function updateNote(llq, note){
     $("#note"+llq+" .note-edit").hide()
 
 }
-/*NOT WORKING*/
-function noteEntryTimeCheck(note, note-entry-time){
-    hourToMins = note-entry-time.getHours()*60;
-    minute = note-entry-time.getMinutes() + hourToMins;
-    curHourToMin = getHours()*60;
-    curMinute = getMinutes() + curHourToMin;
-    timeDifference = curMinute - minute;
-    if(timeDifference >= 60){
-        return false;
-    }
-    else{
-        return true;
-    }
-}
+
 function getCurrentDateTime(){
     d = new Date()
     date = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()
@@ -727,6 +740,9 @@ function createNewNote(noteId, note){
     $("#note-user-name".concat(noteSuffix)).text($("#user-name").text())
     $("#note-entry-time".concat(noteSuffix)).text(getCurrentDateTime())
 
+
+
+    console.log($("#note-entry-time").getHours());
     if (note.tbl == "actionItems" && note.assigned_user != "") {
         assigneeAjax(noteId, note.tbl, note.assigned_user)
     }else if (note.tbl == "dailyReports") {
