@@ -762,7 +762,6 @@ function noteTimeCheck(){
     $('.get-note').each(function(){
         var getNote = $(this).attr('id').split("-");
         da = new Date();
-        //mins = parseInt(da.getHours())*60+da.getMinutes();
         noteId = getNote[getNote.length-1];
         noteTbl = getNote[getNote.length-2];
         noteSuff = "#note-entry-time-" + noteTbl + "-" + noteId;
@@ -776,43 +775,36 @@ function noteTimeCheck(){
         noteHour = noteTime.split(":")[0]
         noteMinute = noteTime.split(":")[1]
         noteDate = new Date(noteYear, noteMonth, noteDay, noteHour, noteMinute)
-        //console.log(noteYear+noteMonth+noteDay)
 
         noteS = "#note-delete-button-" + noteTbl + "-" + noteId;
 
         now = new Date();
-        //noteAllottedTime.setMinutes(noteAllottedTime.getMinutes()-60);
-        //console.log(noteAllottedTime)
-        //console.log(noteAllottedTime)
-        //noteH = parseInt(noteET[noteET.length-2])*60;
-        //console.log(noteH);
-        //noteM = parseInt(noteET[noteET.length-1]);
-        //noteTime = noteM+noteH;
-        //console.log(mins);
-        //console.log(noteM);
-        //console.log(mins - noteM);
-        //noteETMins = (noteET.getHours()*60)+ noteET.getMinutes();
-        //console.log(noteDate)
-        //console.log(noteAllottedTime)
-        timeDiff = now.getTime() - noteDate.getTime()
-        //console.log(timeDiff/60000)
-        console.log(now.getTime()+"-"+noteDate.getTime()+"="+timeDiff)
-        //console.log(timeDiff)
-        if (timeDiff < 60000){
+
+        noteConsolidate = (noteDate.getHours()*60) + noteDate.getMinutes();
+        console.log("Note consolidate is: " + noteConsolidate);
+        //console.log("Note hour time: " + noteConsolidate);
+        nowConsolidate = (now.getHours()*60) + now.getMinutes();
+        console.log("Now consolidate is: " + nowConsolidate)
+        consolidateTime = Math.abs(nowConsolidate - noteConsolidate);
+        console.log("now - note = " + consolidateTime);
+        consolidateDiffMillis = consolidateTime*60000;
+        console.log("The millis left: " + consolidateDiffMillis);
+        
+        
+        if (consolidateTime < 60 && now.getDate() == noteDate.getDate()){
             console.log("true");
             //console.log(noteDate+" < "+now)
             setTimeout(function() {
               $(noteS).hide();
-            }, timeDiff);
+            }, consolidateDiffMillis);
         }
         else{
-            //console.log(noteDate+" > "+now)
-            //console.log("false")
             $(noteS).hide();
         }
-    
     });
 }
+
+
 function getCurrentDateTime(){
     d = new Date()
     date = d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()
