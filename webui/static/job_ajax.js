@@ -211,6 +211,7 @@ function prepNotes() {
             noteS = noteTbl + "-" + noteId;
             postData = {}
             postData.id = noteId;
+            postData.tbl = noteTbl;
             $.ajax({
                 url : "/forward/delete/note",
                 dataType:"text",
@@ -223,7 +224,7 @@ function prepNotes() {
                         console.log(response)
                         $("#note-".concat(noteS)).remove()
                     } else {
-                        console.log("Unsuccessful delete")
+                        console.log("Unsuccessful delete: " + response);
                         $("#apiResponse").html(response+"note-".concat(noteS));
                     };
                 }
@@ -777,6 +778,7 @@ function noteTimeCheck(){
         noteDate = new Date(noteYear, noteMonth, noteDay, noteHour, noteMinute)
 
         noteS = "#note-delete-button-" + noteTbl + "-" + noteId;
+        noteE = "#note-edit-button-" + noteTbl + "-" + noteId;
 
         now = new Date();
 
@@ -800,6 +802,7 @@ function noteTimeCheck(){
         }
         else{
             $(noteS).hide();
+            $(noteE).hide();
         }
     });
 }
