@@ -583,27 +583,41 @@ body {
 }
 
 .addImageAddFolder {
+	/*text-align: center;*/
+	display: inline-block;
+	margin: 2px;
+}
+
+.addImageAddFolderCenter {
 	text-align: center;
+	width: 100%;
 }
 
 .photoFolderButton {
-	margin: 1em;
+	margin: .25em;
 }
 
 .upAFolderIconAndText {
 	display: inline-block;
-	margin: 10px;
+	height: 10em;
 }
 
 .photoFolderAndFolderName {
 	display: inline-block;
-	margin: 10px;
-	//*loat: left;*/
+	height: 10em;
+
 }
 
 .individualPhoto {
 	display: inline-block;
-	/*float: left;*/
+	vertical-align: top;
+	height: 10em;
+
+}
+
+.individualPhotoImg {
+	height: 5em;
+	margin: .25em;
 }
 
 .photoFolderSection {

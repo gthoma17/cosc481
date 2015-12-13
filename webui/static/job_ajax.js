@@ -51,12 +51,22 @@ function photosInit() {
 }
 function createNewPhotoFolder(folderData, folderID) {
 	console.log("new folder")
-    newFolder = $("#imageFolder-template").html()
+    newFolderButton = $("#imageFolder-template").html()
+    newFolderButton = replaceAllSubsting(newFolderButton, "!name!", folderData.name);
+    newFolderButton = replaceAllSubsting(newFolderButton, "!id!", folderID);
+    //once we've implemented opening and closing folders, this will have to be updated
+    if (currentPhotoFolder == "-1") {
+    	$('#folderContents_' + currentPhotoFolder + ' > div:first-child').before(newFolderButton);
+    } else {
+    	$('#folderContents_' + currentPhotoFolder + ' > div:nth-child(2)').before(newFolderButton);
+    }
+    newFolder = $("#renderedPhotoFolderTemplate").html()
     newFolder = replaceAllSubsting(newFolder, "!name!", folderData.name);
     newFolder = replaceAllSubsting(newFolder, "!id!", folderID);
-    //once we've implemented opening and closing folders, this will have to be updated
-    $('#gallery > div:first-child').before(newFolder);
+    newFolder = replaceAllSubsting(newFolder, "!parent_id!", currentPhotoFolder);
+    $('#gallery > div:last-child').after(newFolder);
 	$("#folder-name").val("");
+	prepPhotos();
 }
 
 function prepPhotos() {
@@ -120,7 +130,7 @@ function createNewPhoto(photo){
     newNote = $("#image-template").html()
     newNote = replaceAllSubsting(newNote, "!url!", photo.base64_image);
     newNote = replaceAllSubsting(newNote, "!gallery!", "gallery01");
-    $('#gallery > div:last-child').after(newNote);
+   	$('#folderContents_' + currentPhotoFolder + ' > div:last-child').after(newNote);
     $("#add-image-card").replaceWith($("#add-image-card").clone());
     prepPhotos();
 }
